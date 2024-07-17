@@ -5,16 +5,20 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
-@Table(name="images")
+@Getter
+@Table(name="meeting_dates")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Image {
+public class MeetingDate {
 
     @Id
     @GeneratedValue
-    private int id;
+    private Long id;
+    private LocalDate meetingDate;
 
-    private String link;
 }

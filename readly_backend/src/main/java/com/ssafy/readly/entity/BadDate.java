@@ -1,28 +1,26 @@
 package com.ssafy.readly.entity;
 
-
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.LocalDate;
 
 import static jakarta.persistence.FetchType.LAZY;
+import static lombok.AccessLevel.PROTECTED;
 
 @Entity
-@Table(name="readed_books")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReadedBook {
-
+@Getter
+@Table(name="bad_dates")
+@NoArgsConstructor(access = PROTECTED)
+public class BadDate {
     @Id
     @GeneratedValue
     private Long id;
+    private LocalDate badDate;
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "id")
-    private Book book;
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "id")
+    @JoinColumn(name="id")
     private Member member;
-
 
 }

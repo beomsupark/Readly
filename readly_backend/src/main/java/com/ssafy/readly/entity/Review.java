@@ -1,28 +1,38 @@
 package com.ssafy.readly.entity;
 
-
+import com.ssafy.readly.dto.Visibility;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.LocalDate;
 
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
-@Table(name="readed_books")
+@Getter
+@Table(name="reviews")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReadedBook {
+public class Review {
 
     @Id
     @GeneratedValue
     private Long id;
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "id")
-    private Book book;
+
+    private String text;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "id")
     private Member member;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "id")
+    private Book book;
 
+    private int like;
+
+    private LocalDate createdDate;
+
+    private Visibility visibility;
 }

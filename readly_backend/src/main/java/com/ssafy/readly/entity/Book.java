@@ -1,13 +1,16 @@
 package com.ssafy.readly.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
 @Table(name="Books")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Book {
 
     @Id

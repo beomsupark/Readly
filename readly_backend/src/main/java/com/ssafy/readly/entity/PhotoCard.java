@@ -1,5 +1,6 @@
 package com.ssafy.readly.entity;
 
+import com.ssafy.readly.dto.Visibility;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,5 +27,6 @@ public class PhotoCard {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "id")
     private Member member;
-    private
+    @Enumerated(value = EnumType.STRING)
+    private Visibility visibility; // ALONE,GROUP,EVERY
 }
