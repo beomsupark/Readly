@@ -1,23 +1,24 @@
 package com.ssafy.readly.entity;
 
-import com.ssafy.readly.entity.common.ItemType;
+import com.ssafy.readly.enums.ItemType;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static jakarta.persistence.EnumType.*;
 import static jakarta.persistence.FetchType.LAZY;
+import static lombok.AccessLevel.*;
 
 @Entity
 @Getter
 @Table(name="timecapsule_items")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 public class TimeCapsuleItem {
+
     @Id
     @GeneratedValue
     private int id;
-
-    @Enumerated(EnumType.STRING)
+    @Enumerated(value = STRING)
     private ItemType itemType;
 
     @ManyToOne(fetch = LAZY)

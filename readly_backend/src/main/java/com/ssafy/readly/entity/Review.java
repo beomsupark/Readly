@@ -1,29 +1,28 @@
 package com.ssafy.readly.entity;
 
-import com.ssafy.readly.entity.common.Visibility;
+import com.ssafy.readly.enums.Visibility;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
+import static jakarta.persistence.EnumType.*;
 import static jakarta.persistence.FetchType.LAZY;
+import static lombok.AccessLevel.*;
 
 @Entity
 @Getter
 @Table(name="reviews")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 public class Review {
 
     @Id
     @GeneratedValue
     private int id;
-
     private String text;
-    private LocalDate createdDate;
-
-    @Enumerated(value = EnumType.STRING)
+    private LocalDateTime createdDate;
+    @Enumerated(value = STRING)
     private Visibility visibility;
 
     @ManyToOne(fetch = LAZY)

@@ -1,18 +1,18 @@
 package com.ssafy.readly.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 import static jakarta.persistence.FetchType.LAZY;
+import static lombok.AccessLevel.*;
 
 @Entity
 @Getter
 @Table(name="meeting_dates")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 public class MeetingDate {
 
     @Id

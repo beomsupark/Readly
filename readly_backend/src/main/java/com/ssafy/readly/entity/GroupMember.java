@@ -1,23 +1,23 @@
 package com.ssafy.readly.entity;
-import com.ssafy.readly.entity.common.Role;
+import com.ssafy.readly.enums.Role;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static jakarta.persistence.EnumType.*;
 import static jakarta.persistence.FetchType.LAZY;
+import static lombok.AccessLevel.*;
 
 @Entity
 @Getter
 @Table(name="group_members")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 public class GroupMember {
 
     @Id
     @GeneratedValue
     private int id;
-
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(value = STRING)
     private Role role;
 
     @ManyToOne(fetch = LAZY)

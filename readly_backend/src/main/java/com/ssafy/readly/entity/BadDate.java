@@ -1,7 +1,6 @@
 package com.ssafy.readly.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,8 +23,8 @@ public class BadDate {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name="member_id")
     private Member member;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name="group_id")
     private Group group;
-
 }

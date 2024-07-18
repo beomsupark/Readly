@@ -1,7 +1,6 @@
 package com.ssafy.readly.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,17 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static jakarta.persistence.FetchType.LAZY;
+import static lombok.AccessLevel.*;
 
 @Entity
 @Getter
 @Table(name="timecapsules")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 public class TimeCapsule {
 
     @Id
     @GeneratedValue
     private int id;
-
     private LocalDate releaseDate;
     private LocalDate startDate;
     private LocalDate endDate;

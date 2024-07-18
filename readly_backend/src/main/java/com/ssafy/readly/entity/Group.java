@@ -1,14 +1,15 @@
 package com.ssafy.readly.entity;
 
-import com.ssafy.readly.entity.common.IsInviting;
+import com.ssafy.readly.enums.IsInviting;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.EnumType.*;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
@@ -22,12 +23,16 @@ public class Group {
     private int id;
     private String title;
     private String description;
-    private LocalDate createdDate;
-    @Enumerated(value = EnumType.STRING)
+    private LocalDateTime createdDate;
+    @Enumerated(value = STRING)
     private IsInviting isInviting;
 
     @OneToMany(mappedBy = "group",cascade = CascadeType.ALL)
     private List<BadDate> badDates = new ArrayList<>();
     @OneToMany(mappedBy = "group",cascade = CascadeType.ALL)
     private List<MeetingDate> meetingDates = new ArrayList<>();
+    @OneToMany(mappedBy = "group",cascade = CascadeType.ALL)
+    private List<GroupTag> groupTags = new ArrayList<>();
+    @OneToMany(mappedBy = "group",cascade = CascadeType.ALL)
+    private List<Proceeding> proceedings = new ArrayList<>();
 }

@@ -4,24 +4,23 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static jakarta.persistence.FetchType.*;
-import static lombok.AccessLevel.*;
+import java.time.LocalDateTime;
+
+import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
-@Table(name="group_tags")
+@Table(name = "Proceedings")
 @NoArgsConstructor(access = PROTECTED)
-public class GroupTag {
+public class Proceeding {
 
     @Id
     @GeneratedValue
     private int id;
+    private LocalDateTime createdDate;
+    private String content;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne
     @JoinColumn(name = "group_id")
     private Group group;
-
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "tag_id")
-    private Tag tag;
 }

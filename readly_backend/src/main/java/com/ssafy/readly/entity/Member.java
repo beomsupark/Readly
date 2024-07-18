@@ -1,26 +1,28 @@
 package com.ssafy.readly.entity;
 
-import com.ssafy.readly.entity.common.Gender;
-import com.ssafy.readly.entity.common.Social;
+import com.ssafy.readly.enums.Gender;
+import com.ssafy.readly.enums.Social;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static jakarta.persistence.EnumType.*;
+import static lombok.AccessLevel.*;
 
 @Entity
 @Getter
 @Table(name="members")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 public class Member {
 
     @Id
     @GeneratedValue
     private int id;
-
     private String loginId;
     private String loginPwd;
     private String nickname;
@@ -29,12 +31,10 @@ public class Member {
     private String email;
     private int point;
     private LocalDate birthday;
-    private LocalDate joinDate;
-
-    @Enumerated(value = EnumType.STRING)
+    private LocalDateTime joinDate;
+    @Enumerated(value = STRING)
     private Gender gender;
-
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(value = STRING)
     private Social social;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)

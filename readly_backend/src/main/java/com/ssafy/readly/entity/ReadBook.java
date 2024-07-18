@@ -2,22 +2,21 @@ package com.ssafy.readly.entity;
 
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import static jakarta.persistence.FetchType.LAZY;
+import static lombok.AccessLevel.*;
 
 @Entity
 @Getter
 @Table(name="read_books")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 public class ReadBook {
 
     @Id
     @GeneratedValue
     private int id;
-
     private int currentPage;
 
     @ManyToOne(fetch = LAZY)
@@ -29,6 +28,6 @@ public class ReadBook {
     private Member member;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "group_id")
     private Group group;
 }
