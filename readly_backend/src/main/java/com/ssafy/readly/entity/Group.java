@@ -14,7 +14,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
-@Table(name="groups")
+@Table(name = "small_groups")
 @NoArgsConstructor(access = PROTECTED)
 public class Group {
 
