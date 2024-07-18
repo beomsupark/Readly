@@ -23,4 +23,14 @@ public class Proceeding {
     @ManyToOne
     @JoinColumn(name = "group_id")
     private Group group;
+
+    /* 연관 관계 편의 메소드 */
+    public void setGroup(Group group){
+        if (this.group != null) {
+            this.group.getProceedings().remove(this);
+        }
+
+        this.group = group;
+        group.getProceedings().add(this);
+    }
 }

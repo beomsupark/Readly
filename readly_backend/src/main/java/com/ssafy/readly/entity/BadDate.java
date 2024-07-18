@@ -27,4 +27,14 @@ public class BadDate {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name="group_id")
     private Group group;
+
+    /* 연관 관계 편의 메소드 */
+    public void setGroup(Group group){
+        if (this.group != null) {
+            this.group.getBadDates().remove(this);
+        }
+
+        this.group = group;
+        group.getBadDates().add(this);
+    }
 }

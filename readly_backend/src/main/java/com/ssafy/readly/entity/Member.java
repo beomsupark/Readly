@@ -39,19 +39,14 @@ public class Member {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<ReadBook> readBooks = new ArrayList<>();
-
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<PhotoCard> photoCards = new ArrayList<>();
-
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<>();
-
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<TimeCapsule> timeCapsules = new ArrayList<>();
-
     @OneToMany(mappedBy = "following",cascade = CascadeType.ALL)
     private List<Follower> followers = new ArrayList<>();
-
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
     private List<GroupMember> groupMembers = new ArrayList<>();
 }

@@ -25,4 +25,14 @@ public class Follower {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "followed_id")
     private Member followed;
+
+    /* 연관 관계 편의 메소드 */
+    public void setMember(Member member){
+        if (this.following != null) {
+            this.following.getFollowers().remove(this);
+        }
+
+        this.following = member;
+        member.getFollowers().add(this);
+    }
 }

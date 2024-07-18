@@ -24,4 +24,14 @@ public class GroupTag {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "tag_id")
     private Tag tag;
+
+    /* 연관 관계 편의 메소드 */
+    public void setGroup(Group group){
+        if (this.group != null) {
+            this.group.getGroupTags().remove(this);
+        }
+
+        this.group = group;
+        group.getGroupTags().add(this);
+    }
 }

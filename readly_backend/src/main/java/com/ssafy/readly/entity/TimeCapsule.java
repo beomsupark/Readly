@@ -30,4 +30,14 @@ public class TimeCapsule {
 
     @OneToMany(mappedBy = "timeCapsule", cascade = CascadeType.ALL)
     private List<TimeCapsuleItem> timeCapsuleItems = new ArrayList<>();
+
+    /* 연관 관계 편의 메소드 */
+    public void setMember(Member member){
+        if (this.member != null) {
+            this.member.getTimeCapsules().remove(this);
+        }
+
+        this.member = member;
+        member.getTimeCapsules().add(this);
+    }
 }

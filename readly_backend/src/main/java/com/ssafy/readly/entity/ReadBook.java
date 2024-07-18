@@ -30,4 +30,14 @@ public class ReadBook {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "group_id")
     private Group group;
+
+    /* 연관 관계 편의 메소드 */
+    public void setMember(Member member){
+        if (this.member != null) {
+            this.member.getReadBooks().remove(this);
+        }
+
+        this.member = member;
+        member.getReadBooks().add(this);
+    }
 }

@@ -32,4 +32,14 @@ public class Review {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "book_id")
     private Book book;
+
+    /* 연관 관계 편의 메소드 */
+    public void setMember(Member member){
+        if (this.member != null) {
+            this.member.getReviews().remove(this);
+        }
+
+        this.member = member;
+        member.getReviews().add(this);
+    }
 }

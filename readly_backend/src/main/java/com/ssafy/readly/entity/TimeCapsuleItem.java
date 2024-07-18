@@ -32,4 +32,14 @@ public class TimeCapsuleItem {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name="review_id")
     private Review review;
+
+    /* 연관 관계 편의 메소드 */
+    public void setTimeCapsule(TimeCapsule timeCapsule){
+        if (this.timeCapsule != null) {
+            this.timeCapsule.getTimeCapsuleItems().remove(this);
+        }
+
+        this.timeCapsule = timeCapsule;
+        timeCapsule.getTimeCapsuleItems().add(this);
+    }
 }
