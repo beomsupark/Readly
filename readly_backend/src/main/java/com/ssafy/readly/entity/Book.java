@@ -15,14 +15,15 @@ public class Book {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private int id;
     private String title;
     private String author;
     private String isbn;
     private String detail;
     private String purchaseLink;
     private int totalPage;
-    @OneToOne(fetch = LAZY)
-    private Image image;
 
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "image_id")
+    private Image image;
 }

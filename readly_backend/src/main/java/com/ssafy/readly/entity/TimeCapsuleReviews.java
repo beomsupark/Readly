@@ -15,11 +15,12 @@ public class TimeCapsuleReviews {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private int id;
+
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "timeCapsule_id")
     private TimeCapsule timeCapsule;
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "review_id")
     private Review review;
 }

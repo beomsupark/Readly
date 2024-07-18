@@ -14,14 +14,15 @@ import static jakarta.persistence.FetchType.LAZY;
 public class Progress {
     @Id
     @GeneratedValue
-    private Long id;
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "id")
-    private Member member;
+    private int id;
     private int currentPage;
     private int totalPage;
+
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "member_id")
+    private Member member;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "book_id")
     private Book book;
 
 }

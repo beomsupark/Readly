@@ -18,21 +18,18 @@ public class Review {
 
     @Id
     @GeneratedValue
-    private Long id;
-
+    private int id;
     private String text;
+    private int like;
+    private LocalDate createdDate;
+    @Enumerated(value = EnumType.STRING)
+    private Visibility visibility;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "member_id")
     private Member member;
-
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "book_id")
     private Book book;
 
-    private int like;
-
-    private LocalDate createdDate;
-
-    private Visibility visibility;
 }

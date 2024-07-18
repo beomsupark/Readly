@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static jakarta.persistence.FetchType.LAZY;
@@ -17,14 +18,16 @@ import static jakarta.persistence.FetchType.LAZY;
 public class TimeCapsule {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "id")
-    private Member member;
+    @GeneratedValue
+    private int id;
     private LocalDate releaseDate;
     private LocalDate startDate;
     private LocalDate endDate;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @OneToMany(mappedBy = "timeCapsule", cascade = CascadeType.ALL)
-    private List<TimeCapsulePhotoCard> timeCapsulePhotoCards;
+    private List<TimeCapsulePhotoCard> timeCapsulePhotoCards = new ArrayList<>();
 }

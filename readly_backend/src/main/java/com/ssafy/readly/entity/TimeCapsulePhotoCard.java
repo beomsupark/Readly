@@ -14,12 +14,13 @@ import static jakarta.persistence.FetchType.LAZY;
 public class TimeCapsulePhotoCard {
     @Id
     @GeneratedValue
-    private Long id;
+    private int id;
+
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name="id")
+    @JoinColumn(name="timeCapsule_id")
     private TimeCapsule timeCapsule;
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name="id")
+    @JoinColumn(name="photoCard_id")
     private PhotoCard photoCard;
 
 }

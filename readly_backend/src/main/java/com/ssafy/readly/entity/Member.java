@@ -6,9 +6,9 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,30 +19,31 @@ public class Member {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private int id;
     private String loginId;
     private String loginPwd;
     private String nickname;
     private String memberName;
     private String phoneNumber;
+    private String email;
+    private int point;
+    private LocalDate birthday;
+    private LocalDate joinDate;
     @Enumerated(value = EnumType.STRING)
     private Gender gender;
-    private String email;
-    private LocalDate birthday;
     @Enumerated(value = EnumType.STRING)
     private Social social;
-    private int point;
-    private LocalDate joinDate;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<ReadedBook> readedbooks;
+    private List<ReadedBook> readedbooks = new ArrayList<>();
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<PhotoCard> photoCards;
+    private List<PhotoCard> photoCards = new ArrayList<>();
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Review> reviews;
+    private List<Review> reviews = new ArrayList<>();
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<TimeCapsule> timeCapsules;
+    private List<TimeCapsule> timeCapsules = new ArrayList<>();
     @OneToMany(mappedBy = "following",cascade = CascadeType.ALL)
-    private List<Follower> followers;
-    @OneToMany(mappedBy = "following",cascade = CascadeType.ALL)
-    private List<GroupMember> groupMembers;
+    private List<Follower> followers = new ArrayList<>();
+    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
+    private List<GroupMember> groupMembers = new ArrayList<>();
 }

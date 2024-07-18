@@ -16,17 +16,19 @@ public class PhotoCard {
 
     @Id
     @GeneratedValue
-    private Long id;
-    @OneToOne(fetch = LAZY)
-    private Image image;
+    private int id;
     private String text;
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "id")
-    private Book book;
     private int like;
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "id")
-    private Member member;
     @Enumerated(value = EnumType.STRING)
-    private Visibility visibility; // ALONE,GROUP,EVERY
+    private Visibility visibility; // ALONE, GROUP, EVERY
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "book_id")
+    private Book book;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+    @OneToOne(fetch = LAZY)
+    @JoinColumn(name = "image_id")
+    private Image image;
 }
