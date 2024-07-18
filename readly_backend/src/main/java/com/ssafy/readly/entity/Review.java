@@ -1,6 +1,6 @@
 package com.ssafy.readly.entity;
 
-import com.ssafy.readly.dto.Visibility;
+import com.ssafy.readly.entity.common.Visibility;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,17 +19,18 @@ public class Review {
     @Id
     @GeneratedValue
     private int id;
+
     private String text;
-    private int like;
     private LocalDate createdDate;
+
     @Enumerated(value = EnumType.STRING)
     private Visibility visibility;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "book_id")
     private Book book;
-
 }

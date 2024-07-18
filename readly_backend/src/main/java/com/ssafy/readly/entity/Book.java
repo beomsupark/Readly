@@ -16,14 +16,12 @@ public class Book {
     @Id
     @GeneratedValue
     private int id;
+
     private String title;
     private String author;
     private String isbn;
     private String detail;
     private String purchaseLink;
     private int totalPage;
-
-    @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "image_id")
-    private Image image;
+    private String image;
 }

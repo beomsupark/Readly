@@ -5,22 +5,23 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.FetchType.*;
 
 @Entity
 @Getter
-@Table(name="timecapsule_reviews")
+@Table(name="group_tags")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TimeCapsuleReviews {
+public class GroupTag {
 
     @Id
     @GeneratedValue
     private int id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "timeCapsule_id")
-    private TimeCapsule timeCapsule;
+    @JoinColumn(name = "group_id")
+    private Group group;
+
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "review_id")
-    private Review review;
+    @JoinColumn(name = "tag_id")
+    private Tag tag;
 }

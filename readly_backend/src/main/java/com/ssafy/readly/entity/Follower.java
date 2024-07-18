@@ -20,6 +20,7 @@ public class Follower {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "following_id")
     private Member following;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "followed_id")
     private Member followed;

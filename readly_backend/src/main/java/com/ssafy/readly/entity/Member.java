@@ -1,7 +1,7 @@
 package com.ssafy.readly.entity;
 
-import com.ssafy.readly.dto.Gender;
-import com.ssafy.readly.dto.Social;
+import com.ssafy.readly.entity.common.Gender;
+import com.ssafy.readly.entity.common.Social;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,6 +20,7 @@ public class Member {
     @Id
     @GeneratedValue
     private int id;
+
     private String loginId;
     private String loginPwd;
     private String nickname;
@@ -29,21 +30,28 @@ public class Member {
     private int point;
     private LocalDate birthday;
     private LocalDate joinDate;
+
     @Enumerated(value = EnumType.STRING)
     private Gender gender;
+
     @Enumerated(value = EnumType.STRING)
     private Social social;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<ReadedBook> readedbooks = new ArrayList<>();
+    private List<ReadBook> readBooks = new ArrayList<>();
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<PhotoCard> photoCards = new ArrayList<>();
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<>();
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<TimeCapsule> timeCapsules = new ArrayList<>();
+
     @OneToMany(mappedBy = "following",cascade = CascadeType.ALL)
     private List<Follower> followers = new ArrayList<>();
+
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
     private List<GroupMember> groupMembers = new ArrayList<>();
 }

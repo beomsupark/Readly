@@ -20,6 +20,7 @@ public class TimeCapsule {
     @Id
     @GeneratedValue
     private int id;
+
     private LocalDate releaseDate;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -29,5 +30,5 @@ public class TimeCapsule {
     private Member member;
 
     @OneToMany(mappedBy = "timeCapsule", cascade = CascadeType.ALL)
-    private List<TimeCapsulePhotoCard> timeCapsulePhotoCards = new ArrayList<>();
+    private List<TimeCapsuleItem> timeCapsuleItems = new ArrayList<>();
 }

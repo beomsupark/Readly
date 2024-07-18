@@ -1,6 +1,5 @@
 package com.ssafy.readly.entity;
 
-
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,19 +9,18 @@ import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
-@Table(name="readed_books")
+@Table(name = "likes")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReadedBook {
+public class Like {
 
     @Id
     @GeneratedValue
     private int id;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "book_id")
-    private Book book;
-    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
-
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "timeCapsuleItem_id")
+    private TimeCapsuleItem timeCapsuleItem;
 }

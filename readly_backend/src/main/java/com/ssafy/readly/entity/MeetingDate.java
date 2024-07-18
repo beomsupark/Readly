@@ -1,14 +1,13 @@
 package com.ssafy.readly.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
@@ -18,7 +17,10 @@ public class MeetingDate {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private int id;
     private LocalDate meetingDate;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name="group_id")
+    private Group group;
 }

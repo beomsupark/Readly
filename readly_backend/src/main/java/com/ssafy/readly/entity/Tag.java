@@ -10,12 +10,13 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name="images")
+@Table(name="tags")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Image {
+public class Tag {
 
     @Id
     @GeneratedValue
     private int id;
-    private String link;
+
+    private String name;
 }

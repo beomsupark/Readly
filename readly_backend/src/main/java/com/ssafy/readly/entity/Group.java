@@ -1,6 +1,6 @@
 package com.ssafy.readly.entity;
 
-import com.ssafy.readly.dto.IsInviting;
+import com.ssafy.readly.entity.common.IsInviting;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

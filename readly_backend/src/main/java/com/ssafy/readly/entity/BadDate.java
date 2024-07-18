@@ -15,12 +15,17 @@ import static lombok.AccessLevel.PROTECTED;
 @Table(name="bad_dates")
 @NoArgsConstructor(access = PROTECTED)
 public class BadDate {
+
     @Id
     @GeneratedValue
-    private Long id;
+    private int id;
     private LocalDate badDate;
+
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name="id")
+    @JoinColumn(name="member_id")
     private Member member;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name="group_id")
+    private Group group;
 
 }
