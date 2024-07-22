@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
-import Login from './components/Login.jsx'
-import OnBoard from './components/OnBoard.jsx'
+import Login from './pages/Login/Login.jsx'
+import OnBoard from './pages/OnBoard.jsx'
 import './App.css'
 
 function App() {

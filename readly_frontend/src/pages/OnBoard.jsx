@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoImg from '../assets/logo/readly_logo_long.png';
 import CardImg1 from '../assets/onboard/card1_front.png';
@@ -15,40 +15,39 @@ import MeetingBg from '../assets/onboard/meeting_bg.png';
 import Bg from '../assets/background/background_img.png';
 
 export default function OnBoard() {
-  // const [scrollPosition, setScrollPosition] = useState(0);
-  // const [isAtBottom, setIsAtBottom] = useState(false);
+  const [isImageFixed, setIsImageFixed] = useState(false);
   const [imageScale, setImageScale] = useState(1);
+  const lastSectionRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
-      const position = window.scrollY;
-      const documentHeight = document.documentElement.scrollHeight;
-      const viewportHeight = window.innerHeight;
+      if (!lastSectionRef.current) return;
 
-      // Check if the user has scrolled to the bottom of the page
-      const atBottom = position + viewportHeight >= documentHeight;
+      const rect = lastSectionRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
 
-      setIsAtBottom(atBottom);
-      
-      if (atBottom) {
-        // Calculate the new scale based on scroll position beyond the bottom
-        const scale = Math.min(1 + (position - (documentHeight - viewportHeight)) / 500, 2);
-        setImageScale(scale);
-        
-        // If the image scale reaches 2, navigate to login page
-        if (scale >= 2) {
+      if (rect.top <= 0 && rect.bottom >= 0) {
+        setIsImageFixed(true);
+
+        // 스크롤 진행도에 따라 이미지 크기 조절
+        const scrollProgress = Math.min(Math.max((windowHeight - rect.top) / windowHeight, 0), 1);
+        const newScale = 1 + scrollProgress;
+        setImageScale(newScale);
+
+        // 이미지 크기가 2배 이상이 되면 로그인 페이지로 이동
+        if (newScale >= 2) {
           navigate('/login');
         }
+      } else {
+        setIsImageFixed(false);
+        setImageScale(1);
       }
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [navigate]);
-
   return (
     <div className='w-full min-h-screen bg-white p-10 flex flex-col items-center'>
       <div className='w-full space-y-80'>
@@ -170,12 +169,22 @@ export default function OnBoard() {
           </div>
         </div>
 
-        <div className="w-full h-full min-h-screen relative" data-aos="fade-down">
-          <img src={Bg} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30 z-10" style={{ transform: `scale(${imageScale})` }} />
-          <div className="absolute inset-0 flex items-end justify-center pb-10">
+        <div ref={lastSectionRef} className="w-full h-screen relative overflow-hidden" data-aos="fade-down">
+          <img 
+            src={Bg} 
+            alt="" 
+            className={`absolute inset-0 w-full h-full object-cover opacity-30 transition-transform duration-300 ease-out
+                        ${isImageFixed ? 'fixed top-0 left-0' : ''}`}
+            style={{ 
+              transform: `scale(${imageScale})`,
+              transformOrigin: 'center center'
+            }} 
+          />
+          <div className={`absolute inset-0 flex items-end justify-center pb-10
+                           ${isImageFixed ? 'fixed' : ''}`}>
             <button
               type="button"
-              className="absolute text-white font-bold bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 z-20">
+              className="text-white font-bold bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 z-20">
               Readly 시작하기
             </button>
           </div>
