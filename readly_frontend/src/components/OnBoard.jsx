@@ -15,8 +15,8 @@ import MeetingBg from '../assets/onboard/meeting_bg.png';
 import Bg from '../assets/background/background_img.png';
 
 export default function OnBoard() {
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const [isAtBottom, setIsAtBottom] = useState(false);
+  // const [scrollPosition, setScrollPosition] = useState(0);
+  // const [isAtBottom, setIsAtBottom] = useState(false);
   const [imageScale, setImageScale] = useState(1);
   const navigate = useNavigate();
 
