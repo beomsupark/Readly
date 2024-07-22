@@ -1,11 +1,14 @@
+import { Route, Routes } from 'react-router-dom'
+import Login from './components/Login.jsx'
+import OnBoard from './components/OnBoard.jsx'
 import './App.css'
 
 function App() {
   return (
-    <>
-      <h1 className="font-BM_HANNA font-bold">안녕하세요</h1>
-      <h1 className="font-bold">안녕하세요</h1>
-    </>
+    <Routes>
+      <Route path="/login" element={<Login />}>Login</Route>
+      <Route path='/onboard' element={<OnBoard />}>OnBoard</Route>
+    </Routes>
   )
 }
 
