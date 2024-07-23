@@ -8,6 +8,8 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class MemberRepositoryImpl implements MemberRepository {
@@ -30,17 +32,15 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public int CheckDuplicate(String userId) {
-        return 0;
+    public long findById(String loginId) {
+        return (long) em.createQuery("select count(m.id) from Member m where m.loginId = :loginId")
+                .setParameter("loginId", loginId)
+                .getSingleResult();
     }
 
     @Override
-    public String findId(FindMember findMember) {
+    public String checkMember(FindMember findMember) {
         return "";
     }
 
-    @Override
-    public int findPwd(FindMember findMember) {
-        return 0;
-    }
 }

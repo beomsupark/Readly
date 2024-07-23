@@ -4,6 +4,8 @@ import com.ssafy.readly.dto.member.FindMember;
 import com.ssafy.readly.dto.member.LoginMember;
 import com.ssafy.readly.entity.Member;
 
+import java.util.List;
+
 public interface MemberRepository {
 
     public abstract void signUp(Member member);
@@ -12,9 +14,8 @@ public interface MemberRepository {
 
     public abstract void logout(String userId);
 
-    public abstract int CheckDuplicate(String userId);
+    public abstract long findById(String loginId);
 
-    public abstract String findId(FindMember findMember);
+    public abstract String checkMember(FindMember findMember);
 
-    public abstract int findPwd(FindMember findMember);
 }

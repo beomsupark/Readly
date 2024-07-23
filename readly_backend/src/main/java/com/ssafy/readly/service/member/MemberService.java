@@ -12,9 +12,8 @@ public interface MemberService {
 
     public abstract void logout(String userId);
 
-    public abstract int CheckDuplicate(String userId);
+    public abstract void checkDuplicateId(String loginId);
 
-    public abstract String findId(FindMember findMember);
+    public abstract String checkMember(FindMember findMember);
 
-    public abstract int findPwd(FindMember findMember);
 }

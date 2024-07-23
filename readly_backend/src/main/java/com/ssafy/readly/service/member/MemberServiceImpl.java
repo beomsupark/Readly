@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -34,17 +36,16 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public int CheckDuplicate(String userId) {
-        return 0;
+    public void checkDuplicateId(String loginId) {
+        long findId = memberRepository.findById(loginId);
+        if(findId != 0) {
+            throw new IllegalStateException("이미 존재하는 회원입니다.");
+        }
     }
 
     @Override
-    public String findId(FindMember findMember) {
+    public String checkMember(FindMember findMember) {
         return "";
     }
 
-    @Override
-    public int findPwd(FindMember findMember) {
-        return 0;
-    }
 }
