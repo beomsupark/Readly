@@ -3,9 +3,10 @@ import Login from './pages/Login/Login.jsx'
 import OnBoard from './pages/OnBoard.jsx'
 import Home from './pages/Home.jsx'
 import CustomSidebar from './components/CustomSidebar.jsx'
+import CustomHeader from './components/CustomHeader.jsx'
 import './App.css'
 import MyPage from './pages/MyPage.jsx'
-
+import cloudImg from './assets/background/cloud.png'
 function App() {
   const location = useLocation();
   const isFullScreenPage = ['/login', '/onboard'].includes(location.pathname);
