@@ -1,4 +1,3 @@
-import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoImg from '../assets/logo/readly_logo_long.png';
 import CardImg1 from '../assets/onboard/card1_front.png';
@@ -15,39 +14,10 @@ import MeetingBg from '../assets/onboard/meeting_bg.png';
 import Bg from '../assets/background/background_img.png';
 
 export default function OnBoard() {
-  const [isImageFixed, setIsImageFixed] = useState(false);
-  const [imageScale, setImageScale] = useState(1);
-  const lastSectionRef = useRef(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!lastSectionRef.current) return;
-
-      const rect = lastSectionRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-
-      if (rect.top <= 0 && rect.bottom >= 0) {
-        setIsImageFixed(true);
-
-        // 스크롤 진행도에 따라 이미지 크기 조절
-        const scrollProgress = Math.min(Math.max((windowHeight - rect.top) / windowHeight, 0), 1);
-        const newScale = 1 + scrollProgress;
-        setImageScale(newScale);
-
-        // 이미지 크기가 2배 이상이 되면 로그인 페이지로 이동
-        if (newScale >= 2) {
-          navigate('/login');
-        }
-      } else {
-        setIsImageFixed(false);
-        setImageScale(1);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [navigate]);
+  const handleLoginClick = () => {
+    navigate('/login'); 
+  };
   return (
     <div className='w-full min-h-screen bg-white p-10 flex flex-col items-center'>
       <div className='w-full space-y-80'>
@@ -168,28 +138,45 @@ export default function OnBoard() {
             </div>
           </div>
         </div>
-
-        <div ref={lastSectionRef} className="w-full h-screen relative overflow-hidden" data-aos="fade-down">
-          <img 
-            src={Bg} 
-            alt="" 
-            className={`absolute inset-0 w-full h-full object-cover opacity-30 transition-transform duration-300 ease-out
-                        ${isImageFixed ? 'fixed top-0 left-0' : ''}`}
-            style={{ 
-              transform: `scale(${imageScale})`,
-              transformOrigin: 'center center'
-            }} 
-          />
-          <div className={`absolute inset-0 flex items-end justify-center pb-10
-                           ${isImageFixed ? 'fixed' : ''}`}>
-            <button
-              type="button"
-              className="text-white font-bold bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 z-20">
-              Readly 시작하기
-            </button>
-          </div>
+        <div className="w-full h-full relative" data-aos="fade-down">
+          <img className="opacity-30 w-full h-full object-cover" src={Bg} alt="" />
+          <button
+            type="button"
+            className="bg-[#000000] ml-8 px-6 py-3 rounded-lg hover:bg-opacity-80 transition duration-300 absolute bottom-0 left-1/2 transform -translate-x-1/2 mb-4"
+            onClick={handleLoginClick}
+          >
+            <span className="text-[#F8F8F8] font-bold">Readly 시작하기</span>
+            <div className="arrow-down absolute top-[-20px] left-1/2 transform -translate-x-1/2"></div>
+          </button>
         </div>
       </div>
+      <style>
+        {`
+          .arrow-down {
+            width: 0;
+            height: 0;
+            margin-left: -10px;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid #000;
+            animation: bounce 1s infinite;
+          }
+          
+          @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+              transform: translateY(0);
+            }
+            40% {
+              transform: translateY(-10px);
+            }
+            60% {
+              transform: translateY(-5px);
+            }
+          }
+        `}
+      </style>
     </div>
+    
   );
 }
+
