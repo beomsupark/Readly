@@ -12,13 +12,15 @@ import TimeCat from '../assets/onboard/time_cat.png';
 import TimeBg from '../assets/onboard/time_bg.png';
 import MeetingBg from '../assets/onboard/meeting_bg.png';
 import Bg from '../assets/background/background_img.png';
-
 export default function OnBoard() {
   const navigate = useNavigate();
   const handleLoginClick = () => {
     navigate('/login'); 
   };
   return (
+    <>
+
+
     <div className='w-full min-h-screen bg-white p-10 flex flex-col items-center'>
       <div className='w-full space-y-80'>
         {/* 로고 및 소개 섹션 */}
@@ -176,7 +178,8 @@ export default function OnBoard() {
         `}
       </style>
     </div>
-    
+
+    </>
   );
 }
 
