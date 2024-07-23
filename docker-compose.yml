@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  backend:
+    image: sdi4676/readly_backend:latest
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    networks:
+      - app-network
+
+  frontend:
+    image: sdi4676/readly_frontend:latest
+    ports:
+      - "3000:80"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
