@@ -1,13 +1,18 @@
+import { useState } from 'react';
 import Photocard from './Photocard/Photocard.jsx';
 import Recommend from './Recommend/Recommend.jsx';
+import BookModal from '../components/BookModal.jsx';
 
-import book1 from '../assets/onboard/review1.png'
+import book1 from '../assets/onboard/review1.png';
 import CardImg1 from '../assets/onboard/card1_front.png';
 import CardImg1_back from '../assets/onboard/card1_back.png';
 import CardImg2 from '../assets/onboard/card2.png';
 import CardImg3 from '../assets/onboard/card3.png';
 
 export default function Home() {
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedBook, setSelectedBook] = useState(null);
+
   const dummyBooks = [
     { id: 1, title: '책 제목 1', cover: book1 },
     { id: 2, title: '책 제목 2', cover: book1 },
@@ -30,7 +35,17 @@ export default function Home() {
     { id: 8, title: '책 제목 1', cover: CardImg2, back: CardImg1_back },
     { id: 9, title: '책 제목 1', cover: CardImg3, back: CardImg1_back },
     { id: 10, title: '책 제목 1', cover: CardImg1, back: CardImg1_back },
-  ]
+  ];
+
+  const openModal = (book) => {
+    setSelectedBook(book);
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+    setSelectedBook(null);
+  };
 
   return (
     <>
@@ -40,15 +55,25 @@ export default function Home() {
         <div className="grid grid-cols-2 mb-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2 pr-48">
           {dummyBooks.map(book => (
             <div key={book.id} className="flex flex-col items-center">
-              <img src={book.cover} alt={book.title} className="w-24 h-36 object-cover" />
+              <img
+                src={book.cover}
+                alt={book.title}
+                className="w-24 h-36 object-cover cursor-pointer"
+                onClick={() => openModal(book)}
+              />
             </div>
           ))}
         </div>
       </div>
 
       <Photocard photocards={dummyPhotocards} />
-      <Recommend/>
+      <Recommend />
 
+      <BookModal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        book={selectedBook}
+      />
     </>
-  )
+  );
 }

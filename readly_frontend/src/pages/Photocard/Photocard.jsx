@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './photocard_flip.css'; 
+import './photocard_flip.css';
 
 export default function PhotocardSection({ photocards }) {
   const navigate = useNavigate();
@@ -39,15 +39,22 @@ export default function PhotocardSection({ photocards }) {
       <div className="max-w-full mx-auto px-2 lg:px-2">
         <div className="flex justify-between items-center">
           <h2 className="font-bold text-2xl">사용자들이 좋아하는 <span className="text-custom-highlight">포토카드</span></h2>
-          <button 
-            onClick={handleMorePhotocards}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            <span className="text-sm text-[#868686] font-bold p-4">더 많은 포토카드를 보고싶으신가요?</span>
-          </button>
         </div>
         <div className="relative overflow-hidden">
-          <div 
+          {/* 오른쪽 상단 위치를 조정하기 위한 컨테이너 추가 */}
+          <div className="absolute -top-4 right-36 p-4 rounded-lg z-10">
+            {/* Span에 위쪽 여백 조정 추가 */}
+            <button
+              onClick={handleMorePhotocards}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <span className="text-sm text-[#868686] -mt-64 font-bold">
+                더 많은 포토카드를 보고싶으신가요?
+              </span>
+            </button>
+
+          </div>
+          <div
             className={`flex justify-between items-center transition-transform duration-500 ${isAnimating ? 'translate-x-full' : 'translate-x-0'}`}
             key={currentIndex}
           >
@@ -55,22 +62,22 @@ export default function PhotocardSection({ photocards }) {
               {currentPhotocards.map((photocard, index) => (
                 <div key={`${currentIndex}-${index}`} className="flex-none">
                   {photocard.cover ? (
-                    <div 
+                    <div
                       className="flip-container relative w-full photocard object-cover rounded-lg"
                       onClick={() => handleFlip(currentIndex + index)}
                     >
                       <div className={`flip-card ${flippedCards[currentIndex + index] ? 'flipped' : ''}`}>
                         <div className="flip-card-front">
-                          <img 
-                            src={photocard.cover} 
-                            alt={photocard.title} 
+                          <img
+                            src={photocard.cover}
+                            alt={photocard.title}
                             className="absolute inset-0 w-full h-full rounded-lg"
                           />
                         </div>
                         <div className="flip-card-back">
-                          <img 
-                            src={photocard.back} 
-                            alt={photocard.title} 
+                          <img
+                            src={photocard.back}
+                            alt={photocard.title}
                             className="absolute inset-0 w-full h-full rounded-lg"
                           />
                         </div>
@@ -83,7 +90,7 @@ export default function PhotocardSection({ photocards }) {
               ))}
             </div>
             <div className="flex items-center justify-center ml-2 mr-16">
-              <button 
+              <button
                 onClick={handleShowMore}
                 className="text-blue-500 hover:text-blue-700 text-lg font-bold"
               >

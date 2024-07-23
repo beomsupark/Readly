@@ -29,9 +29,3 @@
 * {
   -ms-overflow-style: none;
 }
-
-@media (min-width: 1024px) { /* lg 브레이크포인트 */
-  body {
-    overflow: hidden;
-  }
-}
