@@ -3,8 +3,6 @@ import Login from './pages/Login/Login.jsx'
 import OnBoard from './pages/OnBoard.jsx'
 import Home from './pages/Home.jsx'
 import CustomSidebar from './components/CustomSidebar.jsx'
-import CustomHeader from './components/CustomHeader.jsx'
-import cloudImg from './assets/background/cloud.png'
 import './App.css'
 import MyPage from './pages/MyPage.jsx'
 
@@ -41,9 +39,3 @@ function App() {
 }
 
 export default App
-
-{/* <Route path="/activity" element={<Activity />} /> */ }
-{/* <Route path="/review" element={<Review />} /> */ }
-{/* <Route path="/ranking" element={<Ranking />} /> */ }
-{/* <Route path="/community" element={<Community />} /> */ }
-{/* <Route path="/mypage" element={<MyPage />} /> */ }
