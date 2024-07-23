@@ -6,14 +6,16 @@ import CustomSidebar from './components/CustomSidebar.jsx'
 import CustomHeader from './components/CustomHeader.jsx'
 import cloudImg from './assets/background/cloud.png'
 import './App.css'
+import MyPage from './pages/MyPage.jsx'
 
 function App() {
   const location = useLocation();
   const isFullScreenPage = ['/login', '/onboard'].includes(location.pathname);
+  const notSaerchPage = ['/login', '/onboard', '/mypage'].includes(location.pathname);
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
-      {!isFullScreenPage && <CustomHeader />}
+      {!notSaerchPage && <CustomHeader />}
       <div className="flex relative min-h-screen">
         {!isFullScreenPage && <CustomSidebar />}
         <main className={`flex-1 ${!isFullScreenPage ? 'ml-28' : ''}`}>
@@ -22,6 +24,7 @@ function App() {
             <Route path='/onboard' element={<OnBoard />} />
 
             <Route path="/" element={<Home />} />
+            <Route path="/mypage" element={<MyPage />} />
             {/* 다른 라우트들... */}
           </Routes>
         </main>
