@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import LoginForm from './LoginForm';
-import SignupForm from './SignupForm';
+import LoginForm from './LoginForm.jsx';
+import SignupForm from './SignupForm.jsx';
 import './LoginPage.css'; // 기존 CSS 스타일을 가져옴
 
-const LoginPage = () => {
-  const [showSignIn, setShowSignIn] = useState(false);
+export default function LoginPage() {
+  const [showSignIn, setShowSignIn] = useState(false)
 
   return (
     <div className="relative w-full h-screen">
@@ -26,7 +26,5 @@ const LoginPage = () => {
         </div>
       </div>
     </div>
-  );
-};
-
-export default LoginPage;
+  )
+}
