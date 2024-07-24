@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './photocard_flip.css';
 
-export default function PhotocardSection({ photocards }) {
+export default function Photocard({ photocards }) {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -41,9 +41,7 @@ export default function PhotocardSection({ photocards }) {
           <h2 className="font-bold text-2xl">사용자들이 좋아하는 <span className="text-custom-highlight">포토카드</span></h2>
         </div>
         <div className="relative overflow-hidden">
-          {/* 오른쪽 상단 위치를 조정하기 위한 컨테이너 추가 */}
           <div className="absolute -top-4 right-36 p-4 rounded-lg z-10">
-            {/* Span에 위쪽 여백 조정 추가 */}
             <button
               onClick={handleMorePhotocards}
               className="text-gray-500 hover:text-gray-700"
@@ -52,7 +50,6 @@ export default function PhotocardSection({ photocards }) {
                 더 많은 포토카드를 보고싶으신가요?
               </span>
             </button>
-
           </div>
           <div
             className={`flex justify-between items-center transition-transform duration-500 ${isAnimating ? 'translate-x-full' : 'translate-x-0'}`}

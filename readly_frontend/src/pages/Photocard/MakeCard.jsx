@@ -64,7 +64,7 @@ export default function MakeCard(){
             <p className="text-center text-custom-highlight mt-2 text-2xl">Loading ....</p>
           </div>
         ) : (
-          <p>포토카드가 여기에 표시됩니다.</p>
+          <p className="text-xl text-[#7a7a7a] text-bold">포토카드가 여기에 나타납니다</p>
         )}
       </div>
     </div>
