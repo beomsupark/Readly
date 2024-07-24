@@ -8,6 +8,7 @@ import './App.css'
 import MyPage from './pages/MyPage.jsx'
 import cloudImg from './assets/background/cloud.png'
 import MakeCard from './pages/Photocard/MakeCard.jsx'
+import SharedBoard from './pages/SharedBoard/SharedBoard.jsx'
 function App() {
   const location = useLocation();
   const isFullScreenPage = ['/login', '/onboard'].includes(location.pathname);
@@ -24,6 +25,7 @@ function App() {
             <Route path='/onboard' element={<OnBoard />} />
 
             <Route path="/" element={<Home />} />
+            <Route path="/sharedboard" element={<SharedBoard />} />
             <Route path="/mypage" element={<MyPage />} />
             <Route path="/makecard" element={<MakeCard/>}/>
             {/* 다른 라우트들... */}
