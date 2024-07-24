@@ -56,9 +56,9 @@ export default function CustomSidebar() {
 
       <div className="flex flex-col flex-grow w-full">
         <SidebarItem icon={activity_icon} alt="Activity" text="독서 활동" to="/activity" />
-        <SidebarItem icon={review_icon} alt="Review" text="한줄평" to="/review" />
+        <SidebarItem icon={review_icon} alt="Review" text="공유게시판" to="/review" />
         <SidebarItem icon={ranking_icon} alt="Ranking" text="랭킹" to="/ranking" />
-        <SidebarItem icon={photocard_icon} alt="Photocard" text="포토카드 제작" to="/makePhotoCard" />
+        <SidebarItem icon={photocard_icon} alt="Photocard" text="포토카드 제작" to="/makecard" />
         <SidebarItem icon={community_icon} alt="Community" text="소모임" to="/community" />
       </div>
 
