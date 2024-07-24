@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static jakarta.persistence.EnumType.*;
+import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
@@ -19,7 +20,7 @@ import static lombok.AccessLevel.PROTECTED;
 public class Group {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     private int id;
     private String title;
     private String description;

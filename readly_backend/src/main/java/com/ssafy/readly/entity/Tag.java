@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.*;
 
 @Entity
@@ -16,7 +17,7 @@ import static lombok.AccessLevel.*;
 public class Tag {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     private int id;
     private String name;
 }

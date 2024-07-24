@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.*;
 
 @Entity
@@ -18,7 +19,7 @@ import static lombok.AccessLevel.*;
 public class TimeCapsule {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     private int id;
     private LocalDate releaseDate;
     private LocalDate startDate;

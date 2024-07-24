@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.*;
 
 @Entity
@@ -16,7 +16,7 @@ import static lombok.AccessLevel.*;
 public class Book {
 
     @Id
-    @GeneratedValue()
+    @GeneratedValue(strategy = IDENTITY)
     private int id;
     private String title;
     private String author;

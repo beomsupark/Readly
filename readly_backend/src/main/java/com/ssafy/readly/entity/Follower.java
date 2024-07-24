@@ -1,11 +1,11 @@
 package com.ssafy.readly.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.*;
 
 @Entity
@@ -15,7 +15,7 @@ import static lombok.AccessLevel.*;
 public class Follower {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     private int id;
 
     @ManyToOne(fetch = LAZY)

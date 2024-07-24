@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 import static jakarta.persistence.EnumType.*;
 import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.*;
 
 @Entity
@@ -18,7 +19,7 @@ import static lombok.AccessLevel.*;
 public class Review {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     private int id;
     private String text;
     private LocalDateTime createdDate;

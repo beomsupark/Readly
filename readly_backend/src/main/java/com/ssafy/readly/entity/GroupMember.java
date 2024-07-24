@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import static jakarta.persistence.EnumType.*;
 import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.*;
 
 @Entity
@@ -15,7 +16,7 @@ import static lombok.AccessLevel.*;
 public class GroupMember {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     private int id;
     @Enumerated(value = STRING)
     private Role role;

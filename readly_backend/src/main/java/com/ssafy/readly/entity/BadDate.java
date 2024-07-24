@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.*;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
@@ -16,7 +17,7 @@ import static lombok.AccessLevel.PROTECTED;
 public class BadDate {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     private int id;
     private LocalDate badDate;
 

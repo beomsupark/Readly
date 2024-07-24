@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static jakarta.persistence.EnumType.*;
+import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.*;
 
 @Entity
@@ -21,7 +22,7 @@ import static lombok.AccessLevel.*;
 public class Member {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     private int id;
     private String loginId;
     private String loginPwd;
