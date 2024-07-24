@@ -1,20 +1,24 @@
 package com.ssafy.readly.repository.member;
 
-import com.ssafy.readly.dto.member.FindMember;
-import com.ssafy.readly.dto.member.LoginMember;
-import com.ssafy.readly.dto.member.SignUpMemberRequest;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.readly.dto.member.FindMemberRequest;
+import com.ssafy.readly.dto.member.LoginMemberRequest;
 import com.ssafy.readly.entity.Member;
 import jakarta.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import static com.ssafy.readly.entity.QMember.member;
 
 @Repository
-@RequiredArgsConstructor
 public class MemberRepositoryImpl implements MemberRepository {
 
     private final EntityManager em;
+    private final JPAQueryFactory queryFactory;
+
+    public MemberRepositoryImpl(EntityManager em) {
+        this.em = em;
+        this.queryFactory = new JPAQueryFactory(em);
+    }
 
     @Override
     public void signUp(Member member) {
@@ -22,7 +26,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public void login(LoginMember longinMember) {
+    public void login(LoginMemberRequest longinMember) {
 
     }
 
@@ -32,14 +36,16 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public long findById(String loginId) {
-        return (long) em.createQuery("select count(m.id) from Member m where m.loginId = :loginId")
-                .setParameter("loginId", loginId)
-                .getSingleResult();
+    public Long findByLoginId(String loginId) {
+        return queryFactory
+                .select(member.id.count())
+                .from(member)
+                .where(member.loginId.eq(loginId))
+                .fetchOne();
     }
 
     @Override
-    public String checkMember(FindMember findMember) {
+    public String checkMember(FindMemberRequest findMember) {
         return "";
     }
 

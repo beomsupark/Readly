@@ -1,6 +1,6 @@
 package com.ssafy.readly.dto.member;
 
-public class LoginMember {
+public class LoginMemberRequest {
     private String userId;
     private String userPwd;
 }

@@ -1,15 +1,13 @@
 package com.ssafy.readly.service.member;
 
-import com.ssafy.readly.dto.member.FindMember;
-import com.ssafy.readly.dto.member.LoginMember;
+import com.ssafy.readly.dto.member.FindMemberRequest;
+import com.ssafy.readly.dto.member.LoginMemberRequest;
 import com.ssafy.readly.dto.member.SignUpMemberRequest;
 import com.ssafy.readly.entity.Member;
 import com.ssafy.readly.repository.member.MemberRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -26,7 +24,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void login(LoginMember longinMember) {
+    public void login(LoginMemberRequest longinMember) {
 
     }
 
@@ -37,14 +35,14 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void checkDuplicateId(String loginId) {
-        long findId = memberRepository.findById(loginId);
+        Long findId = memberRepository.findByLoginId(loginId);
         if(findId != 0) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
     }
 
     @Override
-    public String checkMember(FindMember findMember) {
+    public String checkMember(FindMemberRequest findMember) {
         return "";
     }
 
