@@ -7,6 +7,7 @@ import review_icon from '../assets/toolbar/review_icon.png';
 import ranking_icon from '../assets/toolbar/ranking_icon.png';
 import community_icon from '../assets/toolbar/community_icon.png';
 import myPage_icon from '../assets/toolbar/myPage_icon.png';
+import photocard_icon from '../assets/toolbar/photocard_icon.png';
 
 const SidebarItem = ({ icon, alt, text, to, isLogo = false }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -57,6 +58,7 @@ export default function CustomSidebar() {
         <SidebarItem icon={activity_icon} alt="Activity" text="독서 활동" to="/activity" />
         <SidebarItem icon={review_icon} alt="Review" text="한줄평" to="/review" />
         <SidebarItem icon={ranking_icon} alt="Ranking" text="랭킹" to="/ranking" />
+        <SidebarItem icon={photocard_icon} alt="Photocard" text="포토카드 제작" to="/makePhotoCard" />
         <SidebarItem icon={community_icon} alt="Community" text="소모임" to="/community" />
       </div>
 
