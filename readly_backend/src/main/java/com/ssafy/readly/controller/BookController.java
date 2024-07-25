@@ -3,13 +3,27 @@ package com.ssafy.readly.controller;
 import com.ssafy.readly.dataCrawling.AladdinOpenAPI;
 import com.ssafy.readly.dto.BookRequest;
 import com.ssafy.readly.service.BookService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.function.EntityResponse;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,4 +39,38 @@ public class BookController {
         System.out.println(BookList.get(0).toString());
         bookServiceImpl.addBooks(BookList);
     }
+    // 해당 책 조회
+    @GetMapping("/book/searchBook/{bookId}")
+    public ResponseEntity<Map<String,Object>> getBookById(@PathVariable int bookId) throws Exception {
+        Map<String,Object> responseMap = new HashMap();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        responseMap.put("book",bookServiceImpl.getBookById(bookId));
+
+        status=HttpStatus.OK;
+        return new ResponseEntity<Map<String, Object>>(responseMap, status);
+    }
+    // 베스트 셀러 10개 조회 페이징
+
+    @PostMapping("/book/searchBooks")
+    public ResponseEntity<Map<String,Object>> getBooks() throws Exception {
+        Map<String,Object> responseMap = new HashMap();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        responseMap.put("books",bookServiceImpl.getBooks());
+
+        status=HttpStatus.OK;
+        return new ResponseEntity<Map<String, Object>>(responseMap, status);
+    }
+    // 책 자동완성 최대 5개
+    @GetMapping("/book/searchBooksByTitle/{title}")
+    public ResponseEntity<Map<String,Object>> getBooksByTitle(@PathVariable String title) throws Exception {
+        Map<String,Object> responseMap = new HashMap();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        System.out.println(title);
+        responseMap.put("books",bookServiceImpl.getBooksByTitle(title));
+        status=HttpStatus.OK;
+        return new ResponseEntity<Map<String, Object>>(responseMap, status);
+    }
+    // 책 추천
+
+    // 책 추천 AI
 }
