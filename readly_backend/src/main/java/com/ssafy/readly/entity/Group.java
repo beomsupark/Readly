@@ -25,6 +25,7 @@ public class Group {
     private String title;
     private String description;
     private LocalDateTime createdDate;
+    private String roomId;
     @Enumerated(value = STRING)
     private IsInviting isInviting;
 
