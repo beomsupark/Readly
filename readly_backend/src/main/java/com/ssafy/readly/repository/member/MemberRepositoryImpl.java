@@ -36,10 +36,9 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public Long findByLoginId(String loginId) {
+    public Member findByLoginId(String loginId) {
         return queryFactory
-                .select(member.id.count())
-                .from(member)
+                .selectFrom(member)
                 .where(member.loginId.eq(loginId))
                 .fetchOne();
     }
