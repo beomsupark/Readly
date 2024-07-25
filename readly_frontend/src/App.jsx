@@ -5,14 +5,15 @@ import Home from './pages/Home.jsx'
 import CustomSidebar from './components/CustomSidebar.jsx'
 import CustomHeader from './components/CustomHeader.jsx'
 import './App.css'
-import MyPage from './pages/MyPage.jsx'
+import MyPage from './pages/Mypage/MyPage.jsx'
 import cloudImg from './assets/background/cloud.png'
 import MakeCard from './pages/Photocard/MakeCard.jsx'
 import SharedBoard from './pages/SharedBoard/SharedBoard.jsx'
+import EditProfile from './pages/Mypage/EditProfile.jsx'
 function App() {
   const location = useLocation();
   const isFullScreenPage = ['/login', '/onboard'].includes(location.pathname);
-  const notSaerchPage = ['/login', '/onboard', '/mypage'].includes(location.pathname);
+  const notSaerchPage = ['/login', '/onboard', '/mypage', '/edit'].includes(location.pathname);
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
@@ -28,6 +29,7 @@ function App() {
             <Route path="/sharedboard" element={<SharedBoard />} />
             <Route path="/mypage" element={<MyPage />} />
             <Route path="/makecard" element={<MakeCard/>}/>
+            <Route path="/edit" element={<EditProfile/>}/>
             {/* 다른 라우트들... */}
           </Routes>
         </main>

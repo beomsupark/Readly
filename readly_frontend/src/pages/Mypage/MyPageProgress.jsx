@@ -1,6 +1,5 @@
-import { useState } from "react";
 import BookImg1 from "../../assets/onboard/book.jpg";
-import CurrentPage from "./CurrentPage"
+import ProgressBar from "./ProgressBar";  // 새로 만든 ProgressBar 컴포넌트를 import
 
 const Mybooks = [
   {
@@ -8,7 +7,7 @@ const Mybooks = [
     title: "책 제목 1",
     cover: BookImg1,
     totalPages: 400,
-    currentPage: 100,
+    currentPage: 50,
   },
   {
     id: 2,
@@ -20,15 +19,6 @@ const Mybooks = [
 ];
 
 export default function ProgressComponent() {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-
-  const openModal = () => {
-    setModalIsOpen(true);
-  };
-
-  const closeModal = () => {
-    setModalIsOpen(false);
-  };
 
   return (
     <>
@@ -53,21 +43,7 @@ export default function ProgressComponent() {
               <div className="flex-1">
                 <h2 className="text-xl font-semibold mb-2">{book.title}</h2>
 
-                <div className="w-full h-8 bg-[#F8F8F8] rounded-full mt-4 overflow-hidden">
-                  <div
-                    className="h-full bg-[#E3F7FF] text-center text-black p-1"
-                    style={{
-                      width: `${(book.currentPage / book.totalPages) * 100}%`,
-                    }}
-                  >
-                    {Math.round((book.currentPage / book.totalPages) * 100)}%
-                  </div>
-                </div>
-
-                <div className="flex justify-between text-sm mt-1">
-                  <button onClick={openModal}>p {book.currentPage}</button>
-                  <span>p {book.totalPages}</span>
-                </div>
+                <ProgressBar currentPage={book.currentPage} totalPages={book.totalPages} />
 
                 <div>
                   <h2 className="font-bold mb-2">
@@ -97,7 +73,7 @@ export default function ProgressComponent() {
         </div>
       </div>
 
-      <CurrentPage isOpen={modalIsOpen} onRequestClose={closeModal} />
+      
     </>
   );
 }
