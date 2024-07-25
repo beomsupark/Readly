@@ -1,5 +1,6 @@
 package com.ssafy.readly.service;
 
+import com.ssafy.readly.dto.Book.GetBookByIdResponse;
 import com.ssafy.readly.dto.BookRequest;
 import com.ssafy.readly.entity.Book;
 import com.ssafy.readly.repository.BookRepositoy;
@@ -38,5 +39,16 @@ public class BookServiceImpl implements BookService {
             books.add(book);
         }
         bookRepositoy.saveAll(books);
+    }
+
+    /**
+     * @param bookId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public GetBookByIdResponse getBookById(int bookId) throws Exception {
+        Book responseBook = bookRepositoy.findById(bookId).orElseThrow(IllegalArgumentException::new);
+        return new GetBookByIdResponse(responseBook);
     }
 }
