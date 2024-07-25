@@ -4,11 +4,9 @@ import com.ssafy.readly.entity.Book;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Optional;
-
 @Data
 @NoArgsConstructor
-public class GetBookByIdResponse {
+public class GetBookResponse {
      private String title;
      private String author;
      private String ISBN;
@@ -16,7 +14,7 @@ public class GetBookByIdResponse {
      private String purchase_link;
      private int total_page;
      private String image;
-     public GetBookByIdResponse(Book book) {
+     public GetBookResponse(Book book) {
           this.title = book.getTitle();
           this.author = book.getAuthor();
           this.ISBN = book.getIsbn();

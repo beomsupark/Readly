@@ -1,15 +1,17 @@
 package com.ssafy.readly.service;
 
-import com.ssafy.readly.dto.Book.GetBookByIdResponse;
+import com.ssafy.readly.dto.Book.GetBookResponse;
 import com.ssafy.readly.dto.BookRequest;
 import com.ssafy.readly.entity.Book;
 import com.ssafy.readly.repository.BookRepositoy;
+import jakarta.persistence.NoResultException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -47,8 +49,43 @@ public class BookServiceImpl implements BookService {
      * @throws Exception
      */
     @Override
-    public GetBookByIdResponse getBookById(int bookId) throws Exception {
-        Book responseBook = bookRepositoy.findById(bookId).orElseThrow(IllegalArgumentException::new);
-        return new GetBookByIdResponse(responseBook);
+    public GetBookResponse getBookById(int bookId) throws Exception {
+        Book responseBook = bookRepositoy.findById(bookId).orElseThrow(NoResultException::new);
+        return new GetBookResponse(responseBook);
+    }
+
+    /**
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<GetBookResponse> getBooks() throws Exception {
+        List<Book> books = Optional.of(bookRepositoy.findAll()).orElseThrow(NoResultException::new);
+
+        int size = Math.min(books.size(), 10);
+        books = books.subList(0,size);
+
+        List<GetBookResponse> bookResponses = new ArrayList<>();
+        for (Book book : books) {
+            bookResponses.add(new GetBookResponse(book));
+        }
+        return bookResponses;
+    }
+
+    /**
+     * @param Title
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<GetBookResponse> getBooksByTitle(String Title) throws Exception {
+        List<Book> books = Optional.of(bookRepositoy.findByTitleContaining(Title)).orElseThrow(NoResultException::new);
+        int size = Math.min(books.size(), 5);
+        books = books.subList(0,size);
+        List<GetBookResponse> bookResponses = new ArrayList<>();
+        for (Book book : books) {
+            bookResponses.add(new GetBookResponse(book));
+        }
+        return bookResponses;
     }
 }
