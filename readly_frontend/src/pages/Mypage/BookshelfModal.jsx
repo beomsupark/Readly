@@ -1,9 +1,5 @@
 import Modal from "react-modal";
 
-import LevelIcon1 from "../../assets/level/lv1.png";
-import LevelIcon2 from "../../assets/level/lv2.png";
-import InfoIcon from "../../assets/header/info_img.png";
-
 Modal.setAppElement("#root");
 
 const customModalStyles = {
@@ -17,7 +13,7 @@ const customModalStyles = {
     left: "0",
   },
   content: {
-    width: "80%",
+    width: "60%",
     maxWidth: "100%",
     height: "80%",
     maxHeight: "80vh",
@@ -28,18 +24,13 @@ const customModalStyles = {
     transform: "translate(-50%, -50%)",
     borderRadius: "10px",
     boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.25)",
-    backgroundColor: "white",
+    backgroundColor: "#F5F5F5",
     padding: "20px",
     overflow: "auto",
   },
 };
 
-export default function FollowList({ isOpen, onRequestClose, books }) {
-  const levelIcons = {
-    1: LevelIcon1,
-    2: LevelIcon2,
-  };
-
+export default function BookshelfList({ isOpen, onRequestClose, books }) {
   return (
     <Modal
       isOpen={isOpen}
@@ -55,23 +46,19 @@ export default function FollowList({ isOpen, onRequestClose, books }) {
       >
         X
       </button>
-      <h2 className="text-2xl font-bold mb-4">팔로우 하는 사람들이에요!</h2>
-      <div className="flex space-x-2 mb-2 gap-4">
+      <h2 className="text-2xl font-bold mb-4">읽은 책들이에요!</h2>
+      <div className="flex-col gap-4">
         {books &&
           books.map((book) => (
-            <div
-              key={book.id}
-              className="bg-gray-200 w-[7rem] h-[9rem] p-2 rounded-xl flex-cols items-center bg-[#F5F5F5]"
-            >
+            <div key={book.id} className="flex items-center">
               <img
-                src={levelIcons[book.level]}
-                alt={`Level ${book.level}`}
-                className="w-8 h-8 mr-2"
+                src={book.cover}
+                alt={book.title}
+                className="w-[10rem] h-auto object-cover mb-2"
               />
-              <div className="ml-4">
-                <img src={InfoIcon} alt="info" className="w-14 h-12" />
-                <p className="font-semibold">{book.nickname}</p>
-                <p className="text-sm text-gray-600">{book.intro}</p>
+              <div>
+                <p className="text-center">{book.title}</p>
+                <p className="text-center">{book.description}</p>
               </div>
             </div>
           ))}

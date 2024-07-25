@@ -14,15 +14,13 @@ const customModalStyles = {
   },
   content: {
     width: "20%",
-    height: "15%",
-    maxHeight: "80vh",
+    height: "20%",
+    minHeight: "15%",
     zIndex: "150",
     position: "absolute",
-    bottom: "auto",
-    right: "auto",
-    left: "100px",
-    top: "20px",
-    transform: "none",
+    top: "20px",  // 상단에서 20px 떨어진 위치
+    left: "50%",  // 화면 중앙
+    transform: "translateX(-50%)",  // 정확한 중앙 정렬을 위해
     borderRadius: "10px",
     boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.25)",
     backgroundColor: "#E5E5E5",
@@ -47,9 +45,9 @@ export default function BookshelfList({ isOpen, onRequestClose }) {
       >
         X
       </button>
-      <h2 className="text-lㅎ font-bold mb-4">읽은 페이지를 입력해주세요!</h2>
+      <h2 className="text-lg font-bold mb-4">읽은 페이지를 입력해주세요!</h2>
       <div className="flex gap-4">
-        <input type="text" className="border rounded" />
+        <input type="text" className="border rounded p-2 w-full" />
       </div>
     </Modal>
   );

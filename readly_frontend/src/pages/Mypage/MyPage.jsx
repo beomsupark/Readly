@@ -1,14 +1,14 @@
 import { useState } from "react";
-import levelIcon from "../assets/level/lv1.png";
-import catCoin from "../assets/level/cat_coin.png";
-import CardImg1 from "../assets/onboard/card1_front.png";
-import CardImg1_back from "../assets/onboard/card1_back.png";
-import ReviewImg1 from "../assets/onboard/review1.png";
-import MypageProgress from "./Mypage/MyPageProgress";
-import MypageBookshelf from "./Mypage/MyPageBookshelf";
-import MypageFollow from "./Mypage/MyPageFollow";
-import TimeCat from "../assets/onboard/time_cat.png";
-import Timecapsule from "./Mypage/Timecapsule"
+import levelIcon from "../../assets/level/lv1.png";
+import catCoin from "../../assets/level/cat_coin.png";
+import CardImg1 from "../../assets/onboard/card1_front.png";
+import CardImg1_back from "../../assets/onboard/card1_back.png";
+import ReviewImg1 from "../../assets/onboard/review1.png";
+import MypageProgress from "./MyPageProgress";
+import MypageBookshelf from "./MyPageBookshelf";
+import MypageFollow from "./MyPageFollow";
+import TimeCat from "../../assets/onboard/time_cat.png";
+import Timecapsule from "./Timecapsule"
 
 export default function MyPage() {
   const [activeLink, setActiveLink] = useState("progress"); // Default active link
@@ -36,7 +36,7 @@ export default function MyPage() {
       <div>
         <div className="flex items-center">
           <h2 className="text-2xl font-bold">닉네임</h2>
-          <a href="/update" className="ml-2 text-lg">
+          <a href="/edit" className="ml-2 text-lg">
             ✏️
           </a>
         </div>
