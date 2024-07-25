@@ -12,7 +12,7 @@ public interface MemberRepository {
 
     public abstract void logout(String userId);
 
-    public abstract Long findByLoginId(String loginId);
+    public abstract Member findByLoginId(String loginId);
 
     public abstract String checkMember(FindMemberRequest findMember);
 

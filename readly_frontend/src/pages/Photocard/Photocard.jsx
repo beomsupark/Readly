@@ -41,7 +41,7 @@ export default function Photocard({ photocards }) {
           <h2 className="font-bold text-2xl">사용자들이 좋아하는 <span className="text-custom-highlight">포토카드</span></h2>
         </div>
         <div className="relative overflow-hidden">
-          <div className="absolute -top-4 right-36 p-4 rounded-lg z-10">
+          <div className="absolute -top-4 right-36 p-4 rounded-lg z-0">
             <button
               onClick={handleMorePhotocards}
               className="text-gray-500 hover:text-gray-700"
