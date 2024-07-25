@@ -19,7 +19,16 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public void singnUp(SignUpMemberRequest signUpMember) {
-        Member member = new com.ssafy.readly.entity.Member(signUpMember.getLoginId(), signUpMember.getLoginPwd(), signUpMember.getNickname(), signUpMember.getMemberName(), signUpMember.getPhoneNumber(), signUpMember.getEmail(), signUpMember.getBirthday(), signUpMember.getGender(), signUpMember.getSocial());
+        Member member = new Member(
+                signUpMember.getLoginId(),
+                signUpMember.getLoginPwd(),
+                signUpMember.getNickname(),
+                signUpMember.getMemberName(),
+                signUpMember.getPhoneNumber(),
+                signUpMember.getEmail(),
+                signUpMember.getBirthday(),
+                signUpMember.getGender(),
+                signUpMember.getSocial());
         memberRepository.signUp(member);
     }
 
@@ -35,8 +44,8 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void checkDuplicateId(String loginId) {
-        Long findId = memberRepository.findByLoginId(loginId);
-        if(findId != 0) {
+        Member findMember = memberRepository.findByLoginId(loginId);
+        if(findMember != null) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
     }
