@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -32,37 +33,42 @@ class MemberServiceImplTest {
     @Test
     public void signUpTest() {
         // Given
-        SignUpMemberRequest signUpMember = createSignUpMember(
-                "ehddls",
-                "1234",
-                "동동인",
-                "서동인",
-                "000-1111-2222",
-                "ehddls@naver.com",
-                LocalDate.of(1996, 7, 25),
-                Gender.M);
+        SignUpMemberRequest signUpMember = SignUpMemberRequest.builder()
+                .loginId("ehddls")
+                .loginPwd("1234")
+                .nickname("동동인")
+                .memberName("서동인")
+                .phoneNumber("000-1111-2222")
+                .email("ehddls@naver.com")
+                .birthday(LocalDate.of(1996, 7, 25))
+                .gender(Gender.M)
+                .social(Social.R)
+                .build();
 
         // When
         memberServiceImpl.singnUp(signUpMember);
-        Member findMember = memberRepositoryImpl.findByLoginId("ehddls");
+        Optional<Member> findMember = memberRepositoryImpl.findByLoginId("ehddls");
 
         // Then
-        assertThat(findMember.getLoginId()).isEqualTo("ehddls");
-        assertThat(findMember.getSocial()).isEqualTo(Social.R);
+        assertThat(findMember).isPresent();
+
+        findMember.ifPresent(member ->
+                assertThat(member.getSocial()).isEqualTo(Social.R));
     }
 
     @Test
     public void dupcheckDuplicateIdTest() {
         // Given
-        SignUpMemberRequest signUpMember = createSignUpMember(
-                "ehddls",
-                "1234",
-                "동동인",
-                "서동인",
-                "000-1111-2222",
-                "ehddls@naver.com",
-                LocalDate.of(1996, 7, 25),
-                Gender.M);
+        SignUpMemberRequest signUpMember = SignUpMemberRequest.builder()
+                .loginId("ehddls")
+                .loginPwd("1234")
+                .nickname("동동인")
+                .memberName("서동인")
+                .phoneNumber("000-1111-2222")
+                .email("ehddls@naver.com")
+                .birthday(LocalDate.of(1996, 7, 25))
+                .gender(Gender.M)
+                .build();
 
         memberServiceImpl.singnUp(signUpMember);
 
@@ -70,18 +76,5 @@ class MemberServiceImplTest {
         assertThrows(IllegalStateException.class, () -> {
             memberServiceImpl.checkDuplicateId("ehddls");
         });
-    }
-
-    private static SignUpMemberRequest createSignUpMember(String loginId, String loginPwd, String nickname, String memberName, String phoneNumber, String email, LocalDate birthday, Gender gender) {
-        SignUpMemberRequest request = new SignUpMemberRequest();
-        request.setLoginId(loginId);
-        request.setLoginPwd(loginPwd);
-        request.setNickname(nickname);
-        request.setMemberName(memberName);
-        request.setPhoneNumber(phoneNumber);
-        request.setEmail(email);
-        request.setBirthday(birthday);
-        request.setGender(gender);
-        return request;
     }
 }

@@ -7,6 +7,8 @@ import com.ssafy.readly.entity.Member;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 import static com.ssafy.readly.entity.QMember.member;
 
 @Repository
@@ -36,11 +38,12 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public Member findByLoginId(String loginId) {
-        return queryFactory
+    public Optional<Member> findByLoginId(String loginId) {
+        Member findMember = queryFactory
                 .selectFrom(member)
                 .where(member.loginId.eq(loginId))
                 .fetchOne();
+        return Optional.ofNullable(findMember);
     }
 
     @Override
