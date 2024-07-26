@@ -24,7 +24,7 @@ public class RankRepositoryImpl implements RankRepository {
                 "ORDER BY COUNT(rb.id) DESC";
 
         TypedQuery<GetRankUserResponse> query = entityManager.createQuery(jpql, GetRankUserResponse.class);
-        query.setMaxResults(10);  // 상위 3개 결과만 가져오기
+        query.setMaxResults(3);  // 상위 3개 결과만 가져오기
 
         return query.getResultList();
     }
@@ -38,7 +38,7 @@ public class RankRepositoryImpl implements RankRepository {
                 "ORDER BY COUNT(rb.id) DESC";
 
         TypedQuery<GetRankGroupResponse> query = entityManager.createQuery(jpql, GetRankGroupResponse.class);
-        query.setMaxResults(10);  // 상위 3개 결과만 가져오기
+        query.setMaxResults(3);  // 상위 3개 결과만 가져오기
 
         return query.getResultList();
     }
