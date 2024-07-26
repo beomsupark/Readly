@@ -10,6 +10,9 @@ import cloudImg from './assets/background/cloud.png'
 import MakeCard from './pages/Photocard/MakeCard.jsx'
 import SharedBoard from './pages/SharedBoard/SharedBoard.jsx'
 import EditProfile from './pages/Mypage/EditProfile.jsx'
+import Ranking from './pages/Ranking.jsx'
+import Community from './pages/Community.jsx'
+
 function App() {
   const location = useLocation();
   const isFullScreenPage = ['/login', '/onboard'].includes(location.pathname);
@@ -30,6 +33,8 @@ function App() {
             <Route path="/mypage" element={<MyPage />} />
             <Route path="/makecard" element={<MakeCard/>}/>
             <Route path="/edit" element={<EditProfile/>}/>
+            <Route path="/ranking" element={<Ranking/>}/>
+            <Route path="/community" element={<Community/>}/>
             {/* 다른 라우트들... */}
           </Routes>
         </main>
