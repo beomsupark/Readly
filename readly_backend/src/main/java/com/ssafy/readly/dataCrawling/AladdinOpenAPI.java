@@ -5,11 +5,10 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.net.URLEncoder;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
 
-import com.ssafy.readly.dto.BookRequest;
+import com.ssafy.readly.dto.Book.BookRequest;
 import org.xml.sax.helpers.ParserAdapter;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.Attributes;
