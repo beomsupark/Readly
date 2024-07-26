@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
-import CurrentPageModal from './CurrentPageModal.jsx'
+import { useState, useRef } from 'react';
+import CurrentPageModal from './CurrentPageModal';
 
-export default function ProgressBar({ currentPage, totalPages }) {
+export default function ProgressBar({ currentPage, totalPages, onUpdateCurrentPage }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const progressBarRef = useRef(null);
@@ -20,7 +20,12 @@ export default function ProgressBar({ currentPage, totalPages }) {
   const closeModal = () => {
     setModalIsOpen(false);
   };
-  
+
+  const handleSave = (newPage) => {
+    onUpdateCurrentPage(parseInt(newPage, 10));
+    closeModal();
+  };
+
   const percentage = Math.round((currentPage / totalPages) * 100);
 
   return (
@@ -41,8 +46,9 @@ export default function ProgressBar({ currentPage, totalPages }) {
       <CurrentPageModal 
         isOpen={modalIsOpen} 
         onRequestClose={closeModal} 
+        onSave={handleSave}
         position={modalPosition}
       />
     </div>
   );
-};
+}
