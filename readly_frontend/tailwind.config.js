@@ -18,6 +18,7 @@ export default {
     },
     colors: {
       'custom-highlight': '#549CB9',
+      'custom-border': '#D3D3D3',
     },
     fontFamily: {
       BM_HANNA: ["BM_HANNA"],
