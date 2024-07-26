@@ -1,8 +1,7 @@
 package com.ssafy.readly.service;
 
 import com.ssafy.readly.dto.Book.GetBookResponse;
-import com.ssafy.readly.dto.BookRequest;
-import com.ssafy.readly.entity.Book;
+import com.ssafy.readly.dto.Book.BookRequest;
 
 import java.util.List;
 

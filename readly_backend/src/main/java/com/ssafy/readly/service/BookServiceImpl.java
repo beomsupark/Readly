@@ -1,7 +1,7 @@
 package com.ssafy.readly.service;
 
 import com.ssafy.readly.dto.Book.GetBookResponse;
-import com.ssafy.readly.dto.BookRequest;
+import com.ssafy.readly.dto.Book.BookRequest;
 import com.ssafy.readly.entity.Book;
 import com.ssafy.readly.repository.BookRepositoy;
 import jakarta.persistence.NoResultException;
@@ -36,8 +36,8 @@ public class BookServiceImpl implements BookService {
                     .totalPage(bookRequest.getTotalPage())
                     .image(bookRequest.getImage())
                     .build();
-            System.out.println(book.toString());
-            System.out.println("-------------------------");
+            //System.out.println(book.toString());
+            //System.out.println("-------------------------");
             books.add(book);
         }
         bookRepositoy.saveAll(books);
