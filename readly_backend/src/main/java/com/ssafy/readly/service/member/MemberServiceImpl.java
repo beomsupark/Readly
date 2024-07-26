@@ -21,6 +21,8 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public void singnUp(SignUpMemberRequest signUpMember) {
+        checkDuplicateId(signUpMember.getLoginId());
+
         Member member = new Member(
                 signUpMember.getLoginId(),
                 signUpMember.getLoginPwd(),
@@ -31,7 +33,7 @@ public class MemberServiceImpl implements MemberService {
                 signUpMember.getBirthday(),
                 signUpMember.getGender(),
                 signUpMember.getSocial());
-        
+
         memberRepository.signUp(member);
     }
 
