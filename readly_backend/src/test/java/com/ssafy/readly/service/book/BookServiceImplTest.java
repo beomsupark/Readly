@@ -6,6 +6,7 @@ import com.ssafy.readly.dto.member.SignUpMemberRequest;
 import com.ssafy.readly.repository.BookRepositoy;
 import com.ssafy.readly.service.BookService;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
 @SpringBootTest
 @Transactional
 public class BookServiceImplTest {
@@ -26,10 +28,11 @@ public class BookServiceImplTest {
     private BookRepositoy BookRepositoy;
 
     @Test
-    public void addBooksTest() throws Exception {
+    public void findByTitleTest() throws Exception {
         //GIVEN
         List<BookRequest> bookList = createBooks();
-
+        log.info("here");
+        log.info("bookList: {}", bookList);
         //WHEN
         bookService.addBooks(bookList);
         GetBookResponse response = bookService.getBooksByTitle("나는 얼마짜리입니까").get(0);
@@ -37,6 +40,21 @@ public class BookServiceImplTest {
         assertThat(response.getISBN()).isEqualTo("9788936480431");
 
     }
+
+    @Test
+    public void findByIdTest() throws Exception {
+        //GIVEN
+        List<BookRequest> bookList = createBooks();
+        log.info("here");
+        log.info("bookList: {}", bookList);
+        //WHEN
+        bookService.addBooks(bookList);
+        GetBookResponse response = bookService.getBookById(1);
+        //THEN
+        assertThat(response.getISBN()).isEqualTo("9788936480431");
+
+    }
+
 
 
     private static List<BookRequest> createBooks() {
@@ -52,7 +70,7 @@ public class BookServiceImplTest {
                 .build());
 
         bookList.add(BookRequest.builder()
-                .ISBN("9788936480431")
+                .ISBN("9788936480432")
                 .Title("너에게 들려주는 단단한 말")
                 .Author("김종원 (지은이)")
                 .Description("청소년을 위한 인생철학 에세이다. ‘나’라는 존재와 친구와의 관계, 공부와 성적, 꿈과 진로 등에 관한 고민이 커지는 청소년기는 인생이란 여정에서 어둡고 막막한 터널을 처음으로 마주하는 시기다. 어떤 생각을 키우고, 어떤 마음을 갖느냐에 따라 앞으로 펼쳐질 삶의 모양이 달라질 수도 있기에 저자는 단어 하나, 문장 하나에도 온 마음을 담았다.")
