@@ -37,26 +37,26 @@ public class PhotoCardController {
     @PostMapping("/photocard/createimage")
     public ResponseEntity<Map<String, Object>> createPhoto(@RequestBody @Valid CreatePhotoRequest request) throws Exception {
         List<String> imageList = new ArrayList<>();
-        //log.info(request.getBookId());
-        //log.info(request.getText());
-        //log.info(String.valueOf(request.getVisibility()));
-
+        log.info(String.valueOf(request.getBookId()));
+        log.info(request.getText());
+        log.info(String.valueOf(request.getVisibility()));
+        log.info(String.valueOf(request.getMemberId()));
 
         // 책 정보 가져오기
         Book book = bookService.getBookByIdForPhoto(request.getBookId());
-        /*
-        // 멤버 정보 가져오기
 
+        // 멤버 정보 가져오기
+        Member member = memberService.getMember(request.getMemberId());
         // 포토카드 테이블 생성
         PhotoCard photoCard = PhotoCard.builder()
                 .book(book)
                 .text(request.getText())
                 .visibility(request.getVisibility())
-                .member()
+                .member(member)
                 .build();
 
-        photoCardServiceImpl.addPhotoCard(photoCard);
-        */
+        int photoCardId = photoCardServiceImpl.addPhotoCard(photoCard);
+
         // 프롬프트 생성 로직 구현
 
         String prompt = "";
@@ -75,6 +75,7 @@ public class PhotoCardController {
         Map<String, Object> responseMap = new HashMap<String, Object>();
         CreatePhotoResponse response = new CreatePhotoResponse();
         response.setImages(imageList);
+        response.setPhotoCardId(photoCardId);
         responseMap.put("CreatePhotoCardResponse", response);
         status = HttpStatus.OK;
         return new ResponseEntity<Map<String, Object>>(responseMap, status);
@@ -82,10 +83,22 @@ public class PhotoCardController {
 
     @PutMapping("photocard/createcard")
     public ResponseEntity<Map<String, Object>> createPhotoCard(@RequestBody @Valid CreatePhotoCardRequest request) throws Exception {
+        log.info(request.toString());
         HttpStatus status = HttpStatus.ACCEPTED;
         CreatePhotoCardResponse response = PhotoCardServiceImpl.createPhotoCard(request);
         Map<String, Object> responseMap = new HashMap<String, Object>();
         responseMap.put("CreatePhotoCardResponse", response);
+        status = HttpStatus.OK;
+        return new ResponseEntity<Map<String, Object>>(responseMap, status);
+    }
+
+    @GetMapping("photocard/findbyid/{id}")
+    public ResponseEntity<Map<String, Object>> getPhotoCardById(@PathVariable int id) throws Exception {
+        log.info(String.valueOf(id));
+        HttpStatus status = HttpStatus.ACCEPTED;
+        CreatePhotoCardResponse response = PhotoCardServiceImpl.findPhotoCardById(id);
+        Map<String, Object> responseMap = new HashMap<String, Object>();
+        responseMap.put("PhotoCardResponse", response);
         status = HttpStatus.OK;
         return new ResponseEntity<Map<String, Object>>(responseMap, status);
     }
