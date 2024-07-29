@@ -1,8 +1,10 @@
 package com.ssafy.readly.controller;
 
 import com.ssafy.readly.dto.member.LoginMemberRequest;
+import com.ssafy.readly.dto.member.LoginMemberResponse;
 import com.ssafy.readly.dto.member.SignUpMemberRequest;
 import com.ssafy.readly.service.member.MemberServiceImpl;
+import com.ssafy.readly.util.JWTUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberServiceImpl memberService;
+    private final JWTUtil jwtUtil;
 
     @PostMapping("/member/signup")
     public ResponseEntity<Map<String, Object>> singUp(@Valid @RequestBody SignUpMemberRequest signUpMember) {
@@ -52,7 +55,10 @@ public class MemberController {
         Map<String, Object> responseMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
-            memberService.login(loginMember);
+            LoginMemberResponse loginMemberResponse = memberService.login(loginMember);
+            if(loginMemberResponse != null) {
+                String accessToken = jwtUtil.createAccessToken(loginMemberResponse.getId());
+            }
             status = HttpStatus.OK;
         } catch (AuthenticationException a) {
             responseMap.put("errorMessage", a.getMessage());

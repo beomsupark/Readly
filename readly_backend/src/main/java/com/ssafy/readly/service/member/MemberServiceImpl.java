@@ -2,6 +2,7 @@ package com.ssafy.readly.service.member;
 
 import com.ssafy.readly.dto.member.FindMemberRequest;
 import com.ssafy.readly.dto.member.LoginMemberRequest;
+import com.ssafy.readly.dto.member.LoginMemberResponse;
 import com.ssafy.readly.dto.member.SignUpMemberRequest;
 import com.ssafy.readly.entity.Member;
 import com.ssafy.readly.repository.member.MemberRepositoryImpl;
@@ -40,11 +41,10 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void login(LoginMemberRequest longinMember) throws AuthenticationException {
-        Long islogin = memberRepository.login(longinMember);
-        if (islogin == 0) {
-            throw new AuthenticationException("아이디 또는 비밀번호를 확인해주세요.");
-        }
+    public LoginMemberResponse login(LoginMemberRequest longinMember) throws AuthenticationException {
+        Optional<LoginMemberResponse> loginMember = memberRepository.login(longinMember);
+
+        return loginMember.orElse(null);
     }
 
     @Override
