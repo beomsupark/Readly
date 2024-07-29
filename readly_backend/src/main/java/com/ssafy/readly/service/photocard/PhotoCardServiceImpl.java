@@ -3,7 +3,7 @@ package com.ssafy.readly.service.photocard;
 import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardRequest;
 import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardResponse;
 import com.ssafy.readly.entity.PhotoCard;
-import com.ssafy.readly.repository.photocard.PhotoCardRepository;
+import com.ssafy.readly.repository.photocard.PhotoCardQueryDSLRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PhotoCardServiceImpl implements PhotoCardService{
 
-    private final PhotoCardRepository photoCardRepositoryImpl;
+    private final PhotoCardQueryDSLRepository photoCardRepositoryImpl;
 
     @Override
     public int addPhotoCard(PhotoCard photoCard) throws Exception {
