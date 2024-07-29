@@ -4,6 +4,7 @@ import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardRequest;
 import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardResponse;
 import com.ssafy.readly.entity.PhotoCard;
 import com.ssafy.readly.repository.photocard.PhotoCardQueryDSLRepository;
+import com.ssafy.readly.repository.photocard.PhotoCardRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 public class PhotoCardServiceImpl implements PhotoCardService{
 
     private final PhotoCardQueryDSLRepository photoCardRepositoryImpl;
+
+    private final PhotoCardRepository photoCardRepository;
 
     @Override
     public int addPhotoCard(PhotoCard photoCard) throws Exception {
@@ -28,4 +31,8 @@ public class PhotoCardServiceImpl implements PhotoCardService{
         return photoCardRepositoryImpl.getPhotoCard(request.getPhotoCardId());
     }
 
+    @Override
+    public CreatePhotoCardResponse findPhotoCardById(int id) throws Exception {
+        return photoCardRepositoryImpl.getPhotoCard(id);
+    }
 }

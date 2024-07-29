@@ -61,4 +61,5 @@ public class PhotoCardQueryDSLRepositoryImpl implements PhotoCardQueryDSLReposit
                 .where(photoCard.id.eq(request.getPhotoCardId()))
                 .execute();
     }
+
 }

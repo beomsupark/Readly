@@ -91,4 +91,15 @@ public class PhotoCardController {
         status = HttpStatus.OK;
         return new ResponseEntity<Map<String, Object>>(responseMap, status);
     }
+
+    @GetMapping("photocard/findbyid/{id}")
+    public ResponseEntity<Map<String, Object>> getPhotoCardById(@PathVariable int id) throws Exception {
+        log.info(String.valueOf(id));
+        HttpStatus status = HttpStatus.ACCEPTED;
+        CreatePhotoCardResponse response = PhotoCardServiceImpl.findPhotoCardById(id);
+        Map<String, Object> responseMap = new HashMap<String, Object>();
+        responseMap.put("PhotoCardResponse", response);
+        status = HttpStatus.OK;
+        return new ResponseEntity<Map<String, Object>>(responseMap, status);
+    }
 }

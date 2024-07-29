@@ -29,7 +29,7 @@ public class AIService {
 
         // JSON 문자열 생성
         String requestBody = String.format(
-                "{\"model\":\"dall-e-2\",\"prompt\":\"%s\",\"n\":1,\"size\":\"512x512\"}",
+                "{\"model\":\"dall-e-3\",\"prompt\":\"%s\",\"n\":1,\"size\":\"1024x1024\"}",
                 prompt);
 
         HttpClient client = HttpClient.newHttpClient();

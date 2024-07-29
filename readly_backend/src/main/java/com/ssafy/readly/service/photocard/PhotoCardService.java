@@ -10,4 +10,6 @@ public interface PhotoCardService {
     int addPhotoCard(PhotoCard photoCard) throws Exception;
 
     CreatePhotoCardResponse createPhotoCard(CreatePhotoCardRequest request) throws Exception;
+
+    public CreatePhotoCardResponse findPhotoCardById(int id) throws Exception;
 }
