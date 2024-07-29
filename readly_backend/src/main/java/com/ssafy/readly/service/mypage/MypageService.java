@@ -1,9 +1,6 @@
 package com.ssafy.readly.service.mypage;
 
-import com.ssafy.readly.dto.mypage.GetMyFollowerResponse;
-import com.ssafy.readly.dto.mypage.GetMyPhotocardResponse;
-import com.ssafy.readly.dto.mypage.GetMyReviewResponse;
-import com.ssafy.readly.dto.mypage.GetReadBookResponse;
+import com.ssafy.readly.dto.mypage.*;
 import com.ssafy.readly.entity.Follower;
 import com.ssafy.readly.entity.PhotoCard;
 import com.ssafy.readly.entity.Review;
@@ -17,5 +14,6 @@ public interface MypageService {
     public List<GetMyReviewResponse> getReview(int userId) throws Exception;
     public List<GetMyPhotocardResponse> getPhotoCard(int userId) throws Exception;
     public List<GetMyFollowerResponse> getFollower(int userId) throws Exception;
+    public int updateCurrentPage(UpdateCurrentPageRequest request) throws Exception;
 
 }

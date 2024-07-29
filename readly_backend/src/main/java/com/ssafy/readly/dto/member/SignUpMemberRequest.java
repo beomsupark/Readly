@@ -18,4 +18,5 @@ public class SignUpMemberRequest {
     private LocalDate birthday;
     private Gender gender;
     private Social social = Social.R;
+    private String text;
 }

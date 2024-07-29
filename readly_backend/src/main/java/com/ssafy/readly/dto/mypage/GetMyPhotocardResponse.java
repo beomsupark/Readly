@@ -14,6 +14,7 @@ public class GetMyPhotocardResponse {
 
     public GetMyPhotocardResponse(PhotoCard photoCard) {
 
+        this.photocardId = photoCard.getId();
         this.bookTitle= photoCard.getBook().getTitle();
         this.bookAuthor = photoCard.getBook().getAuthor();
         this.photocardImage= photoCard.getPhotoCardImage();

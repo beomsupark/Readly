@@ -2,7 +2,9 @@ package com.ssafy.readly.dto.mypage;
 
 import com.ssafy.readly.entity.Book;
 import com.ssafy.readly.entity.Review;
+import lombok.Data;
 
+@Data
 public class GetMyReviewResponse {
     private int reviewId;
     private String reviewText;

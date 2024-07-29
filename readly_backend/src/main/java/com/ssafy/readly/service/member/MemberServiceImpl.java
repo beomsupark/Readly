@@ -28,7 +28,8 @@ public class MemberServiceImpl implements MemberService {
                 signUpMember.getEmail(),
                 signUpMember.getBirthday(),
                 signUpMember.getGender(),
-                signUpMember.getSocial());
+                signUpMember.getSocial(),
+                signUpMember.getText());
         memberRepository.signUp(member);
     }
 

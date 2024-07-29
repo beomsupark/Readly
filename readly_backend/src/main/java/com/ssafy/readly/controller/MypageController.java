@@ -1,14 +1,13 @@
 package com.ssafy.readly.controller;
 
 import com.ssafy.readly.dto.mypage.GetReadBookResponse;
+import com.ssafy.readly.dto.mypage.UpdateCurrentPageRequest;
 import com.ssafy.readly.service.mypage.MypageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +60,14 @@ public class MypageController {
         responseMap.put("my-followers",mypageService.getFollower(userId));
         status = HttpStatus.OK;
         return new ResponseEntity<Map<String,Object>>(responseMap, status);
+    }
+    @PutMapping("/member/proceeding-books/update")
+    public ResponseEntity<?> updateCurrentPage(@RequestBody UpdateCurrentPageRequest request) throws Exception {
+        int result = mypageService.updateCurrentPage(request);
+        if(result != 1){
+            throw new Exception();
+        }
+        return ResponseEntity.ok("Successfully updated current page");
     }
 
 }

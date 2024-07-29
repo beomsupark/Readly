@@ -1,9 +1,6 @@
 package com.ssafy.readly.service.mypage;
 
-import com.ssafy.readly.dto.mypage.GetMyFollowerResponse;
-import com.ssafy.readly.dto.mypage.GetMyPhotocardResponse;
-import com.ssafy.readly.dto.mypage.GetMyReviewResponse;
-import com.ssafy.readly.dto.mypage.GetReadBookResponse;
+import com.ssafy.readly.dto.mypage.*;
 import com.ssafy.readly.entity.*;
 import com.ssafy.readly.repository.mypage.MypageRepository;
 import jakarta.transaction.Transactional;
@@ -26,7 +23,7 @@ public class MypageServiceImpl implements MypageService {
         List<ReadBook> readBooks = mypageRepository.getReadBook(userId);
         List<GetReadBookResponse> responses = new ArrayList<>();
         for(ReadBook readBook: readBooks) {
-            responses.add(new GetReadBookResponse(readBook.getBook()));
+            responses.add(new GetReadBookResponse(readBook));
         }
         return responses;
     }
@@ -36,7 +33,7 @@ public class MypageServiceImpl implements MypageService {
         List<ReadBook> proceedingBooks = mypageRepository.getProceedingBooks(userId);
         List<GetReadBookResponse> responses = new ArrayList<>();
         for(ReadBook readBook: proceedingBooks) {
-            responses.add(new GetReadBookResponse(readBook.getBook()));
+            responses.add(new GetReadBookResponse(readBook));
         }
         return responses;
     }
@@ -69,5 +66,10 @@ public class MypageServiceImpl implements MypageService {
             responses.add(new GetMyFollowerResponse(follower));
         }
         return responses;
+    }
+
+    @Override
+    public int updateCurrentPage(UpdateCurrentPageRequest request) throws Exception {
+        return mypageRepository.updateCurrentPage(request);
     }
 }

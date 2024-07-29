@@ -1,6 +1,7 @@
 package com.ssafy.readly.repository.mypage;
 
 import com.ssafy.readly.dto.mypage.GetReadBookResponse;
+import com.ssafy.readly.dto.mypage.UpdateCurrentPageRequest;
 import com.ssafy.readly.entity.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -63,10 +64,23 @@ public class MypageRepositoryImpl implements MypageRepository {
     public List<Follower> getFollower(int userId) throws Exception {
         String jpql = "SELECT f " +
                 "FROM Follower f " +
-                "WHERE f.following = :userId";
+                "WHERE f.following.id = :userId";
         Query query = entityManager.createQuery(jpql, Follower.class);
         query.setParameter("userId", userId);
 
         return query.getResultList();
+    }
+
+    @Override
+    public int updateCurrentPage(UpdateCurrentPageRequest request) throws Exception {
+        int currentPage = request.getCurrentPage();
+        int readBookId = request.getReadBookId();
+        String jpql = "UPDATE ReadBook r " +
+                "SET r.currentPage = :currentPage " +
+                "WHERE r.id = :readBookId";
+        Query query = entityManager.createQuery(jpql);
+        query.setParameter("currentPage", currentPage).setParameter("readBookId", readBookId);
+
+        return query.executeUpdate();
     }
 }

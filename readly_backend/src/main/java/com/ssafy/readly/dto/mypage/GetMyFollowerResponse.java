@@ -1,7 +1,9 @@
 package com.ssafy.readly.dto.mypage;
 
 import com.ssafy.readly.entity.Follower;
+import lombok.Data;
 
+@Data
 public class GetMyFollowerResponse {
     private int followedId;
     private String followedName;
