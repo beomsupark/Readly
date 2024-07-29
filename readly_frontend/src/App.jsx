@@ -19,7 +19,7 @@ import Activity from './pages/Activity/Activity.jsx'
 function App() {
   const location = useLocation();
   const isFullScreenPage = ['/login', '/onboard'].includes(location.pathname);
-  const notSearchPage = ['/login', '/onboard', '/mypage', '/edit'].includes(location.pathname);
+  const notSearchPage = ['/login', '/onboard', '/mypage', '/edit', '/activity'].includes(location.pathname);
 
   useEffect(() => {
     if (location.pathname === '/onboard' || location.pathname === '/community' || location.pathname === '/mypage') {

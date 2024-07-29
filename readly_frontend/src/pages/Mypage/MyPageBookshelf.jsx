@@ -14,7 +14,7 @@ export default function MypageBookshelf() {
     setModalIsOpen(false);
   };
 
-  const myBooks = [
+  const readBooks = [
     { id: 1, title: "책 제목 1", cover: BookImg1, description: "책 설명 1" },
     { id: 2, title: "책 제목 2", cover: BookImg1, description: "책 설명 2" },
     { id: 3, title: "책 제목 3", cover: BookImg1, description: "책 설명 3" },
@@ -25,7 +25,7 @@ export default function MypageBookshelf() {
     <>
       <div className="bg-white rounded-lg shadow p-4 mb-4 relative">
         <div className="flex space-x-2 mb-2">
-          {myBooks.map((book) => (
+          {readBooks.map((book) => (
             <div key={book.id} className="bg-gray-200 p-2 rounded">
               <img
                 src={book.cover}
@@ -50,7 +50,7 @@ export default function MypageBookshelf() {
       <BookshelfList
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        books={myBooks}
+        books={readBooks}
       />
     </>
   );
