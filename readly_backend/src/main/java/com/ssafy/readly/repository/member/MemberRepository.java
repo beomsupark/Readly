@@ -10,7 +10,7 @@ public interface MemberRepository {
 
     public abstract void signUp(Member member);
 
-    public abstract void login(LoginMemberRequest longinMember);
+    public abstract Long login(LoginMemberRequest longinMember);
 
     public abstract void logout(String userId);
 
