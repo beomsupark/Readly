@@ -3,6 +3,7 @@ package com.ssafy.readly.service.book;
 import com.ssafy.readly.dto.Book.BookRequest;
 import com.ssafy.readly.dto.Book.GetBookResponse;
 import com.ssafy.readly.dto.member.SignUpMemberRequest;
+import com.ssafy.readly.entity.Book;
 import com.ssafy.readly.repository.BookRepositoy;
 import com.ssafy.readly.service.BookService;
 import jakarta.transaction.Transactional;
@@ -26,13 +27,13 @@ public class BookServiceImplTest {
     private BookService bookService;
     @Autowired
     private BookRepositoy BookRepositoy;
+    @Autowired
+    private BookRepositoy bookRepositoy;
 
     @Test
     public void findByTitleTest() throws Exception {
         //GIVEN
         List<BookRequest> bookList = createBooks();
-        log.info("here");
-        log.info("bookList: {}", bookList);
         //WHEN
         bookService.addBooks(bookList);
         GetBookResponse response = bookService.getBooksByTitle("나는 얼마짜리입니까").get(0);
@@ -45,11 +46,10 @@ public class BookServiceImplTest {
     public void findByIdTest() throws Exception {
         //GIVEN
         List<BookRequest> bookList = createBooks();
-        log.info("here");
-        log.info("bookList: {}", bookList);
         //WHEN
         bookService.addBooks(bookList);
-        GetBookResponse response = bookService.getBookById(1);
+        int id = bookRepositoy.findByTitleContaining("나는 얼마짜리입니까").get(0).getId();
+        GetBookResponse response = bookService.getBookById(id);
         //THEN
         assertThat(response.getISBN()).isEqualTo("9788936480431");
 
