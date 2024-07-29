@@ -9,6 +9,8 @@ import MypageBookshelf from "./MyPageBookshelf";
 import MypageFollow from "./MyPageFollow";
 import TimeCat from "../../assets/onboard/time_cat.png";
 import Timecapsule from "./Timecapsule"
+import GoButton from "../../components/GoButton/GoButton";
+
 
 export default function MyPage() {
   const [activeLink, setActiveLink] = useState("progress"); // Default active link
@@ -121,9 +123,7 @@ export default function MyPage() {
 
         <div className="fixed bottom-10 right-40 flex flex-col items-end z-10">
           <img src={TimeCat} alt="timecat" className="w-[12rem] mb-2" />
-          <button onClick={openModal} className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition duration-300">
-            타임캡슐 만들기
-          </button>
+          <GoButton text="타임캡슐 만들기" onClick={openModal} />
         </div>
 
         {activeLink !== "progress" && (

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState } from "react";
 import BookImg1 from "../../assets/onboard/book.jpg";
-import ProgressBar from "./ProgressBar";
+import ProgressBar from "../../components/ProgressBar/ProgressBar";
+import GoButton from "../../components/GoButton/GoButton";
 
 const initialBooks = [
   {
@@ -23,9 +24,11 @@ export default function ProgressComponent() {
   const [books, setBooks] = useState(initialBooks);
 
   const updateCurrentPage = (bookId, newPage) => {
-    setBooks(books.map(book => 
-      book.id === bookId ? { ...book, currentPage: newPage } : book
-    ));
+    setBooks(
+      books.map((book) =>
+        book.id === bookId ? { ...book, currentPage: newPage } : book
+      )
+    );
   };
 
   return (
@@ -53,24 +56,24 @@ export default function ProgressComponent() {
               <ProgressBar
                 currentPage={book.currentPage}
                 totalPages={book.totalPages}
-                onUpdateCurrentPage={(newPage) => updateCurrentPage(book.id, newPage)}
+                onUpdateCurrentPage={(newPage) =>
+                  updateCurrentPage(book.id, newPage)
+                }
               />
 
               <div>
                 <h2 className="font-bold mb-2">
                   <span className="text-custom-highlight">책 </span>에 대한{" "}
-                  <span className="text-custom-highlight">한줄평</span>을
-                  남기고 싶으신가요?
+                  <span className="text-custom-highlight">한줄평</span>을 남기고
+                  싶으신가요?
                 </h2>
                 <div className="flex items-center gap-2">
                   <input
                     type="text"
-                    className="w-full mt-1 p-2 border rounded-lg"
+                    className="w-[30rem] mt-1 p-2 border rounded-lg"
                     placeholder="한줄평을 입력해주세요"
                   />
-                  <button className="w-[6em] ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg">
-                    만들기
-                  </button>
+                  <GoButton text="생성" />
                 </div>
               </div>
             </div>
@@ -78,9 +81,7 @@ export default function ProgressComponent() {
         ))
       )}
       <div className="mt-4 flex justify-start">
-        <button className="py-2 px-4 bg-blue-500 text-white rounded-lg">
-          책 추가하기
-        </button>
+        <GoButton text="책 등록하기" />
       </div>
     </div>
   );
