@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import BookImg1 from "../../assets/onboard/book.jpg";
-import BookshelfList from "./BookshelfList";
+import BookshelfList from "./BookshelfModal";
 
 export default function MypageBookshelf() {
   const [modalIsOpen, setModalIsOpen] = useState(false);

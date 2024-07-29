@@ -9,6 +9,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.security.sasl.AuthenticationException;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -19,6 +23,8 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public void singnUp(SignUpMemberRequest signUpMember) {
+        checkDuplicateId(signUpMember.getLoginId());
+
         Member member = new Member(
                 signUpMember.getLoginId(),
                 signUpMember.getLoginPwd(),
@@ -28,14 +34,17 @@ public class MemberServiceImpl implements MemberService {
                 signUpMember.getEmail(),
                 signUpMember.getBirthday(),
                 signUpMember.getGender(),
-                signUpMember.getSocial(),
-                signUpMember.getText());
+                signUpMember.getSocial());
+
         memberRepository.signUp(member);
     }
 
     @Override
-    public void login(LoginMemberRequest longinMember) {
-
+    public void login(LoginMemberRequest longinMember) throws AuthenticationException {
+        Long islogin = memberRepository.login(longinMember);
+        if (islogin == 0) {
+            throw new AuthenticationException("아이디 또는 비밀번호를 확인해주세요.");
+        }
     }
 
     @Override
@@ -44,10 +53,18 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public Member getMember(String loginId) {
+        Optional<Member> findMember = memberRepository.findByLoginId(loginId);
+        return findMember.orElseThrow(() -> new NoSuchElementException("해당 회원이 존재하지 않습니다."));
+    }
+
+    @Override
     public void checkDuplicateId(String loginId) {
-        Member findMember = memberRepository.findByLoginId(loginId);
-        if(findMember != null) {
+        try {
+            getMember(loginId);
             throw new IllegalStateException("이미 존재하는 회원입니다.");
+        } catch (NoSuchElementException n) {
+
         }
     }
 

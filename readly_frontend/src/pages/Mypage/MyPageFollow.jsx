@@ -3,7 +3,7 @@ import { useState } from "react";
 import LevelIcon1 from "../../assets/level/lv1.png";
 import LevelIcon2 from "../../assets/level/lv2.png";
 import InfoIcon from "../../assets/header/info_img.png";
-import FollowList from "./FollowList";
+import FollowList from "./FollowModal";
 
 export default function MypageFollow() {
   const [modalIsOpen, setModalIsOpen] = useState(false);

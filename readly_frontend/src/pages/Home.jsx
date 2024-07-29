@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Photocard from './Photocard/Photocard.jsx';
 import Recommend from './Recommend/Recommend.jsx';
 import BookModal from '../components/BookModal.jsx';
 
-import book1 from '../assets/onboard/review1.png';
+import book1 from '../assets/onboard/book.jpg';
 import CardImg1 from '../assets/onboard/card1_front.png';
 import CardImg1_back from '../assets/onboard/card1_back.png';
 import CardImg2 from '../assets/onboard/card2.png';
@@ -12,6 +12,8 @@ import CardImg3 from '../assets/onboard/card3.png';
 export default function Home() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
 
   const dummyBooks = [
     { id: 1, title: '책 제목 1', cover: book1 },
@@ -47,18 +49,38 @@ export default function Home() {
     setSelectedBook(null);
   };
 
+  const handleInputChange = useCallback((e) => {
+    setSearchQuery(e.target.value);
+    const filteredSuggestions = dummyBooks.filter(book => 
+      book.title.toLowerCase().includes(e.target.value.toLowerCase())
+    );
+    setSuggestions(filteredSuggestions);
+  }, []);
+
+  const handleSearch = useCallback((e) => {
+    e.preventDefault();
+    console.log("Searching for:", searchQuery);
+  }, [searchQuery]);
+
+  const handleSuggestionClick = useCallback((book) => {
+    setSelectedBook(book);
+    setModalIsOpen(true);
+    setSearchQuery("");
+    setSuggestions([]);
+  }, []);
+
   return (
     <>
-      <div className="mt-1 ml-3 max-w-7xl mx-auto lg:px-2">
+      <div className="mt-1 ml-2 max-w-6xl mx-auto lg:px-1">
         {/* 베스트 셀러 섹션 */}
-        <h2 className="font-bold text-2xl mb-2">가장 <span className="text-custom-highlight">인기</span> 많은 <span className="text-custom-highlight">책</span></h2>
-        <div className="grid grid-cols-2 mb-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2 pr-48">
+        <h2 className="font-bold text-xl mb-1">가장 <span className="text-custom-highlight">인기</span> 많은 <span className="text-custom-highlight">책</span></h2>
+        <div className="grid grid-cols-2 mb-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-1 pr-36">
           {dummyBooks.map(book => (
             <div key={book.id} className="flex flex-col items-center">
               <img
                 src={book.cover}
                 alt={book.title}
-                className="w-24 h-36 object-cover cursor-pointer"
+                className="w-20 h-30 object-cover cursor-pointer"
                 onClick={() => openModal(book)}
               />
             </div>
@@ -73,6 +95,11 @@ export default function Home() {
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
         book={selectedBook}
+        searchQuery={searchQuery}
+        handleInputChange={handleInputChange}
+        handleSearch={handleSearch}
+        suggestions={suggestions}
+        handleSuggestionClick={handleSuggestionClick}
       />
     </>
   );

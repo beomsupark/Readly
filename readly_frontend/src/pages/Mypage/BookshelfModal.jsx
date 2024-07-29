@@ -13,25 +13,24 @@ const customModalStyles = {
     left: "0",
   },
   content: {
-    width: "20%",
-    height: "15%",
+    width: "60%",
+    maxWidth: "100%",
+    height: "80%",
     maxHeight: "80vh",
     zIndex: "150",
     position: "absolute",
-    bottom: "auto",
-    right: "auto",
-    left: "100px",
-    top: "20px",
-    transform: "none",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
     borderRadius: "10px",
     boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.25)",
-    backgroundColor: "#E5E5E5",
+    backgroundColor: "#F5F5F5",
     padding: "20px",
     overflow: "auto",
   },
 };
 
-export default function BookshelfList({ isOpen, onRequestClose }) {
+export default function BookshelfList({ isOpen, onRequestClose, books }) {
   return (
     <Modal
       isOpen={isOpen}
@@ -47,9 +46,22 @@ export default function BookshelfList({ isOpen, onRequestClose }) {
       >
         X
       </button>
-      <h2 className="text-lㅎ font-bold mb-4">읽은 페이지를 입력해주세요!</h2>
-      <div className="flex gap-4">
-        <input type="text" className="border rounded" />
+      <h2 className="text-2xl font-bold mb-4">읽은 책들이에요!</h2>
+      <div className="flex-col gap-4">
+        {books &&
+          books.map((book) => (
+            <div key={book.id} className="flex items-center">
+              <img
+                src={book.cover}
+                alt={book.title}
+                className="w-[10rem] h-auto object-cover mb-2"
+              />
+              <div>
+                <p className="text-center">{book.title}</p>
+                <p className="text-center">{book.description}</p>
+              </div>
+            </div>
+          ))}
       </div>
     </Modal>
   );

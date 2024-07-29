@@ -7,6 +7,9 @@ import com.ssafy.readly.entity.Member;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
+import static com.querydsl.core.types.ExpressionUtils.count;
 import static com.ssafy.readly.entity.QMember.member;
 
 @Repository
@@ -26,8 +29,11 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public void login(LoginMemberRequest longinMember) {
-
+    public Long login(LoginMemberRequest longinMember) {
+        return queryFactory.select(count(member.id))
+                .from(member)
+                .where(member.loginId.eq(longinMember.getLoginId()),
+                        member.loginPwd.eq(longinMember.getLoginPwd())).fetchOne();
     }
 
     @Override
@@ -36,11 +42,12 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public Member findByLoginId(String loginId) {
-        return queryFactory
+    public Optional<Member> findByLoginId(String loginId) {
+        Member findMember = queryFactory
                 .selectFrom(member)
                 .where(member.loginId.eq(loginId))
                 .fetchOne();
+        return Optional.ofNullable(findMember);
     }
 
     @Override

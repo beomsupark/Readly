@@ -1,6 +1,5 @@
 package com.ssafy.readly.entity;
 
-import com.ssafy.readly.dto.BookRequest;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

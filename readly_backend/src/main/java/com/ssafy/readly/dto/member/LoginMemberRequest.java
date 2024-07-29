@@ -1,6 +1,12 @@
 package com.ssafy.readly.dto.member;
 
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+
+@Getter
 public class LoginMemberRequest {
-    private String userId;
-    private String userPwd;
+    @NotBlank
+    private String loginId;
+    @NotBlank
+    private String loginPwd;
 }

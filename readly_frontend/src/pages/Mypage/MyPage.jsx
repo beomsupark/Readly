@@ -1,14 +1,16 @@
 import { useState } from "react";
-import levelIcon from "../assets/level/lv1.png";
-import catCoin from "../assets/level/cat_coin.png";
-import CardImg1 from "../assets/onboard/card1_front.png";
-import CardImg1_back from "../assets/onboard/card1_back.png";
-import ReviewImg1 from "../assets/onboard/review1.png";
-import MypageProgress from "./Mypage/MyPageProgress";
-import MypageBookshelf from "./Mypage/MyPageBookshelf";
-import MypageFollow from "./Mypage/MyPageFollow";
-import TimeCat from "../assets/onboard/time_cat.png";
-import Timecapsule from "./Mypage/Timecapsule"
+import levelIcon from "../../assets/level/lv1.png";
+import catCoin from "../../assets/level/cat_coin.png";
+import CardImg1 from "../../assets/onboard/card1_front.png";
+import CardImg1_back from "../../assets/onboard/card1_back.png";
+import ReviewImg1 from "../../assets/onboard/review1.png";
+import MypageProgress from "./MyPageProgress";
+import MypageBookshelf from "./MyPageBookshelf";
+import MypageFollow from "./MyPageFollow";
+import TimeCat from "../../assets/onboard/time_cat.png";
+import Timecapsule from "./Timecapsule"
+import GoButton from "../../components/GoButton/GoButton";
+
 
 export default function MyPage() {
   const [activeLink, setActiveLink] = useState("progress"); // Default active link
@@ -36,7 +38,7 @@ export default function MyPage() {
       <div>
         <div className="flex items-center">
           <h2 className="text-2xl font-bold">닉네임</h2>
-          <a href="/update" className="ml-2 text-lg">
+          <a href="/edit" className="ml-2 text-lg">
             ✏️
           </a>
         </div>
@@ -121,9 +123,7 @@ export default function MyPage() {
 
         <div className="fixed bottom-10 right-40 flex flex-col items-end z-10">
           <img src={TimeCat} alt="timecat" className="w-[12rem] mb-2" />
-          <button onClick={openModal} className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition duration-300">
-            타임캡슐 만들기
-          </button>
+          <GoButton text="타임캡슐 만들기" onClick={openModal} />
         </div>
 
         {activeLink !== "progress" && (
