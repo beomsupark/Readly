@@ -2,7 +2,7 @@ package com.ssafy.readly.controller;
 
 import com.ssafy.readly.dataCrawling.AladdinOpenAPI;
 import com.ssafy.readly.dto.Book.BookRequest;
-import com.ssafy.readly.service.BookService;
+import com.ssafy.readly.service.book.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

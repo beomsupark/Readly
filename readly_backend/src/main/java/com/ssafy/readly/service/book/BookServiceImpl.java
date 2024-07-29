@@ -1,4 +1,4 @@
-package com.ssafy.readly.service;
+package com.ssafy.readly.service.book;
 
 import com.ssafy.readly.dto.Book.GetBookResponse;
 import com.ssafy.readly.dto.Book.BookRequest;
