@@ -3,7 +3,7 @@ import BookImg1 from "../../assets/onboard/book.jpg";
 import ProgressBar from "../../components/ProgressBar/ProgressBar";
 import GoButton from "../../components/GoButton/GoButton";
 
-const initialBooks = [
+const myBooks = [
   {
     id: 1,
     title: "책 제목 1",
@@ -21,7 +21,7 @@ const initialBooks = [
 ];
 
 export default function ProgressComponent() {
-  const [books, setBooks] = useState(initialBooks);
+  const [books, setBooks] = useState(myBooks);
 
   const updateCurrentPage = (bookId, newPage) => {
     setBooks(
