@@ -7,7 +7,6 @@ import 'aos/dist/aos.css';
 
 AOS.init({
   duration: 1200,
-  // once: true // 애니메이션을 한 번만 실행하려면 이 옵션을 사용하세요
 });
 
 import { BrowserRouter } from "react-router-dom";
