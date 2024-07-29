@@ -8,5 +8,5 @@ public class CreatePhotoRequest {
     private int bookId;
     private String text;
     private Visibility visibility;
-    private int memberId;
+    private String memberId;
 }

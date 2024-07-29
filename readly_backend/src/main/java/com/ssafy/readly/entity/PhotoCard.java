@@ -2,8 +2,12 @@ package com.ssafy.readly.entity;
 
 import com.ssafy.readly.enums.Visibility;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDate;
 
 import static jakarta.persistence.EnumType.*;
 import static jakarta.persistence.FetchType.LAZY;
@@ -31,6 +35,19 @@ public class PhotoCard {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @CreationTimestamp
+    @Column(name = "created_date")
+    private LocalDate createdDate;
+
+    @Builder
+    public PhotoCard(String text, String photoCardImage, Book book, Member member,Visibility visibility) {
+        this.text = text;
+        this.photoCardImage = photoCardImage;
+        this.book = book;
+        this.visibility = visibility;
+        setMember(member);
+    }
 
     /* 연관 관계 편의 메소드 */
     public void setMember(Member member){

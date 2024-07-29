@@ -53,6 +53,17 @@ public class BookServiceImpl implements BookService {
     }
 
     /**
+     * @param bookId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Book getBookByIdForPhoto(int bookId) throws Exception {
+        return bookRepositoy.findById(bookId).orElseThrow(NoResultException::new);
+    }
+
+
+    /**
      * @return
      * @throws Exception
      */

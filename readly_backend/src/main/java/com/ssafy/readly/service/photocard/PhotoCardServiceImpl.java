@@ -22,8 +22,10 @@ public class PhotoCardServiceImpl implements PhotoCardService{
 
     @Override
     public CreatePhotoCardResponse createPhotoCard(CreatePhotoCardRequest request) throws Exception {
-        // 포토카드 생성 후 유저정보,포토카드 정보, 책 정보중 원하는 데이터만 추출해 반환
-        return photoCardRepositoryImpl.createPhotoCard(request);
+        // 포토카드 생성
+        photoCardRepositoryImpl.updatePhotoCard(request);
+        // 후 유저정보,포토카드 정보, 책 정보중 원하는 데이터만 추출해 반환
+        return photoCardRepositoryImpl.getPhotoCard(request.getPhotoCard_id());
     }
 
 }

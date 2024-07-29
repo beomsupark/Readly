@@ -9,5 +9,7 @@ public interface PhotoCardRepository {
 
     public void addPhotoCard(PhotoCard photoCard) throws Exception;
 
-    CreatePhotoCardResponse createPhotoCard(CreatePhotoCardRequest request);
+    CreatePhotoCardResponse getPhotoCard(int id);
+
+    public long updatePhotoCard(CreatePhotoCardRequest request) throws Exception;
 }
