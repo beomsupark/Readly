@@ -33,6 +33,7 @@ public class Member {
     private int point;
     private LocalDate birthday;
     private LocalDateTime joinDate;
+    private String text;
     @Enumerated(value = STRING)
     private Gender gender;
     @Enumerated(value = STRING)
@@ -51,7 +52,7 @@ public class Member {
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
     private List<GroupMember> groupMembers = new ArrayList<>();
 
-    public Member(String loginId, String loginPwd, String nickname, String memberName, String phoneNumber, String email, LocalDate birthday, Gender gender, Social social) {
+    public Member(String loginId, String loginPwd, String nickname, String memberName, String phoneNumber, String email, LocalDate birthday, Gender gender, Social social,String text) {
         this.loginId = loginId;
         this.loginPwd = loginPwd;
         this.nickname = nickname;
@@ -61,5 +62,6 @@ public class Member {
         this.birthday = birthday;
         this.gender = gender;
         this.social = social;
+        this.text = text;
     }
 }
