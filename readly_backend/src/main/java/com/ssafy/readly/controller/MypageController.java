@@ -41,8 +41,26 @@ public class MypageController {
     public ResponseEntity<Map<String,Object>> getPhotoCards(@PathVariable int userId) throws Exception {
         HttpStatus status = HttpStatus.ACCEPTED;
         Map<String,Object> responseMap = new HashMap<>();
-        responseMap.put("proceedingBooks",mypageService.getProceedingBooks(userId));
+        responseMap.put("my-photocards",mypageService.getPhotoCard(userId));
         status = HttpStatus.OK;
         return new ResponseEntity<Map<String,Object>>(responseMap, status);
     }
+    @GetMapping("/member/reviews/{userId}")
+    public ResponseEntity<Map<String,Object>> getReviews(@PathVariable int userId) throws Exception {
+        HttpStatus status = HttpStatus.ACCEPTED;
+        Map<String,Object> responseMap = new HashMap<>();
+        responseMap.put("my-reviews",mypageService.getReview(userId));
+        status = HttpStatus.OK;
+        return new ResponseEntity<Map<String,Object>>(responseMap, status);
+    }
+
+    @GetMapping("/member/followers/{userId}")
+    public ResponseEntity<Map<String,Object>> getFollowers(@PathVariable int userId) throws Exception {
+        HttpStatus status = HttpStatus.ACCEPTED;
+        Map<String,Object> responseMap = new HashMap<>();
+        responseMap.put("my-followers",mypageService.getFollower(userId));
+        status = HttpStatus.OK;
+        return new ResponseEntity<Map<String,Object>>(responseMap, status);
+    }
+
 }
