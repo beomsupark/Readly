@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Modal from "react-modal";
+import GoButton from "../GoButton/GoButton";
 
 Modal.setAppElement("#root");
 
@@ -14,7 +15,7 @@ const customModalStyles = {
     left: "0",
   },
   content: {
-    width: "25%",
+    width: "22%",
     height: "20%",
     minHeight: "15%",
     zIndex: "150",
@@ -60,14 +61,12 @@ export default function CurrentPageModal({ isOpen, onRequestClose, onSave, posit
       <div className="flex gap-4">
         <input
           type="text"
-          className="border rounded p-2 w-full"
+          className="border rounded p-2 w-2/5"
           value={newPage}
           onChange={handleInputChange}
         />
       
-        <button onClick={handleSave} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
-          Save
-        </button>
+<GoButton text="저장" onClick={handleSave} />
       </div>
     </Modal>
   );

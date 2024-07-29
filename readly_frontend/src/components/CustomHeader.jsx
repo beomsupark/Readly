@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import searchIcon from '../assets/header/search.png';
 import infoIcon from '../assets/header/info_img.png';
 import BookModal from './BookModal';
+import cloudImg from '../assets/header/cloudImg.png';
 
 const customModalStyles = {
   overlay: {
@@ -117,8 +118,10 @@ export default function CustomHeader() {
   };
 
   return (
-    <header className="flex justify-between items-center py-1 px-3 bg-white">
-      <div className="flex-1"></div>
+    <header className="flex justify-between items-center py-1 px-3 ml-32 bg-white">
+      <div className="flex-1 flex items-center">
+        <img src={cloudImg} alt="클라우드" className="w-96 h-12 opacity-10" />
+      </div>
       <div className="flex-1 flex justify-center">
         <div className="relative w-[20rem]">
           <input

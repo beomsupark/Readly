@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/readly
+    url: jdbc:mysql://mysql:3306/readly
     username: ehddls
     password: ehddls
     driver-class-name: com.mysql.cj.jdbc.Driver
