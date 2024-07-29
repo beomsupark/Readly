@@ -1,4 +1,4 @@
-package com.ssafy.readly.service;
+package com.ssafy.readly.service.book;
 
 import com.ssafy.readly.dto.Book.GetBookResponse;
 import com.ssafy.readly.dto.Book.BookRequest;
@@ -51,6 +51,17 @@ public class BookServiceImpl implements BookService {
         Book responseBook = bookRepositoy.findById(bookId).orElseThrow(NoResultException::new);
         return new GetBookResponse(responseBook);
     }
+
+    /**
+     * @param bookId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Book getBookByIdForPhoto(int bookId) throws Exception {
+        return bookRepositoy.findById(bookId).orElseThrow(NoResultException::new);
+    }
+
 
     /**
      * @return

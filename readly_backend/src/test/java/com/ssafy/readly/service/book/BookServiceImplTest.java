@@ -2,10 +2,7 @@ package com.ssafy.readly.service.book;
 
 import com.ssafy.readly.dto.Book.BookRequest;
 import com.ssafy.readly.dto.Book.GetBookResponse;
-import com.ssafy.readly.dto.member.SignUpMemberRequest;
-import com.ssafy.readly.entity.Book;
 import com.ssafy.readly.repository.BookRepositoy;
-import com.ssafy.readly.service.BookService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
