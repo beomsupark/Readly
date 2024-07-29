@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+import static com.querydsl.core.types.ExpressionUtils.count;
 import static com.ssafy.readly.entity.QMember.member;
 
 @Repository
@@ -28,8 +29,11 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public void login(LoginMemberRequest longinMember) {
-
+    public Long login(LoginMemberRequest longinMember) {
+        return queryFactory.select(count(member.id))
+                .from(member)
+                .where(member.loginId.eq(longinMember.getLoginId()),
+                        member.loginPwd.eq(longinMember.getLoginPwd())).fetchOne();
     }
 
     @Override
