@@ -16,8 +16,8 @@ public class PhotoCardServiceImpl implements PhotoCardService{
     private final PhotoCardRepository photoCardRepositoryImpl;
 
     @Override
-    public void addPhotoCard(PhotoCard photoCard) throws Exception {
-        photoCardRepositoryImpl.addPhotoCard(photoCard);
+    public int addPhotoCard(PhotoCard photoCard) throws Exception {
+        return photoCardRepositoryImpl.addPhotoCard(photoCard);
     }
 
     @Override
@@ -25,7 +25,7 @@ public class PhotoCardServiceImpl implements PhotoCardService{
         // 포토카드 생성
         photoCardRepositoryImpl.updatePhotoCard(request);
         // 후 유저정보,포토카드 정보, 책 정보중 원하는 데이터만 추출해 반환
-        return photoCardRepositoryImpl.getPhotoCard(request.getPhotoCard_id());
+        return photoCardRepositoryImpl.getPhotoCard(request.getPhotoCardId());
     }
 
 }

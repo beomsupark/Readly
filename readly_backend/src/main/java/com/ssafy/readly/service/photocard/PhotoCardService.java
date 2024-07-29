@@ -7,7 +7,7 @@ import com.ssafy.readly.entity.PhotoCard;
 
 public interface PhotoCardService {
 
-    void addPhotoCard(PhotoCard photoCard) throws Exception;
+    int addPhotoCard(PhotoCard photoCard) throws Exception;
 
     CreatePhotoCardResponse createPhotoCard(CreatePhotoCardRequest request) throws Exception;
 }
