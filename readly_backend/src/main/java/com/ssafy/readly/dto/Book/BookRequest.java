@@ -18,5 +18,13 @@ public class BookRequest {
 
 
     @Builder
-    public BookRequest(String Title, String Author, String ISBN, String Description, String purchaseLink, int totalPage, String image) {}
+    public BookRequest(String Title, String Author, String ISBN, String Description, String purchaseLink, int totalPage, String image) {
+        this.Title = Title;
+        this.Author = Author;
+        this.ISBN = ISBN;
+        this.Description = Description;
+        this.purchaseLink = purchaseLink;
+        this.totalPage = totalPage;
+        this.image = image;
+    }
 }

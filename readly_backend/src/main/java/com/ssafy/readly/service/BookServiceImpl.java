@@ -36,8 +36,6 @@ public class BookServiceImpl implements BookService {
                     .totalPage(bookRequest.getTotalPage())
                     .image(bookRequest.getImage())
                     .build();
-            //System.out.println(book.toString());
-            //System.out.println("-------------------------");
             books.add(book);
         }
         bookRepositoy.saveAll(books);
