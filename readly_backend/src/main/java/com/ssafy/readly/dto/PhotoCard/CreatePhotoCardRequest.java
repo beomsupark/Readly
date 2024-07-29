@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class CreatePhotoCardRequest {
-    String ImageLink;
-    int photoCard_id;
+    private String imageLink;
+    private int photoCardId;
 }

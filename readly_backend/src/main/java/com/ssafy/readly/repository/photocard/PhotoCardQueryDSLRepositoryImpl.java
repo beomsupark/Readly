@@ -4,48 +4,48 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardRequest;
 import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardResponse;
-import com.ssafy.readly.entity.Member;
 import com.ssafy.readly.entity.PhotoCard;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.expression.spel.ast.Projection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 
-import static com.ssafy.readly.entity.QMember.member;
-import static com.ssafy.readly.entity.QBook.book;
 import static com.ssafy.readly.entity.QPhotoCard.photoCard;
 
 @Repository
 @RequiredArgsConstructor
-public class PhotoCardRepositoryImpl implements PhotoCardRepository{
+public class PhotoCardQueryDSLRepositoryImpl implements PhotoCardQueryDSLRepository{
 
+    private static final Logger log = LoggerFactory.getLogger(PhotoCardQueryDSLRepositoryImpl.class);
     private final EntityManager em;
     private final JPAQueryFactory query;
 
     @Override
-    public void addPhotoCard(PhotoCard photoCard) throws Exception {
+    public int addPhotoCard(PhotoCard photoCard) throws Exception {
         em.persist(photoCard);
+        return photoCard.getId();
     }
 
     @Override
     public CreatePhotoCardResponse getPhotoCard(int id) {
         // 쿼리 dsl
-        List<CreatePhotoCardResponse> result = query.select(Projections.bean(CreatePhotoCardResponse.class
+        List<CreatePhotoCardResponse> result = query.select(Projections.constructor(CreatePhotoCardResponse.class
                         ,photoCard.id
                         ,photoCard.text
-                        ,member.id
-                        ,book.title
-                        ,book.author
+                        ,photoCard.member.loginId
+                        ,photoCard.book.title
+                        ,photoCard.book.author
                         ,photoCard.photoCardImage
                         ,photoCard.createdDate))
                 .from(photoCard)
-                .join(photoCard.member, member)
-                .join(photoCard.book, book)
+                .join(photoCard.member)
+                .join(photoCard.book)
                 .where(photoCard.id.eq(id))
                 .fetch();
         CreatePhotoCardResponse response = Optional.of(result.get(0)).orElseThrow(NoResultException::new);
@@ -58,7 +58,8 @@ public class PhotoCardRepositoryImpl implements PhotoCardRepository{
         return query
                 .update(photoCard)
                 .set(photoCard.photoCardImage, request.getImageLink())
-                .where(photoCard.id.eq(request.getPhotoCard_id()))
+                .where(photoCard.id.eq(request.getPhotoCardId()))
                 .execute();
     }
+
 }

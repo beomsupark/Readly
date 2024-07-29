@@ -20,24 +20,24 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepositoryImpl memberRepository;
 
-//    @Transactional
-//    @Override
-//    public void singnUp(SignUpMemberRequest signUpMember) {
-//        checkDuplicateId(signUpMember.getLoginId());
-//
-//        Member member = new Member(
-//                signUpMember.getLoginId(),
-//                signUpMember.getLoginPwd(),
-//                signUpMember.getNickname(),
-//                signUpMember.getMemberName(),
-//                signUpMember.getPhoneNumber(),
-//                signUpMember.getEmail(),
-//                signUpMember.getBirthday(),
-//                signUpMember.getGender(),
-//                signUpMember.getSocial());
-//
-//        memberRepository.signUp(member);
-//    }
+    @Transactional
+    @Override
+    public void singnUp(SignUpMemberRequest signUpMember) {
+        checkDuplicateId(signUpMember.getLoginId());
+
+        Member member = new Member(
+                signUpMember.getLoginId(),
+                signUpMember.getLoginPwd(),
+                signUpMember.getNickname(),
+                signUpMember.getMemberName(),
+                signUpMember.getPhoneNumber(),
+                signUpMember.getEmail(),
+                signUpMember.getBirthday(),
+                signUpMember.getGender(),
+                signUpMember.getSocial(),
+                signUpMember.getText());
+        memberRepository.signUp(member);
+    }
 
     @Override
     public void login(LoginMemberRequest longinMember) throws AuthenticationException {
