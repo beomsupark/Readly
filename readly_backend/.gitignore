@@ -38,3 +38,6 @@ out/
 
 ### KEY VALUE ###
 config.properties
+
+### yml ###
+application.yml
