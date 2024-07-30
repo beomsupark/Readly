@@ -1,6 +1,16 @@
-import { redirect } from "react-router-dom"
+import { useNavigate } from 'react-router-dom';
 
-export function action() {
-  localStorage.removeItem('token')
-  return redirect('/')
+function LogoutButton() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
+
+  return (
+    <button onClick={handleLogout}>로그아웃</button>
+  );
 }
+
+export default LogoutButton;

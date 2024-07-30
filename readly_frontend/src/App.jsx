@@ -52,6 +52,7 @@ function App() {
             <Route path="/community" element={<Community />} />
             <Route path="/makecommunity" element={<MakeCommunity />} />
             <Route path="/activity" element={<Activity />} />
+            <Route path="/activity/:groupId" element={<Activity />} />
             {/* 다른 라우트들... */}
           </Routes>
         </main>
