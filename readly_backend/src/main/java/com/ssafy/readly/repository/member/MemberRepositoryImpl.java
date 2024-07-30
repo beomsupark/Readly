@@ -5,12 +5,14 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.readly.dto.member.FindMemberRequest;
 import com.ssafy.readly.dto.member.LoginMemberRequest;
 import com.ssafy.readly.dto.member.LoginMemberResponse;
+import com.ssafy.readly.dto.member.UpdateMemberRequest;
 import com.ssafy.readly.entity.Member;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+import static com.querydsl.core.types.ExpressionUtils.count;
 import static com.ssafy.readly.entity.QMember.member;
 
 @Repository
@@ -46,13 +48,31 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public Optional<Member> findByLoginId(String loginId) {
-        Member findMember = queryFactory
-                .selectFrom(member)
+    public Optional<Member> findById(int id) {
+        Member findMember = em.find(Member.class, id);
+        return Optional.ofNullable(findMember);
+    }
+
+    @Override
+    public Long findByLoginId(String loginId) {
+        return queryFactory
+                .select(count(member.id))
+                .from(member)
                 .where(member.loginId.eq(loginId))
                 .fetchOne();
+    }
 
-        return Optional.ofNullable(findMember);
+    @Override
+    public void updateMember(UpdateMemberRequest updateMember) {
+        Member findMember = em.find(Member.class, updateMember.getId());
+        findMember.changeMember(
+                updateMember.getNickname(),
+                updateMember.getNickname(),
+                updateMember.getPhoneNumber(),
+                updateMember.getEmail(),
+                updateMember.getBirthDate(),
+                updateMember.getGender(),
+                updateMember.getIntroduction());
     }
 
     @Override

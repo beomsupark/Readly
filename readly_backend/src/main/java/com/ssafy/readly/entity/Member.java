@@ -37,6 +37,7 @@ public class Member {
     private Gender gender;
     @Enumerated(value = STRING)
     private Social social;
+    private String introduction;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<ReadBook> readBooks = new ArrayList<>();
@@ -61,5 +62,15 @@ public class Member {
         this.birthday = birthday;
         this.gender = gender;
         this.social = social;
+    }
+
+    public void changeMember(String nickname, String memberName, String phoneNumber, String email, LocalDate birthday, Gender gender, String introduction) {
+        this.nickname = nickname;
+        this.memberName = memberName;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.birthday = birthday;
+        this.gender = gender;
+        this.introduction = introduction;
     }
 }
