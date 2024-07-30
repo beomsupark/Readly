@@ -1,7 +1,11 @@
+# Use an official OpenJDK runtime as a parent image
 FROM openjdk:17.0.1-jdk
 
-ARG JAR_FILE=build/libs/*.jar
+# Set the working directory in the container
+WORKDIR /app
 
-COPY ${JAR_FILE} app.jar
+# Copy the JAR file to the container
+COPY build/libs/*.jar app.jar
 
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+# Run the JAR file
+ENTRYPOINT ["java", "-jar", "app.jar"]
