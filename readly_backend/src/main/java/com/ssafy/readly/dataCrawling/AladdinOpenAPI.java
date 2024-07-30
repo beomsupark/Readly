@@ -109,6 +109,7 @@ public class AladdinOpenAPI {
         hm.put("ttbkey", "ttbbeomsu46390952001");
         hm.put("ItemId", searchISBN);
         hm.put("ItemIdType", "ISBN13");
+        hm.put("Cover", "Big ");
         hm.put("SearchTarget", "Book");
         hm.put("output", "xml");
         hm.put("Version", "20131101");
