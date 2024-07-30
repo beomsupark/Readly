@@ -32,7 +32,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     @Override
     public Optional<LoginMemberResponse> login(LoginMemberRequest longinMember) {
         LoginMemberResponse loginMember = queryFactory.select(Projections.constructor(LoginMemberResponse.class,
-                        member.id, member.nickname))
+                        member.id, member.nickname, member.point, member.introduction))
                 .from(member)
                 .where(member.loginId.eq(longinMember.getLoginId()),
                         member.loginPwd.eq(longinMember.getLoginPwd())).fetchOne();
