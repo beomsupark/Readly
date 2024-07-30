@@ -8,22 +8,24 @@ const useBookStore = create((set) => ({
   error: null,
 
   fetchBooks: async () => {
-    set({ loading: true });
+    set({ loading: true, error: null });
     try {
       const books = await fetchBooks();
+      console.log("Fetched books:", books);
       set({ books, loading: false });
     } catch (error) {
-      set({ error, loading: false });
+      console.error("Error in fetchBooks:", error);
+      set({ error: error.message || 'Failed to fetch books', loading: false });
     }
   },
 
   searchBooks: async (title) => {
-    set({ loading: true });
+    set({ loading: true, error: null });
     try {
       const searchResults = await searchBooksByTitle(title);
       set({ searchResults, loading: false });
     } catch (error) {
-      set({ error, loading: false });
+      set({ error: error.message || 'Failed to search books', loading: false });
     }
   },
 }));

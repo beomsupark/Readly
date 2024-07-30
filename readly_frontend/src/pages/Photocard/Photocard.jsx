@@ -46,7 +46,7 @@ export default function Photocard({ photocards }) {
               onClick={handleMorePhotocards}
               className="text-gray-500 hover:text-gray-700"
             >
-              <span className="text-sm text-[#868686] -mt-64 font-bold">
+              <span className="text-sm text-[#868686] -mt-68 font-bold z-100">
                 더 많은 포토카드를 보고싶으신가요?
               </span>
             </button>
