@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import searchIcon from '../assets/header/search.png';
 import infoIcon from '../assets/header/info_img.png';
 import BookModal from './BookModal';
 import cloudImg from '../assets/header/cloudImg.png';
+import useBookStore from "../store/bookStore";
 
 const customModalStyles = {
   overlay: {
@@ -22,34 +23,19 @@ const customModalStyles = {
   },
 };
 
-const fetchBooks = async (query) => {
-  return [
-    { id: 1, title: "해리 포터와 마법사의 돌" },
-    { id: 2, title: "해리 포터와 비밀의 방" },
-    { id: 3, title: "해리 포터와 아즈카반의 죄수" },
-    { id: 4, title: "해리 포터와 불의 잔" },
-    { id: 5, title: "해리 포터와 불사조 기사단" },
-  ].filter(book => book.title.toLowerCase().includes(query.toLowerCase())).slice(0, 5);
-};
-
-const fetchBookDetails = async (id) => {
-  return {
-    id,
-    title: `책 제목 ${id}`,
-    author: `작가 ${id}`,
-    description: `책 ${id}에 대한 설명입니다.`,
-    cover: 'https://via.placeholder.com/150',
-    tags: ['태그1', '태그2', '태그3'],
-  };
-};
-
 export default function CustomHeader() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [selectedBook, setSelectedBook] = useState(null);
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedBook, setSelectedBook] = useState(null);
   const modalRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const { books, searchResults, loading, error, fetchBooks, searchBooks } = useBookStore();
+
+  useEffect(() => {
+    fetchBooks().catch((err) => console.error("Failed to fetch books:", err));
+  }, [fetchBooks]);
 
   const openModal = (e) => {
     e.preventDefault();
@@ -59,7 +45,6 @@ export default function CustomHeader() {
   const closeModal = () => {
     setIsModalOpen(false);
     setSearchQuery("");
-    setSuggestions([]);
   };
 
   useEffect(() => {
@@ -71,6 +56,9 @@ export default function CustomHeader() {
 
     if (isModalOpen) {
       document.addEventListener('mousedown', handleClickOutside);
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
     }
 
     return () => {
@@ -78,44 +66,23 @@ export default function CustomHeader() {
     };
   }, [isModalOpen]);
 
-  useEffect(() => {
-    const getSuggestions = async () => {
-      if (searchQuery.length > 0) {
-        const results = await fetchBooks(searchQuery);
-        setSuggestions(results);
-      } else {
-        setSuggestions([]);
-      }
-    };
-
-    getSuggestions();
-  }, [searchQuery]);
-
-  const handleInputChange = (e) => {
+  const handleInputChange = useCallback((e) => {
     setSearchQuery(e.target.value);
-  };
+    if (e.target.value) {
+      searchBooks(e.target.value);
+    }
+  }, [searchBooks]);
 
-  const handleSuggestionClick = async (suggestion) => {
-    setSearchQuery(suggestion.title);
-    setSuggestions([]);
-    const bookDetails = await fetchBookDetails(suggestion.id);
-    setSelectedBook(bookDetails);
+  const handleSearch = useCallback((e) => {
+    e.preventDefault();
+    searchBooks(searchQuery);
+  }, [searchQuery, searchBooks]);
+
+  const handleSuggestionClick = useCallback((book) => {
+    setSelectedBook(book);
     setIsBookModalOpen(true);
     closeModal();
-  };
-
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    if (searchQuery) {
-      const results = await fetchBooks(searchQuery);
-      if (results.length > 0) {
-        const bookDetails = await fetchBookDetails(results[0].id);
-        setSelectedBook(bookDetails);
-        setIsBookModalOpen(true);
-        closeModal();
-      }
-    }
-  };
+  }, []);
 
   return (
     <header className="flex justify-between items-center py-1 px-3 ml-32 bg-white">
@@ -150,6 +117,7 @@ export default function CustomHeader() {
               <div className="mb-4 relative ml-20 mr-20">
                 <form onSubmit={handleSearch} className="relative">
                   <input
+                    ref={inputRef}
                     type="text"
                     placeholder="검색할 책을 입력하세요"
                     className="w-full px-3 py-2 pr-8 text-sm rounded-full border"
@@ -160,22 +128,17 @@ export default function CustomHeader() {
                     <img src={searchIcon} alt="검색" className="w-5 h-5" />
                   </button>
                 </form>
-                {suggestions.length > 0 && (
+                {searchResults.length > 0 && (
                   <ul className="bg-[#F5F5F5] border rounded-lg shadow-lg mt-1 absolute z-10 w-full">
-                    {suggestions.map((suggestion) => (
-                      <>
-                        <li
-                          key={suggestion.id}
-                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                          onClick={() => handleSuggestionClick(suggestion)}
-                        >
-                          {suggestion.title}
-                        </li>
-                        <div className="w-full pl-4 pr-4">
-                          <div className="border border-custom-border w-full"></div>
-                        </div>
-
-                      </>
+                    {searchResults.map((book) => (
+                      <li
+                        key={book.id}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => handleSuggestionClick(book)}
+                      >
+                        {book.title}
+                        <div className="border-b border-custom-border w-full"></div>
+                      </li>
                     ))}
                   </ul>
                 )}
@@ -199,7 +162,7 @@ export default function CustomHeader() {
         searchQuery={searchQuery}
         handleInputChange={handleInputChange}
         handleSearch={handleSearch}
-        suggestions={suggestions}
+        suggestions={searchResults}
         handleSuggestionClick={handleSuggestionClick}
       />
     </header>
