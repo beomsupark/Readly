@@ -24,22 +24,22 @@ public class JWTUtil {
     @Value("${jwt.refresh-token.expirationtime}")
     private long refreshTokenExpirationTime;
 
-    public String createAccessToken(int memberId) {
-        return create(memberId, "access-token", accessTokenExpirationTime);
+    public String createAccessToken(int id) {
+        return create(id, "access-token", accessTokenExpirationTime);
     }
 
-    public String createRefreshToken(int memberId) {
-        return create(memberId, "access-token", accessTokenExpirationTime);
+    public String createRefreshToken(int id) {
+        return create(id, "access-token", accessTokenExpirationTime);
     }
 
-    private String create(int memberId, String subject, long expirationTime) {
+    private String create(int id, String subject, long expirationTime) {
         Claims claims = Jwts.claims()
                 .setSubject(subject)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime));
 
         if(subject.equals("access-token")) {
-            claims.put("memberId", memberId);
+            claims.put("id", id);
         }
 
         String jwt = Jwts.builder()
@@ -68,7 +68,7 @@ public class JWTUtil {
         }
     }
 
-    public String getLoginId(String authorization) {
+    public String getMemberId(String authorization) {
         Jws<Claims> claims = null;
         try {
             claims = Jwts.parser().setSigningKey(this.generateKey()).parseClaimsJws(authorization);
@@ -76,6 +76,6 @@ public class JWTUtil {
             throw new UnAuthorizedException();
         }
         Map<String, Object> value = claims.getBody();
-        return (String) value.get("memberId");
+        return (String) value.get("id");
     }
 }

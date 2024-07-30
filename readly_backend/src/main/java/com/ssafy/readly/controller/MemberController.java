@@ -1,17 +1,15 @@
 package com.ssafy.readly.controller;
 
-import com.ssafy.readly.dto.member.LoginMemberRequest;
-import com.ssafy.readly.dto.member.LoginMemberResponse;
-import com.ssafy.readly.dto.member.SignUpMemberRequest;
+import com.ssafy.readly.dto.member.*;
 import com.ssafy.readly.service.member.MemberServiceImpl;
 import com.ssafy.readly.util.JWTUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.security.sasl.AuthenticationException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,12 +56,90 @@ public class MemberController {
             LoginMemberResponse loginMemberResponse = memberService.login(loginMember);
             if(loginMemberResponse != null) {
                 String accessToken = jwtUtil.createAccessToken(loginMemberResponse.getId());
+                String refreshToken = jwtUtil.createRefreshToken(loginMemberResponse.getId());
+
+                memberService.saveRefreshToken(loginMemberResponse.getId(), refreshToken);
+
+                responseMap.put("accessToken", accessToken);
+                responseMap.put("refreshToken", refreshToken);
+                responseMap.put("loginInfo", loginMemberResponse);
+
+                status = HttpStatus.CREATED;
+            } else {
+                responseMap.put("errorMessage", "아이디 또는 비밀번호를 확인해주세요.");
+                status = HttpStatus.UNAUTHORIZED;
             }
-            status = HttpStatus.OK;
-        } catch (AuthenticationException a) {
-            responseMap.put("errorMessage", a.getMessage());
+        } catch (Exception e) {
+            responseMap.put("errorMessage", e.getMessage());
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
         return new ResponseEntity<Map<String, Object>>(responseMap, status);
     }
+
+    @GetMapping("/member/{id}")
+    public ResponseEntity<Map<String, Object>> getMemberInfo(
+            @PathVariable("id") int id, HttpServletRequest request) {
+        Map<String, Object> responseMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        if(jwtUtil.checkToken(request.getHeader("Authorization"))) {
+            try {
+                MemberResponse memberResponse = memberService.getMember(id);
+                responseMap.put("memberInfo", memberResponse);
+                status = HttpStatus.OK;
+            } catch (Exception e) {
+                responseMap.put("errorMessage", e.getMessage());
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+        } else {
+            status = HttpStatus.UNAUTHORIZED;
+        }
+        return new ResponseEntity<Map<String, Object>>(responseMap, status);
+    }
+
+    @DeleteMapping("/member/logout/{id}")
+    public ResponseEntity<Map<String, Object>> logout(@PathVariable("id") int id) {
+        Map<String, Object> responseMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        try {
+            memberService.deleteRefreshToken(id);
+            status = HttpStatus.OK;
+        } catch (Exception e) {
+            responseMap.put("errorMessage", e.getMessage());
+        }
+        return new ResponseEntity<Map<String, Object>>(responseMap, status);
+    }
+
+    @GetMapping("/member/refresh/{id}")
+    public ResponseEntity<Map<String, Object>> refreshToken(
+            @PathVariable("id") int id, HttpServletRequest request) {
+        Map<String, Object> responseMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        String token = request.getHeader("refreshToken");
+        if(jwtUtil.checkToken(token)) {
+            if (token.equals(memberService.getRefreshToken(id))) {
+                String accessToken = jwtUtil.createAccessToken(id);
+                responseMap.put("accessToken", accessToken);
+                status = HttpStatus.CREATED;
+            }
+        } else {
+            status = HttpStatus.UNAUTHORIZED;
+        }
+
+        return new ResponseEntity<Map<String, Object>>(responseMap, status);
+    }
+
+    @PatchMapping("/member")
+    public ResponseEntity<Map<String, Object>> updateMember(@RequestBody UpdateMemberRequest updateMemberRequest) {
+        Map<String, Object> responseMap = new HashMap<>();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        try {
+            memberService.updateMember(updateMemberRequest);
+            status = HttpStatus.OK;
+        } catch (Exception e) {
+            responseMap.put("errorMessage", e.getMessage());
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<Map<String, Object>>(responseMap, status);
+    }
+
 }
