@@ -9,8 +9,7 @@ export default function Home() {
   const [selectedBook, setSelectedBook] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { books, searchResults, loading, error, fetchBooks, searchBooks } =
-    useBookStore();
+  const { books, searchResults, fetchBooks, searchBooks } = useBookStore();
 
   useEffect(() => {
     fetchBooks().catch((err) => console.error("Failed to fetch books:", err));

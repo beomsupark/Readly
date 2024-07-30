@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import Modal from "react-modal";
 import GoButton from "../components/GoButton/GoButton.jsx";
 import aladinLogo from "../assets/onboard/aladinLogo.png";
@@ -32,8 +32,15 @@ export default function BookModal({
   handleSearch,
   suggestions,
   handleSuggestionClick,
+  clearSearch,
 }) {
   const modalRef = useRef(null);
+  const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  useEffect(() => {
+    setLocalSearchQuery(searchQuery);
+  }, [searchQuery]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -51,6 +58,19 @@ export default function BookModal({
     };
   }, [isOpen, onRequestClose]);
 
+  const handleLocalInputChange = (e) => {
+    const newValue = e.target.value;
+    setLocalSearchQuery(newValue);
+    handleInputChange(e);
+    setShowSuggestions(newValue.trim() !== "");
+  };
+
+  const handleLocalSuggestionClick = (suggestion) => {
+    handleSuggestionClick(suggestion);
+    setLocalSearchQuery("");
+    setShowSuggestions(false);
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -60,11 +80,13 @@ export default function BookModal({
     >
       <div ref={modalRef} className="flex flex-col h-full">
         <SearchForm
-          searchQuery={searchQuery}
-          handleInputChange={handleInputChange}
+          searchQuery={localSearchQuery}
+          handleInputChange={handleLocalInputChange}
           handleSearch={handleSearch}
           suggestions={suggestions}
-          handleSuggestionClick={handleSuggestionClick}
+          handleSuggestionClick={handleLocalSuggestionClick}
+          showSuggestions={showSuggestions}
+          setShowSuggestions={setShowSuggestions}
         />
 
         {book && (
@@ -158,7 +180,10 @@ export default function BookModal({
         )}
 
         <button
-          onClick={onRequestClose}
+          onClick={() => {
+            onRequestClose();
+            clearSearch();
+          }}
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
         >
           <span className="text-2xl">&times;</span>
@@ -167,13 +192,14 @@ export default function BookModal({
     </Modal>
   );
 }
-
 function SearchForm({
   searchQuery,
   handleInputChange,
   handleSearch,
   suggestions,
   handleSuggestionClick,
+  showSuggestions,
+  setShowSuggestions,
 }) {
   return (
     <div className="mb-4 relative ml-20 mr-20">
@@ -184,6 +210,7 @@ function SearchForm({
           className="w-full px-3 py-2 pr-8 text-sm rounded-full border"
           value={searchQuery}
           onChange={handleInputChange}
+          onFocus={() => setShowSuggestions(true)}
         />
         <button
           type="submit"
@@ -192,21 +219,22 @@ function SearchForm({
           <img src={searchIcon} alt="검색" className="w-5 h-5" />
         </button>
       </form>
-      {suggestions.length > 0 && (
+      {showSuggestions && searchQuery.trim() !== "" && suggestions.length > 0 && (
         <ul className="bg-[#F5F5F5] border rounded-lg shadow-lg mt-1 absolute z-10 w-full">
           {suggestions.map((suggestion) => (
-            <>
-              <li
-                key={suggestion.id}
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                onClick={() => handleSuggestionClick(suggestion)}
-              >
-                {suggestion.title}
-              </li>
-              <div className="w-full pl-4 pr-4">
-                <div className="border border-custom-border w-full"></div>
-              </div>
-            </>
+            <li
+              key={suggestion.id}
+              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              onClick={() => {
+                handleSuggestionClick(suggestion);
+                setShowSuggestions(false);
+              }}
+            >
+              {/* 작가이름까지 같이 출력 */}
+              {/* {`${suggestion.title} - ${suggestion.author}`} */}
+              {suggestion.title}
+              <div className="border-b border-custom-border w-full"></div>
+            </li>
           ))}
         </ul>
       )}
