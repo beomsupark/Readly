@@ -17,7 +17,9 @@ export default function Activity() {
 
   return (
     <>
+    <div className="-ml-[7rem]">
       <ActivityHeader />
+    </div>
       <div className="flex space-x-6 mt-3">
         {tabs.map((tab) => (
           <button

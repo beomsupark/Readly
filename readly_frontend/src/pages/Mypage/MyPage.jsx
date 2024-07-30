@@ -1,25 +1,32 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import levelIcon from "../../assets/level/lv1.png";
 import catCoin from "../../assets/level/cat_coin.png";
 import CardImg1 from "../../assets/onboard/card1_front.png";
+import CardImg2 from "../../assets/onboard/card2.png";
+import CardImg3 from "../../assets/onboard/card3.png";
+import CardImg4 from "../../assets/onboard/card4.png";
 import CardImg1_back from "../../assets/onboard/card1_back.png";
 import ReviewImg1 from "../../assets/onboard/review1.png";
+import ReviewImg2 from "../../assets/onboard/review2.png";
+import ReviewImg3 from "../../assets/onboard/review3.png";
+import ReviewImg4 from "../../assets/onboard/review4.png";
 import MypageProgress from "./MyPageProgress";
 import MypageBookshelf from "./MyPageBookshelf";
 import MypageFollow from "./MyPageFollow";
 import TimeCat from "../../assets/onboard/time_cat.png";
-import Timecapsule from "./Timecapsule"
+import TimecapsulePeriod from "../Timecapsule/TimecapsulePeriod";
 import GoButton from "../../components/GoButton/GoButton";
-
+import logoutIcon from "../../assets/header/logout.png"; // Renamed to avoid conflict with logout function
 
 export default function MyPage() {
   const [activeLink, setActiveLink] = useState("progress"); // Default active link
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleLinkClick = (link) => {
     setActiveLink(link);
   };
-
-  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const openModal = () => {
     setModalIsOpen(true);
@@ -27,6 +34,10 @@ export default function MyPage() {
 
   const closeModal = () => {
     setModalIsOpen(false);
+  };
+
+  const handleLogout = () => {
+    navigate('/logout');
   };
 
   const Myheader = () => (
@@ -45,26 +56,32 @@ export default function MyPage() {
         <p className="text-base">한줄소개</p>
       </div>
       <div className="flex-1 flex flex-col justify-end items-end mr-6">
-        <div className="flex items-center">
-          <span className="text-lg">포인트</span>
-          <img className="w-6 h-6 mr-1" src={catCoin} alt="coin" />
+        <div className="flex-col items-center">
+          <div className="flex">
+            <span className="text-lg">포인트</span>
+            <img className="w-6 h-6 mr-1" src={catCoin} alt="coin" />
+          </div>
+          <div className="flex" onClick={handleLogout}>
+            <span className="text-lg">로그아웃</span>
+            <img className="w-6 h-6 mr-1" src={logoutIcon} alt="logout" />
+          </div>
         </div>
       </div>
     </header>
   );
 
   const myPhotocards = [
-    { id: 1, title: "책 제목 1", cover: CardImg1, back: CardImg1_back },
-    { id: 2, title: "책 제목 2", cover: CardImg1, back: CardImg1_back },
-    { id: 3, title: "책 제목 3", cover: CardImg1, back: CardImg1_back },
-    { id: 4, title: "책 제목 4", cover: CardImg1, back: CardImg1_back },
+    { id: 1, title: "책 제목 1", cover: CardImg1, back: CardImg1_back, create: "2024-07-30" },
+    { id: 2, title: "책 제목 2", cover: CardImg2, back: CardImg1_back, create: "2024-07-29" },
+    { id: 3, title: "책 제목 3", cover: CardImg3, back: CardImg1_back, create: "2024-06-30" },
+    { id: 4, title: "책 제목 4", cover: CardImg4, back: CardImg1_back, create: "2024-06-29" },
   ];
 
   const myReviews = [
-    { id: 1, title: "책 제목 1", cover: ReviewImg1 },
-    { id: 2, title: "책 제목 2", cover: ReviewImg1 },
-    { id: 3, title: "책 제목 3", cover: ReviewImg1 },
-    { id: 4, title: "책 제목 4", cover: ReviewImg1 },
+    { id: 1, title: "책 제목 1", cover: ReviewImg1, create: "2024-07-30" },
+    { id: 2, title: "책 제목 2", cover: ReviewImg2, create: "2024-07-29" },
+    { id: 3, title: "책 제목 3", cover: ReviewImg3, create: "2024-06-30" },
+    { id: 4, title: "책 제목 4", cover: ReviewImg4, create: "2024-06-29" },
   ];
 
   return (
@@ -161,9 +178,11 @@ export default function MyPage() {
         )}
       </div>
 
-      <Timecapsule
+      <TimecapsulePeriod
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
+        photocard={myPhotocards}
+        review={myReviews}
       />
     </>
   );
