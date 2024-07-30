@@ -18,7 +18,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
-@Table(name = "small_groups")
+@Table(name = "groups")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Group {
 
@@ -36,16 +36,8 @@ public class Group {
     private IsInviting isInviting;
     @Column(name = "max_participants", nullable = false)
     private int maxParticipants;
-
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
-    private List<BadDate> badDates = new ArrayList<>();
-
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
-    private List<MeetingDate> meetingDates = new ArrayList<>();
-
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<GroupTag> groupTags = new HashSet<>();
-
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
     private List<Proceeding> proceedings = new ArrayList<>();
 

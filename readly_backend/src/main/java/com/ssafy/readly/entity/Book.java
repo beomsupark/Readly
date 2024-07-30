@@ -10,7 +10,7 @@ import static lombok.AccessLevel.*;
 
 @Entity
 @Getter
-@Table(name="Books")
+@Table(name="books")
 @NoArgsConstructor(access = PROTECTED)
 public class Book {
 
@@ -19,7 +19,9 @@ public class Book {
     private int id;
     private String title;
     private String author;
+    @Column(name = "ISBN")
     private String isbn;
+    @Column(name = "description")
     private String detail;
     private String purchaseLink;
     private int totalPage;
