@@ -17,9 +17,10 @@ public class Book {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private int id;
+
     private String title;
     private String author;
-    @Column(name = "ISBN")
+    @Column(name = "isbn")
     private String isbn;
     @Column(name = "description")
     private String detail;
