@@ -20,6 +20,7 @@ function App() {
   const location = useLocation();
   const isFullScreenPage = ['/login', '/onboard'].includes(location.pathname);
   const notSearchPage = ['/login', '/onboard', '/mypage', '/edit', '/activity'].includes(location.pathname);
+  const showCloud = location.pathname !== '/onboard';
 
   useEffect(() => {
     if (location.pathname === '/onboard' || location.pathname === '/community' || location.pathname === '/mypage') {
@@ -54,13 +55,15 @@ function App() {
             {/* 다른 라우트들... */}
           </Routes>
         </main>
-        <div className="fixed right-0 bottom-0 overflow-hidden pointer-events-none z-0">
-          <img
-            src={cloudImg}
-            alt="Background cloud"
-            className="w-48 h-48 object-cover translate-x-1/6 translate-y-1/3"
-          />
-        </div>
+        {showCloud && (
+          <div className="fixed right-0 bottom-0 overflow-hidden pointer-events-none z-0">
+            <img
+              src={cloudImg}
+              alt="Background cloud"
+              className="w-48 h-48 object-cover translate-x-1/6 translate-y-1/3"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
