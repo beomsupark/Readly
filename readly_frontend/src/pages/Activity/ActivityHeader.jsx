@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import CustomHeader from "../../components/CustomHeader";
 
 const groupList = [
@@ -9,6 +10,7 @@ const groupList = [
 export default function ActivityHeader() {
   const [isGroupListOpen, setIsGroupListOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState(groupList[0]);
+  const navigate = useNavigate();
 
   const toggleGroupList = () => {
     setIsGroupListOpen(!isGroupListOpen);
@@ -16,7 +18,8 @@ export default function ActivityHeader() {
 
   const selectGroup = (group) => {
     setSelectedGroup(group);
-    setIsGroupListOpen(false); // Close group list modal
+    setIsGroupListOpen(false);
+    navigate(`/activity/${group.id}`);
   };
 
   return (
@@ -30,7 +33,7 @@ export default function ActivityHeader() {
       </h2>
 
       {isGroupListOpen && (
-        <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 bg-gray-200 rounded-lg shadow-lg z-20">
+        <div className="absolute top-full left-[20rem] transform -translate-x-1/2 mt-2 bg-gray-200 rounded-lg shadow-lg z-20">
           <ul className="p-2">
             {groupList.map((group) => (
               <li
@@ -45,6 +48,5 @@ export default function ActivityHeader() {
         </div>
       )}
     </div>
-
   )
 }
