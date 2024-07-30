@@ -12,8 +12,12 @@ export default function Home() {
   const { books, searchResults, loading, error, fetchBooks, searchBooks } = useBookStore();
 
   useEffect(() => {
-    fetchBooks();
-  }, [fetchBooks]);
+    fetchBooks().catch(err => console.error("Failed to fetch books:", err));
+  }, []);
+
+  useEffect(() => {
+    console.log("Current books state:", books);
+  }, [books]);
 
   const openModal = (book) => {
     setSelectedBook(book);
@@ -43,8 +47,9 @@ export default function Home() {
     setSearchQuery("");
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  // if (loading) return <div>Loading...</div>;
+  // if (error) return <div>Error: {error.message || 'An unknown error occurred'}</div>;
+
 
   return (
     <>
