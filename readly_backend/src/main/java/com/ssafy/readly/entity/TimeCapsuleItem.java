@@ -23,15 +23,15 @@ public class TimeCapsuleItem {
     private ItemType itemType;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name="timeCapsule_id")
+    @JoinColumn(name="timecapsule_id")
     private TimeCapsule timeCapsule;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name="photoCard_id")
+    @JoinColumn(name="photocard_id")
     private PhotoCard photoCard;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name="review_id")
+    @JoinColumn(name="reviews_id")
     private Review review;
 
     /* 연관 관계 편의 메소드 */
