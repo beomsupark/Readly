@@ -37,7 +37,7 @@ function App() {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
-      {!notSearchPage(location.pathname) && <CustomHeader />}
+      {!notSearchPage && <CustomHeader />}
       <div className="flex relative min-h-screen">
         {!isFullScreenPage && <CustomSidebar />}
         <main className={`flex-1 ${!isFullScreenPage ? 'ml-28' : ''}`}>
@@ -47,7 +47,6 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/sharedboard" element={<SharedBoard />} />
             <Route path="/mypage" element={<MyPage />} />
-            <Route path="/mypage/:userId" element={<MyPage />} />
             <Route path="/makecard" element={<MakeCard />} />
             <Route path="/edit" element={<EditProfile />} />
             <Route path="/ranking" element={<Ranking />} />

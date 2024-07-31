@@ -2,11 +2,12 @@ import { useState } from "react";
 import BookImg1 from "../../assets/onboard/book.jpg";
 import ProgressBar from "../../components/ProgressBar/ProgressBar";
 import GoButton from "../../components/GoButton/GoButton";
+import CreateReview from "../../components/Review/CreateReview"; // Import the CreateReview component
 
 const groupBooks = [
   {
     id: 1,
-    title: "책 제목 1",
+    title: "책 제목 3",
     cover: BookImg1,
     totalPages: 400,
   },
@@ -28,6 +29,9 @@ const initialGroup = {
 export default function ActivityProgress() {
   const [books, setBooks] = useState(groupBooks);
   const [group, setGroup] = useState(initialGroup);
+  const [reviewInput, setReviewInput] = useState("");
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedBook, setSelectedBook] = useState(null);
 
   const updateCurrentPage = (memberId, newPage) => {
     setGroup((prevGroup) => ({
@@ -38,9 +42,43 @@ export default function ActivityProgress() {
     }));
   };
 
+  const handleReviewInputChange = (e) => {
+    setReviewInput(e.target.value);
+  };
+
+  const openModal = (book) => {
+    setSelectedBook(book);
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedBook(null);
+    setModalIsOpen(false);
+  };
+
+  const handleCreateReview = () => {
+    if (selectedBook && reviewInput.trim()) {
+      // Here you might want to handle the review submission logic
+      console.log("Review submitted:", reviewInput);
+
+      // You can also update the book's review in the state if needed
+      setBooks((prevBooks) =>
+        prevBooks.map((book) =>
+          book.id === selectedBook.id ? { ...book, review: reviewInput } : book
+        )
+      );
+
+      // Clear the review input and close the modal
+      setReviewInput("");
+      closeModal();
+    }
+  };
+
   return (
     <>
-      <h2 className="font-bold text-xl mb-1 mt-5">현재 <span className="text-custom-highlight">읽고 있는</span> 책</h2>
+      <h2 className="font-bold text-xl mb-1 mt-5">
+        현재 <span className="text-custom-highlight">읽고 있는</span> 책
+      </h2>
       <div className="container mx-auto p-4">
         {books.length === 0 ? (
           <div className="bg-white p-4 rounded-lg mb-4 flex-cols z-100 w-3/5">
@@ -88,7 +126,7 @@ export default function ActivityProgress() {
         )}
       </div>
 
-      <div>
+      <div className="mt-4">
         <h2 className="font-bold mb-2 text-xl">
           <span className="text-custom-highlight">책 </span>에 대한{" "}
           <span className="text-custom-highlight">한줄평</span>을 남기고
@@ -99,10 +137,22 @@ export default function ActivityProgress() {
             type="text"
             className="w-[30rem] mt-1 p-2 border rounded-lg"
             placeholder="한줄평을 입력해주세요"
+            value={reviewInput}
+            onChange={handleReviewInputChange}
           />
-          <GoButton text="생성" />
+          <GoButton text="생성" onClick={() => openModal(books[0])} /> {/* Example: open modal for the first book */}
         </div>
       </div>
+
+      {selectedBook && (
+        <CreateReview
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          book={selectedBook}
+          reviewText={reviewInput}
+          onReviewSubmit={handleCreateReview}
+        />
+      )}
     </>
   );
 }
