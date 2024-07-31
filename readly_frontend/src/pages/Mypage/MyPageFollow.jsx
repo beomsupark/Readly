@@ -2,21 +2,21 @@ import { useState } from "react";
 import LevelIcon1 from "../../assets/level/lv1.png";
 import LevelIcon2 from "../../assets/level/lv2.png";
 import InfoIcon from "../../assets/header/info_img.png";
-import FollowList from "./FollowModal";
-import FollowUserPageModal from "./FollowUserPageModal";
+// import FollowList from "./FollowModal";
+// import FollowUserPageModal from "./FollowUserPageModal";
 
 export default function MypageFollow({ follows }) {
-  const [followListModalIsOpen, setFollowListModalIsOpen] = useState(false);
+  // const [followListModalIsOpen, setFollowListModalIsOpen] = useState(false);
   const [followUserPageModalIsOpen, setFollowUserPageModalIsOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  const openFollowListModal = () => {
-    setFollowListModalIsOpen(true);
-  };
+  // const openFollowListModal = () => {
+  //   setFollowListModalIsOpen(true);
+  // };
 
-  const closeFollowListModal = () => {
-    setFollowListModalIsOpen(false);
-  };
+  // const closeFollowListModal = () => {
+  //   setFollowListModalIsOpen(false);
+  // };
 
   const openFollowUserPageModal = (user) => {
     setSelectedUser(user);
@@ -56,7 +56,7 @@ export default function MypageFollow({ follows }) {
             </div>
           ))}
         </div>
-        <div className="absolute top-4 right-4">
+        {/* <div className="absolute top-4 right-4">
           <button
             onClick={openFollowListModal}
             className="text-blue-500 hover:text-blue-700 text-lg font-bold"
@@ -64,14 +64,14 @@ export default function MypageFollow({ follows }) {
             <span className="text-custom-highlight">&gt;</span>{" "}
             <span className="text-[1rem] text-[#868686]">더보기</span>
           </button>
-        </div>
+        </div> */}
       </div>
 
-      <FollowList
+      {/* <FollowList
         isOpen={followListModalIsOpen}
         onRequestClose={closeFollowListModal}
         books={follows}
-      />
+      /> */}
 
       {selectedUser && (
         <FollowUserPageModal
