@@ -87,6 +87,12 @@ public class MemberServiceImpl implements MemberService {
                 .build();
     }
 
+    @Override
+    public Member getMemberEntity(int id) {
+        Optional<Member> findMember = memberRepository.findById(id);
+        return findMember.orElseThrow(() -> new NoSuchElementException("해당 회원은 존재하지 않습니다."));
+    }
+
     @Transactional
     @Override
     public void updateMember(UpdateMemberRequest updateMember) {
