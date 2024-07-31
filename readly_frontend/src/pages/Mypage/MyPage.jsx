@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import levelIcon from "../../assets/level/lv1.png";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import levelIcon1 from "../../assets/level/lv1.png";
+import levelIcon2 from "../../assets/level/lv2.png";
 import catCoin from "../../assets/level/cat_coin.png";
 import CardImg1 from "../../assets/onboard/card1_front.png";
 import CardImg2 from "../../assets/onboard/card2.png";
@@ -11,18 +12,21 @@ import ReviewImg1 from "../../assets/onboard/review1.png";
 import ReviewImg2 from "../../assets/onboard/review2.png";
 import ReviewImg3 from "../../assets/onboard/review3.png";
 import ReviewImg4 from "../../assets/onboard/review4.png";
+import BookImg1 from "../../assets/onboard/book.jpg";
 import MypageProgress from "./MyPageProgress";
 import MypageBookshelf from "./MyPageBookshelf";
 import MypageFollow from "./MyPageFollow";
 import TimeCat from "../../assets/onboard/time_cat.png";
 import TimecapsulePeriod from "../Timecapsule/TimecapsulePeriod";
 import GoButton from "../../components/GoButton/GoButton";
-import logoutIcon from "../../assets/header/logout.png"; // Renamed to avoid conflict with logout function
+import LogoutButton from "../Login/Logout";
 
 export default function MyPage() {
-  const [activeLink, setActiveLink] = useState("progress"); // Default active link
+  const { userId } = useParams();
+  const [activeLink, setActiveLink] = useState("progress");
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const navigate = useNavigate();
+  const [selectedUser, setSelectedUser] = useState(null);
+  const isOwnProfile = !userId;
 
   const handleLinkClick = (link) => {
     setActiveLink(link);
@@ -36,45 +40,162 @@ export default function MyPage() {
     setModalIsOpen(false);
   };
 
-  const handleLogout = () => {
-    navigate('/logout');
+  const levelIcons = {
+    1: levelIcon1,
+    2: levelIcon2,
   };
+
+  const myFollow = [
+    {
+      id: 1,
+      nickname: "닉네임 1",
+      intro: "한줄소개 1",
+      level: 1,
+      readBooks: [
+        { id: 1, title: "책 제목 1", cover: BookImg1, description: "책 설명 1" },
+      ],
+      photocards: [
+        {
+          id: 1,
+          title: "책 제목 1",
+          cover: CardImg1,
+          back: CardImg1_back,
+          create: "2024-07-30",
+        },
+      ],
+      reviews: [
+        { id: 1, title: "책 제목 1", cover: ReviewImg1, create: "2024-07-30" },
+      ],
+    },
+    {
+      id: 2,
+      nickname: "닉네임 2",
+      intro: "한줄소개 2",
+      level: 2,
+      readBooks: [
+        { id: 1, title: "책 제목 1", cover: BookImg1, description: "책 설명 1" },
+        { id: 2, title: "책 제목 2", cover: BookImg1, description: "책 설명 2" },
+      ],
+      photocards: [
+        {
+          id: 1,
+          title: "책 제목 1",
+          cover: CardImg1,
+          back: CardImg1_back,
+          create: "2024-07-30",
+        },
+        {
+          id: 2,
+          title: "책 제목 2",
+          cover: CardImg2,
+          back: CardImg1_back,
+          create: "2024-07-29",
+        },
+      ],
+      reviews: [
+        { id: 1, title: "책 제목 1", cover: ReviewImg1, create: "2024-07-30" },
+        { id: 2, title: "책 제목 2", cover: ReviewImg2, create: "2024-07-29" },
+      ],
+    },
+  ];
+
+  const myReadBooks = [
+    { id: 1, title: "책 제목 1", cover: BookImg1, description: "책 설명 1" },
+    { id: 2, title: "책 제목 2", cover: BookImg1, description: "책 설명 2" },
+    { id: 3, title: "책 제목 3", cover: BookImg1, description: "책 설명 3" },
+    { id: 4, title: "책 제목 4", cover: BookImg1, description: "책 설명 4" },
+  ];
+
+  useEffect(() => {
+    if (userId) {
+      // 여기서 userId에 해당하는 유저 정보를 가져오는 API 호출을 할 수 있습니다.
+      // 예시로 myFollow 배열에서 찾는 방식을 사용하겠습니다.
+      const user = myFollow.find(user => user.id === parseInt(userId));
+      setSelectedUser(user);
+    }
+  }, [userId]);
 
   const Myheader = () => (
     <header className="flex justify-between items-center py-1 px-3 bg-white">
-      <div className="flex-cols items-center">
-        <img className="w-16 h-14 mr-2" src={levelIcon} alt="level" />
-        <p className="font-bold center text-xl">Lv1</p>
+      <div className="flex-cols items-center mr-2">
+        {isOwnProfile ? (
+          <>
+            <img className="w-16 h-14 mr-2" src={levelIcon1} alt="level" />
+            <p className="font-bold text-center text-xl">Lv1</p>
+          </>
+        ) : selectedUser ? (
+          <>
+            <img
+              className="w-16 h-14 mr-2"
+              src={levelIcons[selectedUser.level]}
+              alt="level"
+            />
+            <p className="font-bold text-center text-xl">Lv{selectedUser.level}</p>
+          </>
+        ) : (
+          <p>Loading...</p>
+        )}
       </div>
       <div>
         <div className="flex items-center">
-          <h2 className="text-2xl font-bold">닉네임</h2>
-          <a href="/edit" className="ml-2 text-lg">
-            ✏️
-          </a>
+          {isOwnProfile ? (
+            <>
+              <h2 className="text-2xl font-bold">닉네임</h2>
+              <a href="/edit" className="ml-2 text-lg">
+                ✏️
+              </a>
+            </>
+          ) : (
+            <h2 className="text-2xl font-bold">{selectedUser ? selectedUser.nickname : 'Loading...'}</h2>
+          )}
         </div>
-        <p className="text-base">한줄소개</p>
+        <p className="text-base">{isOwnProfile ? "한줄소개" : (selectedUser ? selectedUser.intro : 'Loading...')}</p>
       </div>
       <div className="flex-1 flex flex-col justify-end items-end mr-6">
         <div className="flex-col items-center">
-          <div className="flex">
-            <span className="text-lg">포인트</span>
-            <img className="w-6 h-6 mr-1" src={catCoin} alt="coin" />
+          <div className="flex justify-end mb-2">
+            <span className="text-base font-bold">포인트</span>
+            <img className="w-6 h-6 ml-2" src={catCoin} alt="coin" />
           </div>
-          <div className="flex" onClick={handleLogout}>
-            <span className="text-lg">로그아웃</span>
-            <img className="w-6 h-6 mr-1" src={logoutIcon} alt="logout" />
-          </div>
+          {isOwnProfile && (
+            <div className="flex">
+              <LogoutButton textColor="#878787" textSize="base" />
+            </div>
+          )}
         </div>
       </div>
     </header>
   );
 
   const myPhotocards = [
-    { id: 1, title: "책 제목 1", cover: CardImg1, back: CardImg1_back, create: "2024-07-30" },
-    { id: 2, title: "책 제목 2", cover: CardImg2, back: CardImg1_back, create: "2024-07-29" },
-    { id: 3, title: "책 제목 3", cover: CardImg3, back: CardImg1_back, create: "2024-06-30" },
-    { id: 4, title: "책 제목 4", cover: CardImg4, back: CardImg1_back, create: "2024-06-29" },
+    {
+      id: 1,
+      title: "책 제목 1",
+      cover: CardImg1,
+      back: CardImg1_back,
+      create: "2024-07-30",
+    },
+    {
+      id: 2,
+      title: "책 제목 2",
+      cover: CardImg2,
+      back: CardImg1_back,
+      create: "2024-07-29",
+    },
+    {
+      id: 3,
+      title: "책 제목 3",
+      cover: CardImg3,
+      back: CardImg1_back,
+      create: "2024-06-30",
+    },
+    {
+      id: 4,
+      title: "책 제목 4",
+      cover: CardImg4,
+      back: CardImg1_back,
+      create: "2024-06-29",
+    },
   ];
 
   const myReviews = [
@@ -124,24 +245,26 @@ export default function MyPage() {
           </a>
         </div>
 
-        <div>
+        <div className="mt-4">
           {activeLink === "progress" && (
-            <div>
+            <div className="flex justify-start">
               <MypageProgress />
             </div>
           )}
-          {activeLink === "bookshelf" && <MypageBookshelf />}
+          {activeLink === "bookshelf" && <MypageBookshelf books={myReadBooks} />}
           {activeLink === "follow" && (
             <div>
-              <MypageFollow />
+              <MypageFollow follows={myFollow} />
             </div>
           )}
         </div>
 
-        <div className="fixed bottom-10 right-40 flex flex-col items-end z-10">
-          <img src={TimeCat} alt="timecat" className="w-[12rem] mb-2" />
-          <GoButton text="타임캡슐 만들기" onClick={openModal} />
-        </div>
+        {isOwnProfile && (
+          <div className="fixed bottom-10 right-40 flex flex-col items-end z-10">
+            <img src={TimeCat} alt="timecat" className="w-[12rem] mb-2" />
+            <GoButton text="타임캡슐 만들기" onClick={openModal} />
+          </div>
+        )}
 
         {activeLink !== "progress" && (
           <>
