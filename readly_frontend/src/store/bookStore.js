@@ -11,10 +11,10 @@ const useBookStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const books = await fetchBooks();
-      console.log("Fetched books:", books);
+      // console.log("Fetched books:", books);
       set({ books, loading: false });
     } catch (error) {
-      console.error("Error in fetchBooks:", error);
+      // console.error("Error in fetchBooks:", error);
       set({ error: error.message || 'Failed to fetch books', loading: false });
     }
   },

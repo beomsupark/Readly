@@ -14,7 +14,7 @@ public class GetMyFollowerResponse {
         this.followedId = follower.getFollowed().getId();
         this.followedName= follower.getFollowed().getNickname();
         this.followedPoint = follower.getFollowed().getPoint();
-        this.followedText = follower.getFollowed().getText();
+        this.followedText = follower.getFollowed().getIntroduction();
 
     }
 }

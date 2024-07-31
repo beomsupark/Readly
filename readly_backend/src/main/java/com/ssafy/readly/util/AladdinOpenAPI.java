@@ -1,4 +1,4 @@
-package com.ssafy.readly.dataCrawling;
+package com.ssafy.readly.util;
 
 import java.util.List;
 import java.util.ArrayList;

@@ -1,16 +1,19 @@
-import { useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import CustomHeader from "../../components/CustomHeader";
 
 const groupList = [
-  { id: 1, title: "group1" },
+  { id: 1, title: "셜록홈즈 책 같이 보면서 회의 할 소모임" },
   { id: 2, title: "group2" },
 ];
 
-export default function ActivityHeader() {
-  const [isGroupListOpen, setIsGroupListOpen] = useState(false);
+export default function ActivityHeader({
+  isGroupListOpen,
+  setIsGroupListOpen,
+}) {
   const [selectedGroup, setSelectedGroup] = useState(groupList[0]);
   const navigate = useNavigate();
+  const groupListRef = useRef(null);
 
   const toggleGroupList = () => {
     setIsGroupListOpen(!isGroupListOpen);
@@ -22,31 +25,60 @@ export default function ActivityHeader() {
     navigate(`/activity/${group.id}`);
   };
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        groupListRef.current &&
+        !groupListRef.current.contains(event.target)
+      ) {
+        setIsGroupListOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [groupListRef, setIsGroupListOpen]);
+
   return (
     <div className="flex-1 items-center relative">
       <CustomHeader />
       <h2
-        className="absolute text-2xl font-bold top-1/2 left-[20rem] transform -translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer"
+        className="absolute text-2xl font-bold top-1/2 left-[20rem] transform -translate-x-1/2 -translate-y-1/2 cursor-pointer z-40 whitespace-nowrap"
         onClick={toggleGroupList}
       >
-        <span className="text-custom-highlight">{selectedGroup.title}</span> 소모임
+        <span
+          className={`text-custom-highlight ${
+            selectedGroup.title.length > 8 ? "text-xl" : "text-2xl"
+          }`}
+        >
+          {selectedGroup.title}
+        </span>{" "}
+        <span className="text-2xl">소모임</span>
       </h2>
-
       {isGroupListOpen && (
-        <div className="absolute top-full left-[20rem] transform -translate-x-1/2 mt-2 bg-gray-200 rounded-lg shadow-lg z-20">
-          <ul className="p-2">
-            {groupList.map((group) => (
+        <div
+          ref={groupListRef}
+          className="absolute top-full left-[20rem] transform -translate-x-1/2 mt-2 z-50"
+        >
+          <ul className="bg-[#F5F5F5] border rounded-lg shadow-lg mt-1 absolute z-10 w-96">
+            {" "}
+            {groupList.map((group, index) => (
               <li
                 key={group.id}
-                className="px-4 py-2 hover:bg-gray-300 cursor-pointer rounded-md border border-red-500 m-2"
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                 onClick={() => selectGroup(group)}
               >
                 {group.title}
+                {index !== groupList.length - 1 && (
+                  <div className="border-b border-custom-border w-full"></div>
+                )}
               </li>
             ))}
           </ul>
         </div>
       )}
     </div>
-  )
+  );
 }

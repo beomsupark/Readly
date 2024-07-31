@@ -16,29 +16,14 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `members`
+-- Dumping data for table `members`
 --
 
-DROP TABLE IF EXISTS `members`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `members` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `login_id` varchar(255) DEFAULT NULL,
-  `login_pwd` varchar(255) DEFAULT NULL,
-  `nickname` varchar(255) DEFAULT NULL,
-  `member_name` varchar(255) DEFAULT NULL,
-  `phone_number` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `point` int DEFAULT NULL,
-  `birthday` date DEFAULT NULL,
-  `join_date` timestamp NULL DEFAULT NULL,
-  `gender` enum('F','M') DEFAULT NULL,
-  `social` enum('G','I','K','R') DEFAULT NULL,
-  `introduction` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+LOCK TABLES `members` WRITE;
+/*!40000 ALTER TABLE `members` DISABLE KEYS */;
+INSERT INTO `members` VALUES (1,'ssafy1','ssafy1','ssafy1','ssafy1','010-1234-5678','ssafy1@ssafy.com',1,'2024-07-31','2024-07-31 00:37:07','F','G','ssafy1 유저에 대한 설명 입니다.'),(2,'ssafy2','ssafy2','ssafy2','ssafy2','010-1234-5678','ssafy2@ssafy.com',1,'2024-07-31','2024-07-31 00:37:09','M','G','ssafy2 유저에 대한 설명 입니다.');
+/*!40000 ALTER TABLE `members` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -49,4 +34,4 @@ CREATE TABLE `members` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-07-30 14:36:11
+-- Dump completed on 2024-07-31  9:37:54

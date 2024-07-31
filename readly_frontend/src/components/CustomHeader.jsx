@@ -141,7 +141,7 @@ export default function CustomHeader() {
   return (
     <header className="flex justify-between items-center py-1 px-3 ml-32 bg-white">
       <div className="flex-1 flex items-center">
-        <img src={cloudImg} alt="클라우드" className="w-96 h-12 opacity-10" />
+        <img src={cloudImg} alt="클라우드" className="w-96 h-12 opacity-5" />
       </div>
       <div className="flex-1 flex justify-center">
         <div className="relative w-[20rem]">

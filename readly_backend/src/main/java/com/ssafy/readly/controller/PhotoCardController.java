@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class PhotoCardController {
 
     private final PhotoCardService PhotoCardServiceImpl;
-    @Autowired
     private final AIService aiService;
     private final BookService bookService;
     private final MemberService memberService;
@@ -48,7 +47,7 @@ public class PhotoCardController {
         Book book = bookService.getBookByIdForPhoto(request.getBookId());
 
         // 멤버 정보 가져오기
-        Member member = memberService.getMember(request.getMemberId());
+        Member member = memberService.getMemberEntity(request.getMemberId());
         // 포토카드 테이블 생성
         PhotoCard photoCard = PhotoCard.builder()
                 .book(book)
