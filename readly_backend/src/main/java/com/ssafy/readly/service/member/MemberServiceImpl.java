@@ -1,8 +1,6 @@
 package com.ssafy.readly.service.member;
 
-import com.ssafy.readly.dto.member.FindMemberRequest;
-import com.ssafy.readly.dto.member.LoginMemberRequest;
-import com.ssafy.readly.dto.member.SignUpMemberRequest;
+import com.ssafy.readly.dto.member.*;
 import com.ssafy.readly.entity.Member;
 import com.ssafy.readly.repository.member.MemberRepositoryImpl;
 import lombok.RequiredArgsConstructor;
@@ -40,32 +38,59 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void login(LoginMemberRequest longinMember) throws AuthenticationException {
-        Long islogin = memberRepository.login(longinMember);
-        if (islogin == 0) {
-            throw new AuthenticationException("아이디 또는 비밀번호를 확인해주세요.");
-        }
-    }
-
-    @Override
-    public void logout(String userId) {
-
-    }
-
-    @Override
-    public Member getMember(String loginId) {
-        Optional<Member> findMember = memberRepository.findByLoginId(loginId);
-        return findMember.orElseThrow(() -> new NoSuchElementException("해당 회원이 존재하지 않습니다."));
-    }
-
-    @Override
     public void checkDuplicateId(String loginId) {
-        try {
-            getMember(loginId);
+        long loginIdCount = memberRepository.findByLoginId(loginId);
+        if (loginIdCount != 0) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
-        } catch (NoSuchElementException n) {
-
         }
+    }
+
+    @Override
+    public LoginMemberResponse login(LoginMemberRequest longinMember) {
+        Optional<LoginMemberResponse> loginMemberResponse = memberRepository.login(longinMember);
+
+        return loginMemberResponse.orElse(null);
+    }
+
+    @Override
+    public void saveRefreshToken(int id, String refreshToken) {
+
+    }
+
+    @Override
+    public Object getRefreshToken(int id) {
+        return null;
+    }
+
+    @Override
+    public void deleteRefreshToken(int id) {
+
+    }
+
+    @Override
+    public MemberResponse getMember(int id) {
+        Optional<Member> findMember = memberRepository.findById(id);
+        Member member = findMember.orElseThrow(() -> new NoSuchElementException("해당 회원은 존재하지 않습니다."));
+        return MemberResponse
+                .builder()
+                .id(member.getId())
+                .loginId(member.getLoginId())
+                .nickname(member.getNickname())
+                .memberName(member.getMemberName())
+                .phoneNumber(member.getPhoneNumber())
+                .email(member.getEmail())
+                .point(member.getPoint())
+                .birthday(member.getBirthday())
+                .joinDate(member.getJoinDate())
+                .gender(member.getGender())
+                .introduction(member.getIntroduction())
+                .build();
+    }
+
+    @Transactional
+    @Override
+    public void updateMember(UpdateMemberRequest updateMember) {
+        memberRepository.updateMember(updateMember);
     }
 
     @Override

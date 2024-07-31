@@ -47,7 +47,7 @@ class MemberServiceImplTest {
 
         // When
         memberServiceImpl.singnUp(signUpMember);
-        Optional<Member> findMember = memberRepositoryImpl.findByLoginId("ehddls");
+        Optional<Member> findMember = memberRepositoryImpl.findById(1);
 
         // Then
         assertThat(findMember).isPresent();

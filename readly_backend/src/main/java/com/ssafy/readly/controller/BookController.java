@@ -1,6 +1,6 @@
 package com.ssafy.readly.controller;
 
-import com.ssafy.readly.dataCrawling.AladdinOpenAPI;
+import com.ssafy.readly.util.AladdinOpenAPI;
 import com.ssafy.readly.dto.Book.BookRequest;
 import com.ssafy.readly.service.book.BookService;
 import lombok.RequiredArgsConstructor;

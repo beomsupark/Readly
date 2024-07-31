@@ -17,3 +17,8 @@ spring:
 logging.level:
   org.hibernate.SQL: debug
   org.hibernate.type: trace
+
+jwt:
+  salt: ssafy-secret-key-20240729-ssafy-secret-key-20240729-ssafy-secret-key-20240729
+  access-token.expirationtime: 3600000
+  refresh-token.expirationtime: 2592000000
