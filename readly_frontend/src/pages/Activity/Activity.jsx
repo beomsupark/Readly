@@ -7,6 +7,7 @@ import ActivityHeader from "./ActivityHeader";
 
 export default function Activity() {
   const [activeTab, setActiveTab] = useState('진행도');
+  const [isGroupListOpen, setIsGroupListOpen] = useState(false);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -14,12 +15,17 @@ export default function Activity() {
 
   const tabs = ['진행도', '소통', '화상', '회의록'];
 
-
   return (
     <>
-    <div className="-ml-[7rem]">
-      <ActivityHeader />
-    </div>
+      {isGroupListOpen && (
+        <div 
+          className="fixed inset-0 bg-[#000000] bg-opacity-50 z-30" 
+          onClick={() => setIsGroupListOpen(false)}
+        ></div>
+      )}
+      <div className="-ml-[7rem]">
+        <ActivityHeader isGroupListOpen={isGroupListOpen} setIsGroupListOpen={setIsGroupListOpen} />
+      </div>
       <div className="flex space-x-6 mt-3">
         {tabs.map((tab) => (
           <button
