@@ -8,6 +8,7 @@ import com.ssafy.readly.entity.PhotoCard;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -20,9 +21,9 @@ import static com.ssafy.readly.entity.QPhotoCard.photoCard;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class PhotoCardQueryDSLRepositoryImpl implements PhotoCardQueryDSLRepository{
 
-    private static final Logger log = LoggerFactory.getLogger(PhotoCardQueryDSLRepositoryImpl.class);
     private final EntityManager em;
     private final JPAQueryFactory query;
 

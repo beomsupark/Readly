@@ -2,10 +2,8 @@ package com.ssafy.readly.dto.review;
 
 import com.ssafy.readly.entity.Review;
 import com.ssafy.readly.enums.Visibility;
-import lombok.Data;
 import lombok.Getter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -17,6 +15,8 @@ public class ReviewResponse {
     private LocalDateTime createdDate;
     private String reviewText;
     private Visibility visibility;
+    private long likeCount;
+    private long likeCheck;
 
 
     public ReviewResponse(Review review) {
@@ -27,5 +27,16 @@ public class ReviewResponse {
         this.createdDate = review.getCreatedDate();
         this.reviewText = review.getText();
         this.visibility = review.getVisibility();
+    }
+    public ReviewResponse(int reviewId,String bookImage,String bookTitle,String bookAuthor, LocalDateTime createdDate, String reviewText, Visibility visibility, long likeCount, long likeCheck) {
+        this.reviewId = reviewId;
+        this.bookImage = bookImage;
+        this.bookTitle = bookTitle;
+        this.bookAuthor = bookAuthor;
+        this.createdDate = createdDate;
+        this.reviewText = reviewText;
+        this.visibility = visibility;
+        this.likeCount = likeCount;
+        this.likeCheck = likeCheck;
     }
 }

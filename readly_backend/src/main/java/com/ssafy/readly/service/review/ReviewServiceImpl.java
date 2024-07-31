@@ -2,7 +2,9 @@ package com.ssafy.readly.service.review;
 
 import com.ssafy.readly.dto.review.ReviewRequest;
 import com.ssafy.readly.dto.review.ReviewResponse;
+import com.ssafy.readly.dto.review.ReviewSearchRequest;
 import com.ssafy.readly.entity.Review;
+import com.ssafy.readly.repository.review.ReviewQueryDSLRepository;
 import com.ssafy.readly.repository.review.ReviewRepositry;
 import jakarta.persistence.NoResultException;
 import jakarta.transaction.Transactional;
@@ -19,7 +21,7 @@ import java.util.Optional;
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepositry reviewRepository;
-
+    private final ReviewQueryDSLRepository reviewQueryDSLRepository;
     /**
      * @param review
      * @return
@@ -45,22 +47,17 @@ public class ReviewServiceImpl implements ReviewService {
      */
     @Override
     public ReviewResponse findReviewByMemberId(int id) {
-
         return new ReviewResponse(Optional.of(reviewRepository.findByMemberId(id)).orElseThrow(NoResultException::new));
 
-    /**
-     * @return
-     */
-    @Override
-    public List<ReviewResponse> findReviewsSortedByLike() {
-        return List.of();
+
     }
 
     /**
+     * @param searchRequest
      * @return
      */
     @Override
-    public List<ReviewResponse> findAllReviews() {
-        return List.of();
+    public List<ReviewResponse> findReviewsSorted(ReviewSearchRequest searchRequest) {
+        return reviewQueryDSLRepository.getReviews(searchRequest);
     }
 }
