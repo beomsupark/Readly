@@ -65,7 +65,7 @@ export default function Home() {
         </h2>
         <div className="grid grid-cols-2 mb-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-1 pr-36">
           {books.slice(0, 8).map((book) => (
-            <div key={book.id} className="flex flex-col items-center">
+            <div key={book.isbn} className="flex flex-col items-center">
               <div className="w-24 h-28 gap-1">
                 <img
                   src={book.image}
