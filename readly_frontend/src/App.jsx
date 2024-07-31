@@ -19,7 +19,10 @@ import Activity from './pages/Activity/Activity.jsx'
 function App() {
   const location = useLocation();
   const isFullScreenPage = ['/login', '/onboard'].includes(location.pathname);
-  const notSearchPage = ['/login', '/onboard', '/mypage', '/edit', '/activity'].includes(location.pathname);
+  const notSearchPage = (path) => {
+    const noHeaderPaths = ['/login', '/onboard', '/mypage', '/edit', '/activity'];
+    return noHeaderPaths.some(p => path === p || path.startsWith(`${p}/`));
+  };
   const showCloud = location.pathname !== '/onboard';
 
   useEffect(() => {
@@ -36,7 +39,7 @@ function App() {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
-      {!notSearchPage && <CustomHeader />}
+      {!notSearchPage(location.pathname) && <CustomHeader />}
       <div className="flex relative min-h-screen">
         {!isFullScreenPage && <CustomSidebar />}
         <main className={`flex-1 ${!isFullScreenPage ? 'ml-28' : ''}`}>
@@ -46,6 +49,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/sharedboard" element={<SharedBoard />} />
             <Route path="/mypage" element={<MyPage />} />
+            <Route path="/mypage/:userId" element={<MyPage />} />
             <Route path="/makecard" element={<MakeCard />} />
             <Route path="/edit" element={<EditProfile />} />
             <Route path="/ranking" element={<Ranking />} />

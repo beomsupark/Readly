@@ -1,9 +1,9 @@
 import { useState } from "react";
 
-import BookImg1 from "../../assets/onboard/book.jpg";
+
 import BookshelfList from "./BookshelfModal";
 
-export default function MypageBookshelf() {
+export default function MypageBookshelf({books}) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const openModal = () => {
@@ -14,18 +14,13 @@ export default function MypageBookshelf() {
     setModalIsOpen(false);
   };
 
-  const readBooks = [
-    { id: 1, title: "책 제목 1", cover: BookImg1, description: "책 설명 1" },
-    { id: 2, title: "책 제목 2", cover: BookImg1, description: "책 설명 2" },
-    { id: 3, title: "책 제목 3", cover: BookImg1, description: "책 설명 3" },
-    { id: 4, title: "책 제목 4", cover: BookImg1, description: "책 설명 4" },
-  ];
+
 
   return (
     <>
       <div className="bg-white rounded-lg shadow p-4 mb-4 relative">
         <div className="flex space-x-2 mb-2">
-          {readBooks.map((book) => (
+          {books.map((book) => (
             <div key={book.id} className="bg-gray-200 p-2 rounded">
               <img
                 src={book.cover}
@@ -50,7 +45,7 @@ export default function MypageBookshelf() {
       <BookshelfList
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        books={readBooks}
+        books={books}
       />
     </>
   );

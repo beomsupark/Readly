@@ -32,7 +32,7 @@ export default function ProgressComponent() {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container flex-col justify-start p-4">
       {books.length === 0 ? (
         <div className="bg-white p-4 rounded-lg mb-4 flex z-100 w-3/5">
           <div className="flex justify-center items-center bg-[#F5F5F5] w-[9rem] h-[12rem]">

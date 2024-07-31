@@ -1,0 +1,69 @@
+/* Hide the default checkbox */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+}
+
+.container input:checked ~ .like {
+  animation: kfs-fill-like .5s forwards;
+}
+
+.container .like {
+  fill: none;
+  stroke: white;
+}
+
+.container input:checked ~ .celebrate {
+  display: block;
+}
+
+.container .celebrate {
+  position: absolute;
+  animation: kfs-celebrate 1s;
+  animation-fill-mode: forwards;
+  display: none;
+  stroke: white;
+}
+
+@keyframes kfs-celebrate {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1.5) rotate(180deg);
+    opacity: 0;
+    display: none;
+  }
+}
+
+@keyframes kfs-fill-like {
+
+  50% {
+    fill: white;
+    stroke: white;
+    transform: scale(1.2);
+  }
+
+  100% {
+    fill: white;
+    stroke: white;
+  }
+}
