@@ -1,6 +1,7 @@
 package com.ssafy.readly.service.member;
 
 import com.ssafy.readly.dto.member.*;
+import com.ssafy.readly.entity.Member;
 
 import javax.security.sasl.AuthenticationException;
 
@@ -20,8 +21,11 @@ public interface MemberService {
 
     public abstract MemberResponse getMember(int id);
 
+    public abstract Member getMemberEntity(int id);
+
     public abstract void updateMember(UpdateMemberRequest updateMember);
 
     public abstract String checkMember(FindMemberRequest findMember);
+
 
 }
