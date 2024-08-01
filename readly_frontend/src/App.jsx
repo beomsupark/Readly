@@ -1,5 +1,6 @@
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+import useUserStore from "./store/userStore";
 import Login from './pages/Login/Login.jsx';
 import OnBoard from './pages/OnBoard.jsx';
 import Home from './pages/Home.jsx';
@@ -14,14 +15,14 @@ import EditProfile from './pages/Mypage/EditProfile.jsx';
 import Ranking from './pages/Ranking.jsx';
 import Community from './pages/Community/Community.jsx';
 import MakeCommunity from './pages/Community/MakeCommunity.jsx';
-import Activity from './pages/Activity/Activity.jsx'
+import Activity from './pages/Activity/Activity.jsx';
 
 function App() {
   const location = useLocation();
   const isFullScreenPage = ['/login', '/'].includes(location.pathname);
   const notSearchPage = ['/login', '/', '/mypage', '/edit'].includes(location.pathname) || 
                         /^\/activity(\/.*)?$/.test(location.pathname);
-  const showCloud = location.pathname !== '/';
+  const showCloud = !['/login', '/'].includes(location.pathname);
 
   useEffect(() => {
     if (location.pathname === '/' || location.pathname === '/community' || location.pathname === '/mypage') {
@@ -34,6 +35,15 @@ function App() {
       document.body.style.overflow = '';
     };
   }, [location.pathname]);
+
+    const setUser = useUserStore(state => state.setUser);
+  
+    useEffect(() => {
+      const userInfo = localStorage.getItem('userInfo');
+      if (userInfo) {
+        setUser(JSON.parse(userInfo));
+      }
+    }, [setUser]);
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden">

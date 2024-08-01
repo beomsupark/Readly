@@ -52,7 +52,7 @@ SidebarItem.propTypes = {
 export default function CustomSidebar() {
   return (
     <div className="fixed left-0 top-0 h-screen w-10 sm:w-14 md:w-16 lg:w-20 flex flex-col py-2 sm:py-4 bg-[#E3F7FF] rounded-lg shadow-lg z-50">
-      <SidebarItem icon={logo} alt="메인페이지" to="/" isLogo={true} />
+      <SidebarItem icon={logo} alt="메인페이지" to="/home" isLogo={true} />
 
       <div className="flex flex-col flex-grow w-full">
         <SidebarItem icon={activity_icon} alt="Activity" text="독서 활동" to="/activity" />
