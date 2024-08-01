@@ -29,7 +29,7 @@ public class AIService {
 
         // JSON 문자열 생성
         String requestBody = String.format(
-                "{\"model\":\"dall-e-3\",\"prompt\":\"%s\",\"n\":1,\"size\":\"1024x1024\"}",
+                "{\"model\":\"dall-e-3\",\"prompt\":\"%s\",\"n\":1,\"size\":\"1024x1792\",\"response_format\":\"b64_json\"}",
                 prompt);
 
         HttpClient client = HttpClient.newHttpClient();
@@ -40,17 +40,16 @@ public class AIService {
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
+        log.info(response.body());
         // 응답 본문에서 URL 추출
         String responseBody = response.body();
-        int startIndex = responseBody.indexOf("https://"); // URL이 "https://"로 시작함
+        int startIndex = responseBody.indexOf("b64_json\": \"")+15; // URL이 "https://"로 시작함
         int endIndex = responseBody.indexOf("\"", startIndex); // URL이 큰 따옴표로 끝남
         String imageUrl = responseBody.substring(startIndex, endIndex);
 
-        log.info(response.body());
-        log.info("===============");
-        log.info(imageUrl);
-
+//        log.info(response.body());
+//        log.info("===============");
+//        log.info(responseBody);
         return imageUrl;
     }
 }
