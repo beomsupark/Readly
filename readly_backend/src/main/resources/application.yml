@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/readly?serverTimezone=Asia/Seoul
+    username: ehddls
+    password: ehddls
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        # use_sql_comments: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+logging.level:
+  org.hibernate.SQL: debug
+  org.hibernate.type: trace

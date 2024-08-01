@@ -2,8 +2,7 @@ package com.ssafy.readly.controller;
 
 import com.ssafy.readly.dto.group.GetGroupResponse;
 import com.ssafy.readly.dto.group.MakeGroupRequest;
-import com.ssafy.readly.entity.Group;
-import com.ssafy.readly.service.chat.ChatRoomService;
+import com.ssafy.readly.service.chat.RedisPubService;
 import com.ssafy.readly.service.group.GroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,14 +17,14 @@ import java.util.List;
 public class GroupController {
 
     private final GroupService groupService;
-    private final ChatRoomService chatRoomService;
+    private final RedisPubService redisPubService;
 
     @PostMapping("/makegroup")
     public ResponseEntity<?> makeGroup(@RequestBody MakeGroupRequest makeGroupRequest) throws Exception {
 
         String groupId = groupService.makeGroup(makeGroupRequest);
-        String roomId = chatRoomService.createChatRoom(groupId);
-        groupService.updateRoomId(groupId, roomId);  // roomId 업데이트
+        groupService.updateRoomId(groupId, groupId);  // Use groupId directly as roomId
+        redisPubService.subscribeChannel(groupId);
 
         return new ResponseEntity<>(HttpStatus.CREATED); // 201 Created 상태 코드로 변경
     }
