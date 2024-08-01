@@ -20,11 +20,15 @@ import TimeCat from "../../assets/onboard/time_cat.png";
 import TimecapsulePeriod from "../Timecapsule/TimecapsulePeriod";
 import GoButton from "../../components/GoButton/GoButton";
 import LogoutButton from "../Login/Logout";
+import PhotocardList from "./PhotocardListModal";
+import ReviewList from "./ReviewListModal";
 
 export default function MyPage() {
   const { userId } = useParams();
   const [activeLink, setActiveLink] = useState("progress");
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [timecapsuleModalIsOpen, setTimecapsuleModalIsOpen] = useState(false);
+  const [photocardModalIsOpen, setPhotocardModalIsOpen] = useState(false);
+  const [reviewModalIsOpen, setReviewModalIsOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const isOwnProfile = !userId;
 
@@ -32,12 +36,28 @@ export default function MyPage() {
     setActiveLink(link);
   };
 
-  const openModal = () => {
-    setModalIsOpen(true);
+  const openTimecapsuleModal = () => {
+    setTimecapsuleModalIsOpen(true);
   };
 
-  const closeModal = () => {
-    setModalIsOpen(false);
+  const closeTimecapsuleModal = () => {
+    setTimecapsuleModalIsOpen(false);
+  };
+
+  const openPhotocardModal = () => {
+    setPhotocardModalIsOpen(true);
+  };
+
+  const closePhotocardModal = () => {
+    setPhotocardModalIsOpen(false);
+  };
+
+  const openReviewModal = () => {
+    setReviewModalIsOpen(true);
+  };
+
+  const closeReviewModal = () => {
+    setReviewModalIsOpen(false);
   };
 
   const levelIcons = {
@@ -52,7 +72,12 @@ export default function MyPage() {
       intro: "한줄소개 1",
       level: 1,
       readBooks: [
-        { id: 1, title: "책 제목 1", cover: BookImg1, description: "책 설명 1" },
+        {
+          id: 1,
+          title: "책 제목 1",
+          cover: BookImg1,
+          description: "책 설명 1",
+        },
       ],
       photocards: [
         {
@@ -73,8 +98,18 @@ export default function MyPage() {
       intro: "한줄소개 2",
       level: 2,
       readBooks: [
-        { id: 1, title: "책 제목 1", cover: BookImg1, description: "책 설명 1" },
-        { id: 2, title: "책 제목 2", cover: BookImg1, description: "책 설명 2" },
+        {
+          id: 1,
+          title: "책 제목 1",
+          cover: BookImg1,
+          description: "책 설명 1",
+        },
+        {
+          id: 2,
+          title: "책 제목 2",
+          cover: BookImg1,
+          description: "책 설명 2",
+        },
       ],
       photocards: [
         {
@@ -110,7 +145,7 @@ export default function MyPage() {
     if (userId) {
       // 여기서 userId에 해당하는 유저 정보를 가져오는 API 호출을 할 수 있습니다.
       // 예시로 myFollow 배열에서 찾는 방식을 사용하겠습니다.
-      const user = myFollow.find(user => user.id === parseInt(userId));
+      const user = myFollow.find((user) => user.id === parseInt(userId));
       setSelectedUser(user);
     }
   }, [userId]);
@@ -130,7 +165,9 @@ export default function MyPage() {
               src={levelIcons[selectedUser.level]}
               alt="level"
             />
-            <p className="font-bold text-center text-xl">Lv{selectedUser.level}</p>
+            <p className="font-bold text-center text-xl">
+              Lv{selectedUser.level}
+            </p>
           </>
         ) : (
           <p>Loading...</p>
@@ -146,10 +183,18 @@ export default function MyPage() {
               </a>
             </>
           ) : (
-            <h2 className="text-2xl font-bold">{selectedUser ? selectedUser.nickname : 'Loading...'}</h2>
+            <h2 className="text-2xl font-bold">
+              {selectedUser ? selectedUser.nickname : "Loading..."}
+            </h2>
           )}
         </div>
-        <p className="text-base">{isOwnProfile ? "한줄소개" : (selectedUser ? selectedUser.intro : 'Loading...')}</p>
+        <p className="text-base">
+          {isOwnProfile
+            ? "한줄소개"
+            : selectedUser
+            ? selectedUser.intro
+            : "Loading..."}
+        </p>
       </div>
       <div className="flex-1 flex flex-col justify-end items-end mr-6">
         <div className="flex-col items-center">
@@ -251,7 +296,9 @@ export default function MyPage() {
               <MypageProgress />
             </div>
           )}
-          {activeLink === "bookshelf" && <MypageBookshelf books={myReadBooks} />}
+          {activeLink === "bookshelf" && (
+            <MypageBookshelf books={myReadBooks} />
+          )}
           {activeLink === "follow" && (
             <div>
               <MypageFollow follows={myFollow} />
@@ -262,13 +309,13 @@ export default function MyPage() {
         {isOwnProfile && (
           <div className="fixed bottom-10 right-40 flex flex-col items-end z-10">
             <img src={TimeCat} alt="timecat" className="w-[12rem] mb-2" />
-            <GoButton text="타임캡슐 만들기" onClick={openModal} />
+            <GoButton text="타임캡슐 만들기" onClick={openTimecapsuleModal} />
           </div>
         )}
 
         {activeLink !== "progress" && (
           <>
-            <div className="bg-white rounded-lg shadow p-4 mb-4">
+            <div className="relative bg-white rounded-lg shadow p-4 mb-4">
               <h3 className="font-bold mb-2">내가 만든 포토카드</h3>
               <div className="flex gap-1">
                 {myPhotocards.map((card) => (
@@ -281,9 +328,18 @@ export default function MyPage() {
                   </div>
                 ))}
               </div>
+              <div className="absolute top-4 right-4">
+                <button
+                  onClick={openPhotocardModal}
+                  className="text-blue-500 hover:text-blue-700 text-lg font-bold mr-80"
+                >
+                  <span className="text-custom-highlight">&gt;</span>{" "}
+                  <span className="text-[1rem] text-[#868686]">더보기</span>
+                </button>
+              </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow p-4">
+            <div className="relative bg-white rounded-lg shadow p-4">
               <h3 className="font-bold mb-2">내가 남긴 한줄평</h3>
               <div className="flex gap-1">
                 {myReviews.map((review) => (
@@ -296,16 +352,37 @@ export default function MyPage() {
                   </div>
                 ))}
               </div>
+              <div className="absolute top-4 right-4">
+                <button
+                  onClick={openReviewModal}
+                  className="text-blue-500 hover:text-blue-700 text-lg font-bold mr-80"
+                >
+                  <span className="text-custom-highlight">&gt;</span>{" "}
+                  <span className="text-[1rem] text-[#868686]">더보기</span>
+                </button>
+              </div>
             </div>
           </>
         )}
       </div>
 
       <TimecapsulePeriod
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
+        isOpen={timecapsuleModalIsOpen}
+        onRequestClose={closeTimecapsuleModal}
         photocard={myPhotocards}
         review={myReviews}
+      />
+
+      <PhotocardList
+        isOpen={photocardModalIsOpen}
+        onRequestClose={closePhotocardModal}
+        photocards={myPhotocards}
+      />
+
+      <ReviewList
+        isOpen={reviewModalIsOpen}
+        onRequestClose={closeReviewModal}
+        reviews={myReviews}
       />
     </>
   );

@@ -3,6 +3,7 @@ import BookImg1 from "../../assets/onboard/book.jpg";
 import ProgressBar from "../../components/ProgressBar/ProgressBar";
 import GoButton from "../../components/GoButton/GoButton";
 import CreateReview from "../../components/Review/CreateReview";
+import Search from "../../components/Search";
 
 const myBooks = [
   {
@@ -11,7 +12,7 @@ const myBooks = [
     cover: BookImg1,
     totalPages: 400,
     currentPage: 50,
-    review: "", // Add review property
+    review: "",
   },
   {
     id: 2,
@@ -19,15 +20,16 @@ const myBooks = [
     cover: BookImg1,
     totalPages: 250,
     currentPage: 100,
-    review: "", // Add review property
+    review: "",
   },
 ];
 
 export default function ProgressComponent() {
   const [books, setBooks] = useState(myBooks);
   const [reviewInputs, setReviewInputs] = useState({});
-  const [selectedBook, setSelectedBook] = useState(null); // Track selected book for review
+  const [selectedBook, setSelectedBook] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [searchModalIsOpen, setSearchModalIsOpen] = useState(false);
 
   const updateCurrentPage = (bookId, newPage) => {
     setBooks(
@@ -39,7 +41,7 @@ export default function ProgressComponent() {
 
   const openModal = (book) => {
     setSelectedBook(book);
-    setReviewInputs(reviewInputs[book.id] || "");
+    setReviewInputs((prev) => ({ ...prev, [book.id]: prev[book.id] || "" }));
     setModalIsOpen(true);
   };
 
@@ -48,21 +50,51 @@ export default function ProgressComponent() {
     setModalIsOpen(false);
   };
 
+  const openSearchModal = () => {
+    console.log("Opening search modal");
+    setSearchModalIsOpen(true);
+  };
+
+  const closeSearchModal = () => {
+    setSearchModalIsOpen(false);
+  };
+
   const handleReviewInputChange = (bookId, value) => {
     setReviewInputs((prev) => ({ ...prev, [bookId]: value }));
   };
 
   const handleCreateReview = () => {
-    if (selectedBook && reviewInputs.trim()) {
+    if (selectedBook && reviewInputs[selectedBook.id]?.trim()) {
       setBooks(
         books.map((book) =>
-          book.id === selectedBook.id ? { ...book, review: reviewInputs } : book
+          book.id === selectedBook.id
+            ? { ...book, review: reviewInputs[selectedBook.id] }
+            : book
         )
       );
       setReviewInputs((prev) => ({ ...prev, [selectedBook.id]: "" }));
       closeModal();
     }
   };
+
+  const addNewBook = (newBook) => {
+    const isBookExists = books.some(book => book.id === newBook.id);
+    
+    if (!isBookExists) {
+      const bookToAdd = {
+        id: newBook.id,
+        title: newBook.title,
+        cover: newBook.image || BookImg1,
+        totalPages: newBook.totalPages || 100,
+        currentPage: 0,
+        review: "",
+      };
+      
+      setBooks(prevBooks => [...prevBooks, bookToAdd]);
+    }
+    closeSearchModal();
+  };
+
   return (
     <>
       <div className="container mx-auto p-4">
@@ -85,7 +117,6 @@ export default function ProgressComponent() {
               />
               <div className="flex-1">
                 <h2 className="text-xl font-semibold mb-2">{book.title}</h2>
-
                 <ProgressBar
                   currentPage={book.currentPage}
                   totalPages={book.totalPages}
@@ -93,7 +124,6 @@ export default function ProgressComponent() {
                     updateCurrentPage(book.id, newPage)
                   }
                 />
-
                 <div>
                   <h2 className="font-bold mb-2">
                     <span className="text-custom-highlight">책 </span>에 대한{" "}
@@ -112,22 +142,13 @@ export default function ProgressComponent() {
                     />
                     <GoButton text="생성" onClick={() => openModal(book)} />
                   </div>
-                  {/* {book.review && (
-                    <Review
-                      bookImage={book.cover}
-                      title={book.title}
-                      author="Author Name"  // Replace with actual author if available
-                      review={book.review}
-                      likeCount={0}  // Initial like count
-                    />
-                  )} */}
                 </div>
               </div>
             </div>
           ))
         )}
         <div className="mt-4 flex justify-start">
-          <GoButton text="책 등록하기" />
+          <GoButton text="책 등록하기" onClick={openSearchModal} />
         </div>
       </div>
 
@@ -136,10 +157,16 @@ export default function ProgressComponent() {
           isOpen={modalIsOpen}
           onRequestClose={closeModal}
           book={selectedBook}
-          reviewText={reviewInputs}
-          onReviewSubmit={handleCreateReview} // Handle review creation
+          reviewText={reviewInputs[selectedBook.id] || ""}
+          onReviewSubmit={handleCreateReview}
         />
       )}
+
+      <Search
+        isOpen={searchModalIsOpen}
+        onRequestClose={closeSearchModal}
+        onBookSelect={addNewBook}
+      />
     </>
   );
 }

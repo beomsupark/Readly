@@ -41,14 +41,35 @@ export default function CreateReview({
   reviewText,
   onReviewSubmit,
 }) {
-  const [visibility, setVisibility] = useState("공개");
+  const [visibility, setVisibility] = useState("A");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!book.title) {
+      alert("책을 입력해주세요.");
+      return;
+    }
+    if (!reviewText.trim()) {
+      alert("글귀를 입력해주세요.");
+      return;
+    }
+
+    // Submit the review
+    onReviewSubmit({
+      bookId: book.id, // Assuming book has an id
+      reviewText,
+      visibility,
+    });
+
+    // Reset the form
+    setVisibility("A");
+  };
 
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
       style={customModalStyles}
-      ariaHideApp={false}
       shouldCloseOnOverlayClick={true}
       closeTimeoutMS={300}
     >
@@ -64,21 +85,24 @@ export default function CreateReview({
         <Review
           bookImage={book.cover}
           title={book.title}
-          author="Author Name" // Replace with actual author if available
+          author={book.author || "Author Name"} // Replace with actual author if available
           review={reviewText}
           likeCount={0} // Initial like count
         />
       </div>
       <div className="mt-5 ml-3 justify-start sm:w-40 lg:w-48">
         <CustomRadioButton
-          options={["공개", "비공개"]}
+          options={[
+            { value: "A", label: "공개" },
+            { value: "E", label: "비공개" },
+          ]}
           selectedOption={visibility}
           onChange={setVisibility}
         />
       </div>
       <div className="mt-4 flex justify-end gap-2">
-        <GoButton text="생성" />
-        <GoButton text="취소" />
+        <GoButton text="생성" onClick={handleSubmit} />
+        <GoButton text="취소" onClick={onRequestClose} />
       </div>
     </Modal>
   );
