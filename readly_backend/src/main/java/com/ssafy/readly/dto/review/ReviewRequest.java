@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class ReviewRequest {
-    private String memberId;
+    private int memberId;
     private int bookId;
     private String text;
     private Visibility visibility;

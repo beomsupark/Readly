@@ -14,7 +14,7 @@ spring:
         # use_sql_comments: true
   data:
     redis:
-      host: redis
+      host: localhost
       port: 6379
 logging.level:
   org.hibernate.SQL: debug
