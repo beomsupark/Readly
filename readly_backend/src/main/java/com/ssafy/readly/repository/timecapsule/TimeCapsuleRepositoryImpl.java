@@ -5,9 +5,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardResponse;
 import com.ssafy.readly.dto.review.ReviewResponse;
-import com.ssafy.readly.dto.timecapsule.CardsRequest;
-import com.ssafy.readly.entity.QPhotoCard;
-import com.ssafy.readly.entity.QReview;
+import com.ssafy.readly.dto.timecapsule.TimeCapsuleRequest;
+import com.ssafy.readly.entity.*;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 
@@ -31,24 +30,24 @@ public class TimeCapsuleRepositoryImpl implements TimeCapsuleRepository {
     }
 
     @Override
-    public List<ReviewResponse> findByReviews(CardsRequest cardsRequest) {
+    public List<ReviewResponse> findByReviewNoLike(TimeCapsuleRequest timeCapsuleRequest) {
         return queryFactory.select(Projections.constructor(ReviewResponse.class,
                         review.id, book.image, book.title, book.author, review.createdDate, review.text))
                 .from(review)
                 .join(review.book, book)
-                .where(memberIdEq(cardsRequest.getMemberId(), review, null),
-                        betweenDate(cardsRequest.getStartDate(), cardsRequest.getEndDate(), review, null))
+                .where(memberIdEq(timeCapsuleRequest.getMemberId(), review, null),
+                        betweenDate(timeCapsuleRequest.getStartDate(), timeCapsuleRequest.getEndDate(), review, null))
                 .fetch();
     }
 
     @Override
-    public List<CreatePhotoCardResponse> findByPhotoCards(CardsRequest cardsRequest) {
+    public List<CreatePhotoCardResponse> findByPhotoCardNoLike(TimeCapsuleRequest timeCapsuleRequest) {
         return queryFactory.select(Projections.constructor(CreatePhotoCardResponse.class,
                         photoCard.id, photoCard.text, book.title, book.author, photoCard.photoCardImage, photoCard.createdDate))
                 .from(photoCard)
                 .join(photoCard.book, book)
-                .where(memberIdEq(cardsRequest.getMemberId(), null, photoCard),
-                        betweenDate(cardsRequest.getStartDate(), cardsRequest.getEndDate(), null, photoCard))
+                .where(memberIdEq(timeCapsuleRequest.getMemberId(), null, photoCard),
+                        betweenDate(timeCapsuleRequest.getStartDate(), timeCapsuleRequest.getEndDate(), null, photoCard))
                 .fetch();
     }
 
@@ -81,5 +80,24 @@ public class TimeCapsuleRepositoryImpl implements TimeCapsuleRepository {
         }
 
         return null;
+    }
+
+    @Override
+    public void saveTimeCapsule(TimeCapsule timeCapsule) {
+        em.persist(timeCapsule);
+    }
+
+    @Override
+    public List<Review> findByReviewIn(Integer[] reviews) {
+        return queryFactory.selectFrom(review)
+                .where(review.id.in(reviews))
+                .fetch();
+    }
+
+    @Override
+    public List<PhotoCard> findByPhotoCardIn(Integer[] photoCards) {
+        return queryFactory.selectFrom(photoCard)
+                .where(photoCard.id.in(photoCards))
+                .fetch();
     }
 }

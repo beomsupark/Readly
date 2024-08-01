@@ -5,9 +5,11 @@ import lombok.Getter;
 import java.time.LocalDate;
 
 @Getter
-public class CardsRequest {
+public class TimeCapsuleRequest {
 
     private int memberId;
     private LocalDate startDate;
     private LocalDate endDate;
+    private Integer[] reviewIds;
+    private Integer[] photoCardIds;
 }

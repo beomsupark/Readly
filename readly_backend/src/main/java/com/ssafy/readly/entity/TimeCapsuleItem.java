@@ -19,6 +19,7 @@ public class TimeCapsuleItem {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private int id;
+
     @Enumerated(value = STRING)
     private ItemType itemType;
 
@@ -33,6 +34,18 @@ public class TimeCapsuleItem {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name="reviews_id")
     private Review review;
+
+    public TimeCapsuleItem(ItemType itemType, Review review, TimeCapsule timeCapsule) {
+        this.itemType = itemType;
+        this.review = review;
+        setTimeCapsule(timeCapsule);
+    }
+
+    public TimeCapsuleItem(ItemType itemType, PhotoCard photoCard, TimeCapsule timeCapsule) {
+        this.itemType = itemType;
+        this.photoCard = photoCard;
+        setTimeCapsule(timeCapsule);
+    }
 
     /* 연관 관계 편의 메소드 */
     public void setTimeCapsule(TimeCapsule timeCapsule){
