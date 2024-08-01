@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/redis/pubsub")
+@RequestMapping("api/redis/pubsub")
 @CrossOrigin(origins = "http://localhost:5173") // 프론트엔드 서버의 주소
 public class RedisPubSubController {
 
