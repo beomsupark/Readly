@@ -31,7 +31,7 @@ public class GroupRepositoryImpl implements GroupRepository{
                 makeGroupRequest.getCreatedDate(),
                 makeGroupRequest.getMaxParticipants(),
                 makeGroupRequest.getRoomId(),
-                IsInviting.A // Default value
+                IsInviting.a // Default value
         );
         em.persist(group);
         em.flush(); // Ensure the entity is saved to get the ID
