@@ -48,7 +48,13 @@ export default function SignupForm() {
             return;
         }
 
-        signUp(values)
+        // 성별 값을 'M' 또는 'F'로 변환하여 백엔드에 전송
+        const updatedValues = {
+            ...values,
+            gender: values.gender === '남' ? 'M' : 'F'
+        };
+
+        signUp(updatedValues)
             .then((response) => {
                 window.location.href = `/login`;
             })
@@ -106,6 +112,21 @@ export default function SignupForm() {
         }
     };
 
+    const handlePhoneChange = (e) => {
+        const phone = e.target.value.replace(/\D/g, '');
+        setValues({
+            ...values,
+            phone
+        });
+    };
+
+    const handleGenderChange = (e) => {
+        setValues({
+            ...values,
+            gender: e.target.value
+        });
+    };
+
     return (
         <div className="login-content login-content-signup">
             <div>
@@ -119,10 +140,31 @@ export default function SignupForm() {
                     {confirmError && <small>{confirmError}</small>}
                     <input type="text" className="form-control" id="username" placeholder="이름" onChange={handleChange} value={values.username} required />
                     <input type="text" className="form-control" id="nickname" placeholder="닉네임" onChange={handleChange} value={values.nickname} required />
-                    <input type="text" className="form-control" id="phone" placeholder="전화번호" onChange={handleChange} value={values.phone} required />
+                    <input type="text" className="form-control" id="phone" placeholder="전화번호" onChange={handlePhoneChange} value={values.phone} required />
                     <input type="email" className="form-control" id="email" placeholder="이메일" onChange={handleChange} value={values.email} required />
                     <input type="text" className="form-control" id="birthdate" placeholder="생년월일" onChange={handleChange} value={values.birthdate} required />
-                    <input type="text" className="form-control" id="gender" placeholder="성별" onChange={handleChange} value={values.gender} required />
+                    <div className="gender-options">
+                        <label className="mr-4">
+                            <input 
+                                type="radio" 
+                                name="gender" 
+                                value="남" 
+                                checked={values.gender === '남'} 
+                                onChange={handleGenderChange} 
+                            />
+                            남
+                        </label>
+                        <label>
+                            <input 
+                                type="radio" 
+                                name="gender" 
+                                value="녀" 
+                                checked={values.gender === '녀'} 
+                                onChange={handleGenderChange} 
+                            />
+                            녀
+                        </label>
+                    </div>
                     <button type="submit" className="btn btn-submit">회원가입</button>
                 </form>
             </div>
