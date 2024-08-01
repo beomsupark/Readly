@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { createPhotoCard } from '../api/photocardAPI';
+import { createPhotoCard, updatePhotoCard } from '../api/photocardAPI';
 
 const usePhotocardStore = create((set) => ({
   photoCard: null,
@@ -10,10 +10,24 @@ const usePhotocardStore = create((set) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await createPhotoCard(bookId, text, visibility, memberId);
-      set({ photoCard: response.CreatePhotoCardResponse, isLoading: false });
+      set({ photoCard: response, isLoading: false });
     } catch (error) {
       set({ error: error.message, isLoading: false });
     }
+  },
+
+  updatePhotoCard: async (imageLink, photoCardId) => {
+    set({ isLoading: true, error: null });
+    try {
+      const updatedPhotoCard = await updatePhotoCard(imageLink, photoCardId);
+      set({ photoCard: updatedPhotoCard, isLoading: false });
+    } catch (error) {
+      set({ error: error.message, isLoading: false });
+    }
+  },
+
+  setPhotoCard: (state, photoCard) => {
+    state.photoCard = photoCard;
   },
 }));
 
