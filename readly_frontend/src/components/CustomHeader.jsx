@@ -6,6 +6,7 @@ import BookModal from "./BookModal";
 import cloudImg from "../assets/header/cloudImg.png";
 import useBookStore from "../store/bookStore";
 import LogoutButton from "../pages/Login/Logout";
+import useUserStore from "../store/userStore.js";
 
 const customModalStyles = {
   overlay: {
@@ -26,6 +27,8 @@ const customModalStyles = {
 };
 
 export default function CustomHeader() {
+  const user = useUserStore(state => state.user);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -167,7 +170,7 @@ export default function CustomHeader() {
             className="w-[3rem] h-6 rounded-lg mr-2 cursor-pointer"
           />
           <span className="text-base font-bold cursor-pointer">
-            닉네임
+            {user?.nickname || '닉네임'}
           </span>
         </div>
         {isDropdownOpen && (

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import levelIcon1 from "../../assets/level/lv1.png";
 import levelIcon2 from "../../assets/level/lv2.png";
+import levelIcon3 from "../../assets/level/lv3.png";
+import levelIcon4 from "../../assets/level/lv4.png";
 import catCoin from "../../assets/level/cat_coin.png";
 import CardImg1 from "../../assets/onboard/card1_front.png";
 import CardImg2 from "../../assets/onboard/card2.png";
@@ -22,8 +24,11 @@ import GoButton from "../../components/GoButton/GoButton";
 import LogoutButton from "../Login/Logout";
 import PhotocardList from "./PhotocardListModal";
 import ReviewList from "./ReviewListModal";
+import useUserStore from "../../store/userStore";
 
 export default function MyPage() {
+  const user = useUserStore(state => state.user);
+
   const { userId } = useParams();
   const [activeLink, setActiveLink] = useState("progress");
   const [timecapsuleModalIsOpen, setTimecapsuleModalIsOpen] = useState(false);
@@ -60,194 +65,105 @@ export default function MyPage() {
     setReviewModalIsOpen(false);
   };
 
-  const levelIcons = {
-    1: levelIcon1,
-    2: levelIcon2,
+  const calculateLevel = (point) => {
+    if (point < 1000) return 1;
+    if (point < 2000) return 2;
+    if (point < 3000) return 3;
+    return 4;
+  };
+
+  const getLevelIcon = (level) => {
+    switch (level) {
+      case 1: return levelIcon1;
+      case 2: return levelIcon2;
+      case 3: return levelIcon3;
+      case 4: return levelIcon4;
+      default: return levelIcon1;
+    }
   };
 
   const myFollow = [
-    {
-      id: 1,
-      nickname: "닉네임 1",
-      intro: "한줄소개 1",
-      level: 1,
-      readBooks: [
-        {
-          id: 1,
-          title: "책 제목 1",
-          cover: BookImg1,
-          description: "책 설명 1",
-        },
-      ],
-      photocards: [
-        {
-          id: 1,
-          title: "책 제목 1",
-          cover: CardImg1,
-          back: CardImg1_back,
-          create: "2024-07-30",
-        },
-      ],
-      reviews: [
-        { id: 1, title: "책 제목 1", cover: ReviewImg1, create: "2024-07-30" },
-      ],
-    },
-    {
-      id: 2,
-      nickname: "닉네임 2",
-      intro: "한줄소개 2",
-      level: 2,
-      readBooks: [
-        {
-          id: 1,
-          title: "책 제목 1",
-          cover: BookImg1,
-          description: "책 설명 1",
-        },
-        {
-          id: 2,
-          title: "책 제목 2",
-          cover: BookImg1,
-          description: "책 설명 2",
-        },
-      ],
-      photocards: [
-        {
-          id: 1,
-          title: "책 제목 1",
-          cover: CardImg1,
-          back: CardImg1_back,
-          create: "2024-07-30",
-        },
-        {
-          id: 2,
-          title: "책 제목 2",
-          cover: CardImg2,
-          back: CardImg1_back,
-          create: "2024-07-29",
-        },
-      ],
-      reviews: [
-        { id: 1, title: "책 제목 1", cover: ReviewImg1, create: "2024-07-30" },
-        { id: 2, title: "책 제목 2", cover: ReviewImg2, create: "2024-07-29" },
-      ],
-    },
+    // ... 기존 myFollow 데이터
   ];
 
   const myReadBooks = [
-    { id: 1, title: "책 제목 1", cover: BookImg1, description: "책 설명 1" },
-    { id: 2, title: "책 제목 2", cover: BookImg1, description: "책 설명 2" },
-    { id: 3, title: "책 제목 3", cover: BookImg1, description: "책 설명 3" },
-    { id: 4, title: "책 제목 4", cover: BookImg1, description: "책 설명 4" },
+    // ... 기존 myReadBooks 데이터
   ];
 
   useEffect(() => {
     if (userId) {
-      // 여기서 userId에 해당하는 유저 정보를 가져오는 API 호출을 할 수 있습니다.
-      // 예시로 myFollow 배열에서 찾는 방식을 사용하겠습니다.
       const user = myFollow.find((user) => user.id === parseInt(userId));
       setSelectedUser(user);
     }
   }, [userId]);
 
-  const Myheader = () => (
-    <header className="flex justify-between items-center py-1 px-3 bg-white">
-      <div className="flex-cols items-center mr-2">
-        {isOwnProfile ? (
-          <>
-            <img className="w-16 h-14 mr-2" src={levelIcon1} alt="level" />
-            <p className="font-bold text-center text-xl">Lv1</p>
-          </>
-        ) : selectedUser ? (
-          <>
-            <img
-              className="w-16 h-14 mr-2"
-              src={levelIcons[selectedUser.level]}
-              alt="level"
-            />
-            <p className="font-bold text-center text-xl">
-              Lv{selectedUser.level}
-            </p>
-          </>
-        ) : (
-          <p>Loading...</p>
-        )}
-      </div>
-      <div>
-        <div className="flex items-center">
+  const Myheader = () => {
+    const userLevel = calculateLevel(user.point);
+    const levelIcon = getLevelIcon(userLevel);
+
+    return (
+      <header className="flex justify-between items-center py-1 px-3 bg-white">
+        <div className="flex-cols items-center mr-2">
           {isOwnProfile ? (
             <>
-              <h2 className="text-2xl font-bold">닉네임</h2>
-              <a href="/edit" className="ml-2 text-lg">
-                ✏️
-              </a>
+              <img className="w-16 h-14 mr-2" src={levelIcon} alt="level" />
+              <p className="font-bold text-center text-xl">Lv{userLevel}</p>
+            </>
+          ) : selectedUser ? (
+            <>
+              <img
+                className="w-16 h-14 mr-2"
+                src={getLevelIcon(calculateLevel(selectedUser.point))}
+                alt="level"
+              />
+              <p className="font-bold text-center text-xl">
+                Lv{calculateLevel(selectedUser.point)}
+              </p>
             </>
           ) : (
-            <h2 className="text-2xl font-bold">
-              {selectedUser ? selectedUser.nickname : "Loading..."}
-            </h2>
+            <p>Loading...</p>
           )}
         </div>
-        <p className="text-base">
-          {isOwnProfile
-            ? "한줄소개"
-            : selectedUser
-            ? selectedUser.intro
-            : "Loading..."}
-        </p>
-      </div>
-      <div className="flex-1 flex flex-col justify-end items-end mr-6">
-        <div className="flex-col items-center">
-          <div className="flex justify-end mb-2">
-            <span className="text-base font-bold">포인트</span>
-            <img className="w-6 h-6 ml-2" src={catCoin} alt="coin" />
+        <div>
+          <div className="flex items-center">
+            {isOwnProfile ? (
+              <>
+                <h2 className="text-2xl font-bold">{user.nickname}</h2>
+                <a href="/edit" className="ml-2 text-lg">
+                  ✏️
+                </a>
+              </>
+            ) : (
+              <h2 className="text-2xl font-bold">
+                {selectedUser ? selectedUser.nickname : "Loading..."}
+              </h2>
+            )}
           </div>
-          {isOwnProfile && (
-            <div className="flex">
-              <LogoutButton textColor="#878787" textSize="base" />
-            </div>
-          )}
+          <p className="text-base">{user.introduction}</p>
         </div>
-      </div>
-    </header>
-  );
+        <div className="flex-1 flex flex-col justify-end items-end mr-6">
+          <div className="flex-col items-center">
+            <div className="flex justify-end mb-2">
+              <span className="text-base font-bold">{user.point}</span>
+              <img className="w-6 h-6 ml-2" src={catCoin} alt="coin" />
+            </div>
+            {isOwnProfile && (
+              <div className="flex">
+                <LogoutButton textColor="#878787" textSize="base" />
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+    );
+  };
 
   const myPhotocards = [
-    {
-      id: 1,
-      title: "책 제목 1",
-      cover: CardImg1,
-      back: CardImg1_back,
-      create: "2024-07-30",
-    },
-    {
-      id: 2,
-      title: "책 제목 2",
-      cover: CardImg2,
-      back: CardImg1_back,
-      create: "2024-07-29",
-    },
-    {
-      id: 3,
-      title: "책 제목 3",
-      cover: CardImg3,
-      back: CardImg1_back,
-      create: "2024-06-30",
-    },
-    {
-      id: 4,
-      title: "책 제목 4",
-      cover: CardImg4,
-      back: CardImg1_back,
-      create: "2024-06-29",
-    },
+    // ... 기존 myPhotocards 데이터
   ];
 
   const myReviews = [
-    { id: 1, title: "책 제목 1", cover: ReviewImg1, create: "2024-07-30" },
-    { id: 2, title: "책 제목 2", cover: ReviewImg2, create: "2024-07-29" },
-    { id: 3, title: "책 제목 3", cover: ReviewImg3, create: "2024-06-30" },
-    { id: 4, title: "책 제목 4", cover: ReviewImg4, create: "2024-06-29" },
+    // ... 기존 myReviews 데이터
   ];
 
   return (
