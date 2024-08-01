@@ -1,18 +1,14 @@
-import { useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRef, useEffect } from "react";
 import CustomHeader from "../../components/CustomHeader";
-
-const groupList = [
-  { id: 1, title: "셜록홈즈 책 같이 보면서 회의 할 소모임" },
-  { id: 2, title: "group2" },
-];
 
 export default function ActivityHeader({
   isGroupListOpen,
   setIsGroupListOpen,
+  setSelectedGroupId,
+  selectedGroupId,
+  selectedGroup,
+  groupList
 }) {
-  const [selectedGroup, setSelectedGroup] = useState(groupList[0]);
-  const navigate = useNavigate();
   const groupListRef = useRef(null);
 
   const toggleGroupList = () => {
@@ -20,10 +16,17 @@ export default function ActivityHeader({
   };
 
   const selectGroup = (group) => {
-    setSelectedGroup(group);
+    console.log("ActivityHeader: Selecting group", group);
+    setSelectedGroupId(group.id);
     setIsGroupListOpen(false);
-    navigate(`/activity/${group.id}`);
+    
+    // 새 URL로 이동하고 페이지를 새로고침합니다.
+    window.location.href = `/activity/${group.id}`;
   };
+
+  useEffect(() => {
+    console.log("ActivityHeader: selectedGroup updated", selectedGroup);
+  }, [selectedGroup]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -63,7 +66,6 @@ export default function ActivityHeader({
           className="absolute top-full left-[20rem] transform -translate-x-1/2 mt-2 z-50"
         >
           <ul className="bg-[#F5F5F5] border rounded-lg shadow-lg mt-1 absolute z-10 w-96">
-            {" "}
             {groupList.map((group, index) => (
               <li
                 key={group.id}

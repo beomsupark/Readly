@@ -18,13 +18,13 @@ import Activity from './pages/Activity/Activity.jsx'
 
 function App() {
   const location = useLocation();
-  const isFullScreenPage = ['/login', '/onboard'].includes(location.pathname);
-  const notSearchPage = ['/login', '/onboard', '/mypage', '/edit'].includes(location.pathname) || 
+  const isFullScreenPage = ['/login', '/'].includes(location.pathname);
+  const notSearchPage = ['/login', '/', '/mypage', '/edit'].includes(location.pathname) || 
                         /^\/activity(\/.*)?$/.test(location.pathname);
-  const showCloud = location.pathname !== '/onboard';
+  const showCloud = location.pathname !== '/';
 
   useEffect(() => {
-    if (location.pathname === '/onboard' || location.pathname === '/community' || location.pathname === '/mypage') {
+    if (location.pathname === '/' || location.pathname === '/community' || location.pathname === '/mypage') {
       document.body.style.overflow = '';
     } else {
       document.body.style.overflow = 'hidden';
@@ -43,8 +43,8 @@ function App() {
         <main className={`flex-1 ${!isFullScreenPage ? 'ml-28' : ''}`}>
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path='/onboard' element={<OnBoard />} />
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<OnBoard />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/sharedboard" element={<SharedBoard />} />
             <Route path="/mypage" element={<MyPage />} />
             <Route path="/makecard" element={<MakeCard />} />

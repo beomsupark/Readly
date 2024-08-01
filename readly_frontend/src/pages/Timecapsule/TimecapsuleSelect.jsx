@@ -3,7 +3,6 @@ import Modal from "react-modal";
 import GoButton from "../../components/GoButton/GoButton.jsx";
 import TimecapsuleOpen from "./TimecapsuleOpen.jsx";
 
-
 Modal.setAppElement("#root");
 
 const customModalStyles = {
@@ -42,7 +41,6 @@ export default function TimecapsuleSelect({
 }) {
   const [selectedPhotocards, setSelectedPhotocards] = useState([]);
   const [selectedReviews, setSelectedReviews] = useState([]);
-  const [selectedData, setSelectedData] = useState({ photocards: [], reviews: [] });
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const toggleSelection = (id, type) => {
@@ -51,12 +49,6 @@ export default function TimecapsuleSelect({
         const newSelection = prev.includes(id)
           ? prev.filter((item) => item !== id)
           : [...prev, id];
-        setSelectedData((prevData) => ({
-          ...prevData,
-          photocards: newSelection.map((id) =>
-            photocards.find((card) => card.id === id)
-          ),
-        }));
         return newSelection;
       });
     } else if (type === "review") {
@@ -64,12 +56,6 @@ export default function TimecapsuleSelect({
         const newSelection = prev.includes(id)
           ? prev.filter((item) => item !== id)
           : [...prev, id];
-        setSelectedData((prevData) => ({
-          ...prevData,
-          reviews: newSelection.map((id) =>
-            reviews.find((review) => review.id === id)
-          ),
-        }));
         return newSelection;
       });
     }
@@ -82,6 +68,14 @@ export default function TimecapsuleSelect({
   const closeModal = () => {
     setModalIsOpen(false);
   };
+
+  const selectedPhotocardsData = selectedPhotocards.map((id) =>
+    photocards.find((card) => card.id === id)
+  );
+
+  const selectedReviewsData = selectedReviews.map((id) =>
+    reviews.find((review) => review.id === id)
+  );
 
   return (
     <>
@@ -154,7 +148,8 @@ export default function TimecapsuleSelect({
       <TimecapsuleOpen
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        selectedData={[...selectedData.photocards, ...selectedData.reviews]} // Combine the selected photocards and reviews
+        selectedPhotocards={selectedPhotocardsData}
+        selectedReviews={selectedReviewsData}
       />
     </>
   );
