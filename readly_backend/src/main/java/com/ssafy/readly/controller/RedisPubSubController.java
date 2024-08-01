@@ -19,17 +19,6 @@ public class RedisPubSubController {
 
     private final RedisPubService redisSubscribeService;
 
-    @PostMapping("/send")
-    public void sendMessage(@RequestParam String channel, @RequestBody MessageDto message) {
-        log.info("Redis Pub MSG Channel = {}", channel);
-        redisSubscribeService.pubMsgChannel(channel, message);
-    }
-
-    @PostMapping("/cancel")
-    public void cancelSubChannel(@RequestParam String channel) {
-        redisSubscribeService.cancelSubChannel(channel);
-    }
-
     @GetMapping("/history")
     public ResponseEntity<List<MessageDto>> getMessages(@RequestParam String roomId) {
         try {

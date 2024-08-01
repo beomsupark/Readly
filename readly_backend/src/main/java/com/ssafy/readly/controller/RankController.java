@@ -19,7 +19,7 @@ public class RankController {
 
     private final RankService rankService;
 
-    @GetMapping("/rankUser")
+    @GetMapping("/rank-user")
     public ResponseEntity<?> getRankUser() {
         try {
             List<GetRankUserResponse> rankMembers = rankService.getMembers();
@@ -34,7 +34,7 @@ public class RankController {
 
     }
 
-    @GetMapping("/rankGroup")
+    @GetMapping("/rank-group")
     public ResponseEntity<?> getRankGroup() {
         try {
             List<GetRankGroupResponse> rankGroups = rankService.getGroups();

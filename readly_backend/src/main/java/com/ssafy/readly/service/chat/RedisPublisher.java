@@ -6,7 +6,6 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
 @Service
 public class RedisPublisher {
 
@@ -27,9 +26,5 @@ public class RedisPublisher {
 
     public List<MessageDto> getMessagesFromRoom(String roomId) {
         return template.opsForList().range(roomId, 0, -1);
-    }
-
-    public RedisTemplate<String, MessageDto> getTemplate() {
-        return template;
     }
 }
