@@ -1,9 +1,11 @@
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import searchIcon from "../assets/header/search.png";
 import infoIcon from "../assets/header/info_img.png";
 import BookModal from "./BookModal";
 import cloudImg from "../assets/header/cloudImg.png";
 import useBookStore from "../store/bookStore";
+import LogoutButton from "../pages/Login/Logout";
 
 const customModalStyles = {
   overlay: {
@@ -29,11 +31,13 @@ export default function CustomHeader() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBook, setSelectedBook] = useState(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const modalRef = useRef(null);
   const inputRef = useRef(null);
+  const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
-  const { books, searchResults, loading, error, fetchBooks, searchBooks } =
-    useBookStore();
+  const { books, searchResults, loading, error, fetchBooks, searchBooks } = useBookStore();
 
   useEffect(() => {
     fetchBooks().catch((err) => console.error("Failed to fetch books:", err));
@@ -69,6 +73,22 @@ export default function CustomHeader() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isModalOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   const handleInputChange = useCallback(
     (e) => {
@@ -108,6 +128,16 @@ export default function CustomHeader() {
     setShowSuggestions(false);
   }, []);
 
+  const handleDropdownToggle = (e) => {
+    e.stopPropagation();
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleMyPageClick = () => {
+    navigate("/mypage");
+    setIsDropdownOpen(false);
+  };
+
   return (
     <header className="flex justify-between items-center py-1 px-3 ml-32 bg-white">
       <div className="flex-1 flex items-center">
@@ -129,13 +159,32 @@ export default function CustomHeader() {
           </button>
         </div>
       </div>
-      <div className="flex-1 flex justify-end items-center mr-6">
-        <img
-          src={infoIcon}
-          alt="프로필"
-          className="w-[3rem] h-6 rounded-lg mr-2"
-        />
-        <span className="text-base font-bold">닉네임</span>
+      <div className="flex-1 flex justify-end items-center mr-6 relative" ref={dropdownRef}>
+        <div className="flex" onClick={handleDropdownToggle}>
+          <img
+            src={infoIcon}
+            alt="프로필"
+            className="w-[3rem] h-6 rounded-lg mr-2 cursor-pointer"
+          />
+          <span className="text-base font-bold cursor-pointer">
+            닉네임
+          </span>
+        </div>
+        {isDropdownOpen && (
+          <div className="absolute right-0 top-10 mt-2 w-[8rem] bg-[#F2F2F2] rounded-lg shadow-lg z-20 w-[10rem] h-[6rem] flex flex-col justify-center">
+            <div className="flex items-center px-4 py-2 hover:bg-gray-300 cursor-pointer">
+              <button
+                onClick={handleMyPageClick}
+                className="text-sm ml-4 font-bold"
+              >
+                마이페이지
+              </button>
+            </div>
+            <div className="w-full flex px-4 py-2">
+              <LogoutButton textColor="#878787" textSize="sm" />
+            </div>
+          </div>
+        )}
       </div>
 
       {isModalOpen && (

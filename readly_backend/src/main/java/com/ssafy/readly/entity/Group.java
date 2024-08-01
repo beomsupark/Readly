@@ -18,7 +18,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
-@Table(name = "groups")
+@Table(name = "`groups`") // 테이블 이름을 백틱으로 감쌉니다.
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Group {
 
