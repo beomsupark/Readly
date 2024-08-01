@@ -1,6 +1,6 @@
 import JSZip from "jszip";
-import saveIcon from "../../assets/icon/save.png";
-import checkIcon from "../../assets/icon/check.png";
+import saveIcon from "../../assets/iconimage/save.png"
+import checkIcon from "../../assets/iconimage/check.png"
 import "./shareIcon.css";
 
 const ShareIcon = ({ onClick, icon, alt }) => {
