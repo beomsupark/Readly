@@ -2,8 +2,10 @@ package com.ssafy.readly.entity;
 
 import com.ssafy.readly.enums.Visibility;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -22,6 +24,8 @@ public class Review {
     @GeneratedValue(strategy = IDENTITY)
     private int id;
     private String text;
+
+    @CreationTimestamp
     private LocalDateTime createdDate;
     @Enumerated(value = STRING)
     private Visibility visibility;
@@ -33,6 +37,14 @@ public class Review {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "book_id")
     private Book book;
+
+    @Builder
+    public Review(String text, Visibility visibility, Member member, Book book) {
+        this.text = text;
+        this.visibility = visibility;
+        setMember(member);
+        this.book = book;
+    }
 
     /* 연관 관계 편의 메소드 */
     public void setMember(Member member){
