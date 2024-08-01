@@ -1,36 +1,15 @@
 import { useState } from "react";
-import BookImg1 from "../../assets/onboard/book.jpg";
 import ProgressBar from "../../components/ProgressBar/ProgressBar";
 import GoButton from "../../components/GoButton/GoButton";
-import CreateReview from "../../components/Review/CreateReview"; // Import the CreateReview component
+import CreateReview from "../../components/Review/CreateReview";
+import Search from "../../components/Search";
 
-const groupBooks = [
-  {
-    id: 1,
-    title: "책 제목 3",
-    cover: BookImg1,
-    totalPages: 400,
-  },
-];
-
-const initialGroup = {
-  title: "group1",
-  leader: "user1",
-  tag: "tag1",
-  max_member: 6,
-  members: [
-    { id: 1, name: "user1", currentPage: 50 },
-    { id: 2, name: "user2", currentPage: 100 },
-    { id: 3, name: "user3", currentPage: 75 },
-    { id: 4, name: "user4", currentPage: 200 },
-  ],
-};
-
-export default function ActivityProgress() {
-  const [books, setBooks] = useState(groupBooks);
-  const [group, setGroup] = useState(initialGroup);
+export default function ActivityProgress({ groupData }) {
+  const [books, setBooks] = useState(groupData.books || []);
+  const [group, setGroup] = useState(groupData.group || {});
   const [reviewInput, setReviewInput] = useState("");
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [searchModalIsOpen, setSearchModalIsOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
 
   const updateCurrentPage = (memberId, newPage) => {
@@ -58,20 +37,41 @@ export default function ActivityProgress() {
 
   const handleCreateReview = () => {
     if (selectedBook && reviewInput.trim()) {
-      // Here you might want to handle the review submission logic
       console.log("Review submitted:", reviewInput);
 
-      // You can also update the book's review in the state if needed
       setBooks((prevBooks) =>
         prevBooks.map((book) =>
           book.id === selectedBook.id ? { ...book, review: reviewInput } : book
         )
       );
 
-      // Clear the review input and close the modal
       setReviewInput("");
       closeModal();
     }
+  };
+
+  const openSearchModal = () => {
+    console.log("Opening search modal");
+    setSearchModalIsOpen(true);
+  };
+
+  const closeSearchModal = () => {
+    setSearchModalIsOpen(false);
+  };
+
+  const changeBook = (newBook) => {
+    if (books.length > 0) {
+      setBooks([
+        {
+          ...books[0],
+          id: newBook.id,
+          title: newBook.title,
+          cover: newBook.image,
+          totalPages: newBook.totalPages || 100,
+        },
+      ]);
+    }
+    closeSearchModal();
   };
 
   return (
@@ -86,7 +86,7 @@ export default function ActivityProgress() {
               <h1 className="text-5xl text-[#FFFFFF]">+</h1>
             </div>
             <div className="mt-4 flex justify-start">
-              <GoButton text="책 등록하기" />
+              <GoButton text="책 변경하기" onClick={openSearchModal} />
             </div>
           </div>
         ) : (
@@ -102,11 +102,11 @@ export default function ActivityProgress() {
                   className="w-[8rem] h-[12rem] mr-4"
                 />
                 <div className="mt-4 flex justify-start">
-                  <GoButton text="책 등록하기" />
+                  <GoButton text="책 변경하기" onClick={openSearchModal} />
                 </div>
               </div>
               <div className="flex-1 ml-4">
-                {group.members.map((member) => (
+                {group.members && group.members.map((member) => (
                   <div key={member.id} className="mb-4 flex items-center">
                     <p className="mr-4 w-20">{member.name}</p>
                     <div className="flex-1">
@@ -140,7 +140,7 @@ export default function ActivityProgress() {
             value={reviewInput}
             onChange={handleReviewInputChange}
           />
-          <GoButton text="생성" onClick={() => openModal(books[0])} /> {/* Example: open modal for the first book */}
+          <GoButton text="생성" onClick={() => books.length > 0 && openModal(books[0])} />
         </div>
       </div>
 
@@ -153,6 +153,12 @@ export default function ActivityProgress() {
           onReviewSubmit={handleCreateReview}
         />
       )}
+
+      <Search
+        isOpen={searchModalIsOpen}
+        onRequestClose={closeSearchModal}
+        onBookSelect={changeBook}
+      />
     </>
   );
 }

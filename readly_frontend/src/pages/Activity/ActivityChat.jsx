@@ -10,19 +10,9 @@ import {
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import InfoImg from '../../assets/header/info_img.png'
 
-export default function ActivityChat() {
-  const [messages, setMessages] = useState([
-    {
-      message: '안녕',
-      direction: 'incoming',
-      position: 'first',
-    },
-    {
-      message: '나도 안녕',
-      direction: 'outgoing',
-      position: 'first',
-    }
-  ]);
+export default function ActivityChat({groupData}) {
+  // groupData에서 초기 메시지를 가져옵니다.
+  const [messages, setMessages] = useState(groupData.messages || []);
 
   const handleSend = (message) => {
     setMessages([...messages, {
@@ -57,4 +47,4 @@ export default function ActivityChat() {
       </ChatContainer>
     </MainContainer>
   );
-};
+}
