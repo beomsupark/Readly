@@ -1,19 +1,26 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/readly?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3306/readly
     username: ehddls
     password: ehddls
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
+    hibernate:
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true
         # use_sql_comments: true
   data:
     redis:
-      host: localhost
+      host: redis
       port: 6379
 logging.level:
   org.hibernate.SQL: debug
   org.hibernate.type: trace
+
+jwt:
+  salt: ssafy-secret-key-20240729-ssafy-secret-key-20240729-ssafy-secret-key-20240729
+  access-token.expirationtime: 3600000
+  refresh-token.expirationtime: 2592000000
