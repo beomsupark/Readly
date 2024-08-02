@@ -4,7 +4,11 @@ const ranking = [
   { id: 3, ranking: "🥉" },
 ];
 
-const PersonalRanking = ({ personalRanking, currentUser, userSpecificRank }) => {
+const PersonalRanking = ({
+  personalRanking,
+  currentUser,
+  userSpecificRank,
+}) => {
   return (
     <ol className="space-y-4">
       {personalRanking.slice(0, 3).map((item, index) => (
@@ -19,7 +23,7 @@ const PersonalRanking = ({ personalRanking, currentUser, userSpecificRank }) => 
             {item.memberName}
           </div>
           <span className={index === 0 ? "text-[#B73D3D]" : "text-[#868686]"}>
-            {item.booksReadCount}권
+            {item.readBookCount}권
           </span>
         </li>
       ))}
@@ -28,10 +32,11 @@ const PersonalRanking = ({ personalRanking, currentUser, userSpecificRank }) => 
       {userSpecificRank && (
         <li className="text-sm font-bold p-2 text-[#878787] flex items-center justify-between">
           <div>
-            현재 {currentUser.nickname}님의 전체 랭킹은 {userSpecificRank.rank}등 입니다
+            현재 {currentUser.nickname}님의 전체 랭킹은 {userSpecificRank.rank}
+            등 입니다
           </div>
           <span className="text-[#868686]">
-            {userSpecificRank.booksReadCount}권
+            {userSpecificRank.readBookCount}권
           </span>
         </li>
       )}
