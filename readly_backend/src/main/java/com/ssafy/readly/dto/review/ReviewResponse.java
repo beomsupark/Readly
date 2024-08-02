@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 public class ReviewResponse {
+
     private int reviewId;
     private String bookImage;
     private String bookTitle;
@@ -38,5 +39,14 @@ public class ReviewResponse {
         this.visibility = visibility;
         this.likeCount = likeCount;
         this.likeCheck = likeCheck;
+    }
+
+    public ReviewResponse(int reviewId, String bookImage, String bookTitle, String bookAuthor, LocalDateTime createdDate, String reviewText) {
+        this.reviewId = reviewId;
+        this.bookImage = bookImage;
+        this.bookTitle = bookTitle;
+        this.bookAuthor = bookAuthor;
+        this.createdDate = createdDate;
+        this.reviewText = reviewText;
     }
 }

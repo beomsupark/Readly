@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static jakarta.persistence.EnumType.*;
 import static jakarta.persistence.FetchType.LAZY;
@@ -39,7 +39,7 @@ public class PhotoCard {
 
     @CreationTimestamp
     @Column(name = "created_date")
-    private LocalDate createdDate;
+    private LocalDateTime createdDate;
 
     @Builder
     public PhotoCard(String text, String photoCardImage, Book book, Member member,Visibility visibility) {

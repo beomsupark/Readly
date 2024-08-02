@@ -3,6 +3,7 @@ package com.ssafy.readly.dto.PhotoCard;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -16,4 +17,12 @@ public class CreatePhotoCardResponse {
     private String photoCardImage;
     private LocalDate photoCardCreatedDate;
 
+    public CreatePhotoCardResponse(int photoCardId, String photoCardText, String bookTitle, String bookAuthor, String photoCardImage, LocalDateTime photoCardCreatedDate) {
+        this.photoCardId = photoCardId;
+        this.photoCardText = photoCardText;
+        this.bookTitle = bookTitle;
+        this.bookAuthor = bookAuthor;
+        this.photoCardImage = photoCardImage;
+        this.photoCardCreatedDate = photoCardCreatedDate.toLocalDate();
+    }
 }
