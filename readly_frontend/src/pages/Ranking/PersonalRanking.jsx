@@ -4,9 +4,7 @@ const ranking = [
   { id: 3, ranking: "🥉" },
 ];
 
-const PersonalRanking = ({ personalRanking }) => {
-  const currentUserRank = personalRanking.findIndex(item => item.memberName === "ssafy1");
-
+const PersonalRanking = ({ personalRanking, currentUser, userSpecificRank }) => {
   return (
     <ol className="space-y-4">
       {personalRanking.slice(0, 3).map((item, index) => (
@@ -27,13 +25,13 @@ const PersonalRanking = ({ personalRanking }) => {
       ))}
       <li className="ml-2">...</li>
       <li className="ml-2.5">..</li>
-      {currentUserRank !== -1 && (
-        <li className="bg-yellow-100 text-sm text-gray-500 flex items-center justify-between">
+      {userSpecificRank && (
+        <li className="text-sm font-bold p-2 text-[#878787] flex items-center justify-between">
           <div>
-            현재 {personalRanking[currentUserRank].memberName}님의 랭킹은 {currentUserRank + 1}등 입니다.
+            현재 {currentUser.nickname}님의 전체 랭킹은 {userSpecificRank.rank}등 입니다
           </div>
           <span className="text-[#868686]">
-            {personalRanking[currentUserRank].booksReadCount}권
+            {userSpecificRank.booksReadCount}권
           </span>
         </li>
       )}
