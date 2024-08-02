@@ -19,3 +19,9 @@ export const fetchUserSpecificRank = async (memberId) => {
   console.log("Fetch UserSpecificRank:", response.data);
   return response.data;
 };
+
+export const fetchUserGroupsRank = async (memberId) => {
+  const response = await axios.get(`${BASE_URL}/rank-user-groups/${memberId}`);
+  console.log("Fetch UserGroupsRank:", response.data);
+  return response.data;
+};

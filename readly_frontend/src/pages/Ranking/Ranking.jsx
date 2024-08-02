@@ -1,46 +1,64 @@
 import { useEffect } from "react";
 import { create } from "zustand";
-import { fetchPersonalRanking, fetchGroupRanking } from "../api/rankingAPI";
-import CrownImg from "../assets/level/crown.png";
-import InfoImg from "../assets/header/info_img.png";
-import GroupImg from "../assets/header/group_img.png";
+import { fetchPersonalRanking, fetchGroupRanking, fetchUserGroupsRank, fetchUserSpecificRank } from "../../api/rankingAPI";
+import CrownImg from "../../assets/level/crown.png";
+import InfoImg from "../../assets/header/info_img.png";
+import GroupImg from "../../assets/header/group_img.png";
 import PersonalRanking from "./PersonalRanking";
 import GroupRanking from "./GroupRanking";
+import useUserStore from "../../store/userStore";
 
 const useRankStore = create((set) => ({
   personalRanking: [],
   groupRanking: [],
+  userGroupsRank: [],
+  userSpecificRank: null,
   setPersonalRanking: (data) => set({ personalRanking: Array.isArray(data) ? data : [] }),
   setGroupRanking: (data) => set({ groupRanking: Array.isArray(data) ? data : [] }),
+  setUserGroupsRank: (data) => set({ userGroupsRank: Array.isArray(data) ? data : [] }),
+  setUserSpecificRank: (data) => set({ userSpecificRank: data }),
 }));
 
 export default function Ranking() {
-  const { personalRanking, groupRanking, setPersonalRanking, setGroupRanking } = useRankStore();
+  const { personalRanking, groupRanking, userGroupsRank, userSpecificRank, setPersonalRanking, setGroupRanking, setUserGroupsRank, setUserSpecificRank } = useRankStore();
+  const { user } = useUserStore();
 
   useEffect(() => {
     const fetchRankings = async () => {
+      if (!user) return;
+
       try {
-        const [personalData, groupData] = await Promise.all([
+        const [personalData, groupData, userGroupsData, userSpecificData] = await Promise.all([
           fetchPersonalRanking(),
           fetchGroupRanking(),
+          fetchUserGroupsRank(user.id),
+          fetchUserSpecificRank(user.id),
         ]);
         setPersonalRanking(personalData);
         setGroupRanking(groupData);
+        setUserGroupsRank(userGroupsData);
+        setUserSpecificRank(userSpecificData);
       } catch (error) {
         console.error("Error fetching rankings:", error);
         setPersonalRanking([]);
         setGroupRanking([]);
+        setUserGroupsRank([]);
+        setUserSpecificRank(null);
       }
     };
 
     fetchRankings();
-  }, []);
+  }, [user]);
 
   const today = new Date().toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
+
+  if (!user) {
+    return <div>로그인이 필요합니다.</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10">
@@ -58,7 +76,7 @@ export default function Ranking() {
             </div>
             <img src={InfoImg} alt="info" className="w-[5rem] h-[4rem]" />
           </div>
-          <PersonalRanking personalRanking={personalRanking} />
+          <PersonalRanking personalRanking={personalRanking} currentUser={user} userSpecificRank={userSpecificRank} />
         </div>
         <div className="bg-[#F5F5F5] shadow-md rounded-lg p-6 w-[30rem]">
           <div className="flex justify-between items-center mb-4">
@@ -70,7 +88,7 @@ export default function Ranking() {
             </div>
             <img src={GroupImg} alt="group" className="w-[5rem] h-[4rem]" />
           </div>
-          <GroupRanking groupRanking={groupRanking} />
+          <GroupRanking groupRanking={groupRanking} userGroupsRank={userGroupsRank} userName={user.nickname} />
         </div>
       </div>
     </div>
