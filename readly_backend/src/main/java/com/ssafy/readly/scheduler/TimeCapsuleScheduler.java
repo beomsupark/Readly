@@ -1,5 +1,6 @@
 package com.ssafy.readly.scheduler;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.querydsl.core.Tuple;
 import com.ssafy.readly.repository.timecapsule.TimeCapsuleRepositoryImpl;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +16,10 @@ import java.util.List;
 public class TimeCapsuleScheduler {
 
     private final TimeCapsuleRepositoryImpl timeCapsuleRepository;
-    private final RedisPublisher redisPublisher;
+    private final JsonRedisPublisher redisPublisher;
 
     @Scheduled(cron = "0 0 6 * * ?")
-    public void sendNotification() {
+    public void sendNotification() throws JsonProcessingException {
         List<Tuple> timeCapsuleTuple = timeCapsuleRepository.findTimeCapsuleByDate(LocalDate.now());
 
         for(Tuple timeCapsule : timeCapsuleTuple) {

@@ -1,6 +1,7 @@
 package com.ssafy.readly.config;
 
 import com.ssafy.readly.dto.chat.MessageDto;
+import com.ssafy.readly.scheduler.RedisSubscriber;
 import com.ssafy.readly.service.chat.RedisSubscribeListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -35,14 +37,31 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory connectionFactory) {
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-        return container;
+    public RedisTemplate<String, Object> genericRedisTemplate() {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory());
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
+        return template;
     }
 
     @Bean
+    public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory connectionFactory,
+                                                                       MessageListenerAdapter listenerAdapter,
+                                                                       MessageListenerAdapter listenerAdapter2) {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory);
+        container.addMessageListener(listenerAdapter2, new PatternTopic("timecapsule-channel"));
+        return container;
+    }
+
+    @Bean(name = "listenerAdapter")
     public MessageListenerAdapter listenerAdapter(RedisSubscribeListener listener) {
         return new MessageListenerAdapter(listener, "onMessage");
+    }
+
+    @Bean(name = "listenerAdapter2")
+    public MessageListenerAdapter listenerAdapter2(RedisSubscriber subscriber) {
+        return new MessageListenerAdapter(subscriber, "onMessage");
     }
 }
