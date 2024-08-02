@@ -1,43 +1,79 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import GoButton from "../../components/GoButton/GoButton";
 import FormField from "../../components/Form/FormField";
+import TagFormField from "../../components/Form/TagFormField";
+import NumberInputField from "../../components/Form/NumberInputField";
+import { createGroup } from "../../api/communityAPI";
+import useUserStore from "../../store/userStore.js";
 
 export default function MakeCommunity() {
+  const navigate = useNavigate();
   const [title, setTitle] = useState("");
-  const [tag, setTag] = useState("");
-  const [member, setMember] = useState("");
-
+  const [description, setDescription] = useState("");
+  const [maxParticipants, setMaxParticipants] = useState(2);
+  const [tags, setTags] = useState([]);
+  const { user } = useUserStore();
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const groupData = {
+      memberId: user.id,
+      title,
+      description,
+      createdDate: new Date().toISOString(),
+      maxParticipants,
+      roomId: null,
+      tags,
+    };
+  
+    try {
+      const status = await createGroup(groupData);
+      if (status === 201) {
+        console.log("Group created successfully");
+        alert("소모임이 성공적으로 생성되었습니다.");
+        navigate("/community");
+      } else {
+        console.error("Unexpected status code:", status);
+        alert(`소모임 생성 중 오류가 발생했습니다. (상태 코드: ${status})`);
+      }
+    } catch (error) {
+      console.error("Error creating group:", error);
+      alert(`소모임 생성 중 오류가 발생했습니다: ${error.response ? error.response.data : error.message}`);
+    }
   };
 
   return (
     <div className="flex w-full h-4/5">
       <div className="w-2/5 p-4 mt-10 bg-[#F5F5F5] rounded-xl shadow-md relative">
-      <form onSubmit={handleSubmit} className="space-y-12">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <FormField
             label="소모임 이름을 입력해주세요"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
           <FormField
-            label="태그를 입력해주세요"
-            value={tag}
-            onChange={(e) => setTag(e.target.value)}
+            label="소모임 설명을 입력해주세요"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             multiline={true}
           />
-          <FormField
+          <NumberInputField
             label="참여 인원을 입력해주세요"
-            value={member}
-            onChange={(e) => setMember(e.target.value)}
-            multiline={true}
+            value={maxParticipants}
+            onChange={setMaxParticipants}
+            min={1}
+            max={12}
           />
-      <div className="absolute bottom-4 right-4">
+          <TagFormField
+            label="태그를 입력해주세요"
+            tags={tags}
+            setTags={setTags}
+          />
+          <div className="absolute bottom-4 right-4">
             <GoButton text="소모임 생성" onClick={handleSubmit} />
           </div>
-          </form>
-    </div>
+        </form>
+      </div>
     </div>
   );
 }
