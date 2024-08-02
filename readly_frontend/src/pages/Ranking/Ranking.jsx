@@ -34,10 +34,19 @@ export default function Ranking() {
           fetchUserGroupsRank(user.id),
           fetchUserSpecificRank(user.id),
         ]);
-        setPersonalRanking(personalData);
+        
+        // 데이터 변환 (필요한 경우)
+        const transformedPersonalData = personalData.map(item => ({
+          ...item,
+          readBookCount: item.booksReadCount || item.readBookCount || 0
+        }));
+
+        setPersonalRanking(transformedPersonalData);
         setGroupRanking(groupData);
         setUserGroupsRank(userGroupsData);
         setUserSpecificRank(userSpecificData);
+
+        console.log("Transformed Personal Ranking:", transformedPersonalData);
       } catch (error) {
         console.error("Error fetching rankings:", error);
         setPersonalRanking([]);
