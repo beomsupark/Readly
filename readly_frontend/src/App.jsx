@@ -1,5 +1,5 @@
-import { Route, Routes, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { Route, Routes, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import useUserStore from "./store/userStore";
 import Login from './pages/Login/Login.jsx';
 import OnBoard from './pages/OnBoard.jsx';
@@ -19,52 +19,59 @@ import Activity from './pages/Activity/Activity.jsx';
 
 function App() {
   const location = useLocation();
-  const isFullScreenPage = ['/login', '/'].includes(location.pathname);
-  const notSearchPage = ['/login', '/', '/mypage', '/edit'].includes(location.pathname) || 
-                        /^\/activity(\/.*)?$/.test(location.pathname);
-  const showCloud = !['/login', '/'].includes(location.pathname);
+  const isFullScreenPage = ["/login", "/"].includes(location.pathname);
+  const notSearchPage =
+    ["/login", "/", "/mypage", "/edit"].includes(location.pathname) ||
+    /^\/activity(\/.*)?$/.test(location.pathname);
+  const showCloud = !["/login", "/"].includes(location.pathname);
 
   useEffect(() => {
-    if (location.pathname === '/' || location.pathname === '/community' || location.pathname === '/mypage') {
-      document.body.style.overflow = '';
+    if (
+      location.pathname === "/" ||
+      location.pathname === "/community" ||
+      location.pathname === "/mypage"
+    ) {
+      document.body.style.overflow = "";
     } else {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     }
 
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [location.pathname]);
 
-    const setUser = useUserStore(state => state.setUser);
-  
-    useEffect(() => {
-      const userInfo = localStorage.getItem('userInfo');
-      if (userInfo) {
-        setUser(JSON.parse(userInfo));
-      }
-    }, [setUser]);
+  const setUser = useUserStore((state) => state.setUser);
+
+  useEffect(() => {
+    const userInfo = localStorage.getItem("userInfo");
+    if (userInfo) {
+      setUser(JSON.parse(userInfo));
+    }
+  }, [setUser]);
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
       {!notSearchPage && <CustomHeader />}
       <div className="flex relative min-h-screen">
         {!isFullScreenPage && <CustomSidebar />}
-        <main className={`flex-1 ${!isFullScreenPage ? 'ml-28' : ''}`}>
+        <main className={`flex-1 ${!isFullScreenPage ? "ml-28" : ""}`}>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<OnBoard />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/sharedboard" element={<SharedBoard />} />
-            <Route path="/mypage" element={<MyPage />} />
-            <Route path="/makecard" element={<MakeCard />} />
-            <Route path="/edit" element={<EditProfile />} />
-            <Route path="/ranking" element={<Ranking />} />
-            <Route path="/community" element={<Community />} />
-            <Route path="/makecommunity" element={<MakeCommunity />} />
-            <Route path="/activity" element={<Activity />} />
-            <Route path="/activity/:groupId" element={<Activity />} />
-            {/* 다른 라우트들... */}
+            <Route element={<ProtectedRoute />}>
+              <Route path="/home" element={<Home />} />
+              <Route path="/sharedboard" element={<SharedBoard />} />
+              <Route path="/mypage" element={<MyPage />} />
+              <Route path="/makecard" element={<MakeCard />} />
+              <Route path="/update" element={<UpdateProfile />} />
+              <Route path="/ranking" element={<Ranking />} />
+              <Route path="/community" element={<Community />} />
+              <Route path="/makecommunity" element={<MakeCommunity />} />
+              <Route path="/activity" element={<Activity />} />
+              <Route path="/activity/:groupId" element={<Activity />} />
+              {/* 다른 라우트들... */}
+            </Route>
           </Routes>
         </main>
         {showCloud && (
