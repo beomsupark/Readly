@@ -30,12 +30,27 @@ public class GroupMember {
     private Group group;
 
     /* 연관 관계 편의 메소드 */
-    public void setMember(Member member){
+    public void setMember(Member member) {
         if (this.member != null) {
             this.member.getGroupMembers().remove(this);
         }
 
         this.member = member;
         member.getGroupMembers().add(this);
+    }
+
+    public void setGroup(Group group) {
+        if (this.group != null) {
+            this.group.getGroupMembers().remove(this);
+        }
+
+        this.group = group;
+        group.getGroupMembers().add(this);
+    }
+
+    public GroupMember(Role role, Member member, Group group) {
+        this.role = role;
+        this.member = member;
+        this.group = group;
     }
 }

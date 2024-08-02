@@ -1,6 +1,7 @@
 package com.ssafy.readly.controller;
 
 import com.ssafy.readly.dto.group.GetGroupResponse;
+import com.ssafy.readly.dto.group.JoinGroupRequest;
 import com.ssafy.readly.dto.group.MakeGroupRequest;
 import com.ssafy.readly.service.chat.RedisPubService;
 import com.ssafy.readly.service.group.GroupService;
@@ -44,5 +45,23 @@ public class GroupController {
         }
     }
 
+    @PostMapping("/joingroup")
+    public ResponseEntity<?> joinGroup(@RequestBody JoinGroupRequest joinGroupRequest)  throws Exception {
+        try {
+            groupService.joinGroup(joinGroupRequest.getGroupId(), joinGroupRequest.getMemberId());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/membergroups/{memberId}")
+    public ResponseEntity<List<GetGroupResponse>> getGroupsByMemberId(@PathVariable int memberId) throws Exception {
+        List<GetGroupResponse> groups = groupService.findGroupsByMemberId(memberId);
+        if (groups.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(groups, HttpStatus.OK);
+    }
 
 }
