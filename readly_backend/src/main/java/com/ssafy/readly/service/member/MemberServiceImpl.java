@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.security.sasl.AuthenticationException;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -33,7 +32,7 @@ public class MemberServiceImpl implements MemberService {
                 signUpMember.getBirthday(),
                 signUpMember.getGender(),
                 signUpMember.getSocial(),
-                signUpMember.getText());
+                signUpMember.getIntroduction());
         memberRepository.signUp(member);
     }
 
