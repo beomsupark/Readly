@@ -1,6 +1,5 @@
 package com.ssafy.readly.entity;
 
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,12 +11,13 @@ import static lombok.AccessLevel.*;
 @Entity
 @Getter
 @Table(name="read_books")
-@NoArgsConstructor(access = PROTECTED)
 public class ReadBook {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private int id;
+
+    @Column(name = "current_page")
     private int currentPage;
 
     @ManyToOne(fetch = LAZY)
@@ -40,5 +40,26 @@ public class ReadBook {
 
         this.member = member;
         member.getReadBooks().add(this);
+    }
+
+    public void setBook(Book book) {
+        if (this.book != null) {
+            this.book.getReadBooks().remove(this);
+        }
+
+        this.book = book;
+        book.getReadBooks().add(this);
+    }
+
+    public void setGroup(Group group) {
+        if (this.group != null) {
+            this.group.getReadBooks().remove(this);
+        }
+        this.group = group;
+        group.getReadBooks().add(this);
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
     }
 }

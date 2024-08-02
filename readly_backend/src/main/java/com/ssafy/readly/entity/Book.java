@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.*;
 
@@ -27,6 +30,9 @@ public class Book {
     private String purchaseLink;
     private int totalPage;
     private String image;
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private List<ReadBook> readBooks = new ArrayList<>();
 
     @Builder
     public Book(String title, String author, String isbn, String detail, String purchaseLink, int totalPage, String image) {
