@@ -38,21 +38,17 @@ public class TimeCapsuleItem {
     public TimeCapsuleItem(ItemType itemType, Review review, TimeCapsule timeCapsule) {
         this.itemType = itemType;
         this.review = review;
-        setTimeCapsule(timeCapsule);
+        addTimeCapsule(timeCapsule);
     }
 
     public TimeCapsuleItem(ItemType itemType, PhotoCard photoCard, TimeCapsule timeCapsule) {
         this.itemType = itemType;
         this.photoCard = photoCard;
-        setTimeCapsule(timeCapsule);
+        addTimeCapsule(timeCapsule);
     }
 
     /* 연관 관계 편의 메소드 */
-    public void setTimeCapsule(TimeCapsule timeCapsule){
-        if (this.timeCapsule != null) {
-            this.timeCapsule.getTimeCapsuleItems().remove(this);
-        }
-
+    public void addTimeCapsule(TimeCapsule timeCapsule){
         this.timeCapsule = timeCapsule;
         timeCapsule.getTimeCapsuleItems().add(this);
     }

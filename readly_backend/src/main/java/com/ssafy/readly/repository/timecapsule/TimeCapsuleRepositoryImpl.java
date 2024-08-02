@@ -1,5 +1,6 @@
 package com.ssafy.readly.repository.timecapsule;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -17,6 +18,7 @@ import java.util.List;
 import static com.ssafy.readly.entity.QBook.book;
 import static com.ssafy.readly.entity.QPhotoCard.photoCard;
 import static com.ssafy.readly.entity.QReview.review;
+import static com.ssafy.readly.entity.QTimeCapsule.timeCapsule;
 
 @Repository
 public class TimeCapsuleRepositoryImpl implements TimeCapsuleRepository {
@@ -98,6 +100,15 @@ public class TimeCapsuleRepositoryImpl implements TimeCapsuleRepository {
     public List<PhotoCard> findByPhotoCardIn(Integer[] photoCards) {
         return queryFactory.selectFrom(photoCard)
                 .where(photoCard.id.in(photoCards))
+                .fetch();
+    }
+
+    @Override
+    public List<Tuple> findTimeCapsuleByDate(LocalDate date) {
+        return queryFactory
+                .select(timeCapsule.id, timeCapsule.member.id, photoCard.createdDate)
+                .from(timeCapsule)
+                .where(timeCapsule.releaseDate.eq(date))
                 .fetch();
     }
 }

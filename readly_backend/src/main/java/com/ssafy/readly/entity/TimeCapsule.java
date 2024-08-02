@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -23,9 +22,10 @@ public class TimeCapsule {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private int id;
-    private LocalDateTime releaseDate;
+    private LocalDate releaseDate;
     private LocalDate startDate;
     private LocalDate endDate;
+    private LocalDate createdDate = LocalDate.now();
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
@@ -38,15 +38,11 @@ public class TimeCapsule {
         this.startDate = startDate;
         this.endDate = endDate;
         createReleaseDate();
-        setMember(member);
+        addMember(member);
     }
 
     /* 연관 관계 편의 메소드 */
-    public void setMember(Member member){
-        if (this.member != null) {
-            this.member.getTimeCapsules().remove(this);
-        }
-
+    public void addMember(Member member){
         this.member = member;
         member.getTimeCapsules().add(this);
     }
@@ -54,6 +50,6 @@ public class TimeCapsule {
     public void createReleaseDate() {
         Random random = new Random();
         int addMonth = random.nextInt(12) + 1;
-        this.releaseDate = LocalDateTime.now().plusMonths(addMonth);
+        this.releaseDate = LocalDate.now().plusMonths(addMonth);
     }
 }
