@@ -42,4 +42,11 @@ public class GlobalExceptionHandler {
         map.put("errorMessage", e.getMessage());
         return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = Exception.class)
+    public ResponseEntity<Map<String, Object>> handleGenericException(Exception e) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("errorMessage", e.getMessage());
+        return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
