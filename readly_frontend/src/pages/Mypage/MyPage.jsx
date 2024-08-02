@@ -1,40 +1,32 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
-import levelIcon1 from "../../assets/level/lv1.png";
-import levelIcon2 from "../../assets/level/lv2.png";
-import levelIcon3 from "../../assets/level/lv3.png";
-import levelIcon4 from "../../assets/level/lv4.png";
-import catCoin from "../../assets/level/cat_coin.png";
 import CardImg1 from "../../assets/onboard/card1_front.png";
 import CardImg2 from "../../assets/onboard/card2.png";
 import CardImg3 from "../../assets/onboard/card3.png";
 import CardImg4 from "../../assets/onboard/card4.png";
-import CardImg1_back from "../../assets/onboard/card1_back.png";
 import ReviewImg1 from "../../assets/onboard/review1.png";
 import ReviewImg2 from "../../assets/onboard/review2.png";
 import ReviewImg3 from "../../assets/onboard/review3.png";
 import ReviewImg4 from "../../assets/onboard/review4.png";
-import BookImg1 from "../../assets/onboard/book.jpg";
 import MypageProgress from "./MyPageProgress";
 import MypageBookshelf from "./MyPageBookshelf";
 import MypageFollow from "./MyPageFollow";
 import TimeCat from "../../assets/onboard/time_cat.png";
 import TimecapsulePeriod from "../Timecapsule/TimecapsulePeriod";
 import GoButton from "../../components/GoButton/GoButton";
-import LogoutButton from "../Login/Logout";
 import PhotocardList from "./PhotocardListModal";
 import ReviewList from "./ReviewListModal";
 import useUserStore from "../../store/userStore";
+import Myheader from "./MypageHeader";
 
 export default function MyPage() {
   const user = useUserStore(state => state.user);
-
   const { userId } = useParams();
   const [activeLink, setActiveLink] = useState("progress");
   const [timecapsuleModalIsOpen, setTimecapsuleModalIsOpen] = useState(false);
   const [photocardModalIsOpen, setPhotocardModalIsOpen] = useState(false);
   const [reviewModalIsOpen, setReviewModalIsOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  // const [selectedUser, setSelectedUser] = useState(null);
   const isOwnProfile = !userId;
 
   const handleLinkClick = (link) => {
@@ -65,105 +57,25 @@ export default function MyPage() {
     setReviewModalIsOpen(false);
   };
 
-  const calculateLevel = (point) => {
-    if (point < 1000) return 1;
-    if (point < 2000) return 2;
-    if (point < 3000) return 3;
-    return 4;
-  };
-
-  const getLevelIcon = (level) => {
-    switch (level) {
-      case 1: return levelIcon1;
-      case 2: return levelIcon2;
-      case 3: return levelIcon3;
-      case 4: return levelIcon4;
-      default: return levelIcon1;
-    }
-  };
-
-  const myFollow = [
-    // ... 기존 myFollow 데이터
-  ];
-
-  const myReadBooks = [
-    // ... 기존 myReadBooks 데이터
-  ];
-
-  useEffect(() => {
-    if (userId) {
-      const user = myFollow.find((user) => user.id === parseInt(userId));
-      setSelectedUser(user);
-    }
-  }, [userId]);
-
-  const Myheader = () => {
-    const userLevel = calculateLevel(user.point);
-    const levelIcon = getLevelIcon(userLevel);
-
-    return (
-      <header className="flex justify-between items-center py-1 px-3 bg-white">
-        <div className="flex-cols items-center mr-2">
-          {isOwnProfile ? (
-            <>
-              <img className="w-16 h-14 mr-2" src={levelIcon} alt="level" />
-              <p className="font-bold text-center text-xl">Lv{userLevel}</p>
-            </>
-          ) : selectedUser ? (
-            <>
-              <img
-                className="w-16 h-14 mr-2"
-                src={getLevelIcon(calculateLevel(selectedUser.point))}
-                alt="level"
-              />
-              <p className="font-bold text-center text-xl">
-                Lv{calculateLevel(selectedUser.point)}
-              </p>
-            </>
-          ) : (
-            <p>Loading...</p>
-          )}
-        </div>
-        <div>
-          <div className="flex items-center">
-            {isOwnProfile ? (
-              <>
-                <h2 className="text-2xl font-bold">{user.nickname}</h2>
-                <a href="/update" className="ml-2 text-lg">
-                  ✏️
-                </a>
-              </>
-            ) : (
-              <h2 className="text-2xl font-bold">
-                {selectedUser ? selectedUser.nickname : "Loading..."}
-              </h2>
-            )}
-          </div>
-          <p className="text-base">{user.introduction}</p>
-        </div>
-        <div className="flex-1 flex flex-col justify-end items-end mr-6">
-          <div className="flex-col items-center">
-            <div className="flex justify-end mb-2">
-              <span className="text-base font-bold">{user.point}</span>
-              <img className="w-6 h-6 ml-2" src={catCoin} alt="coin" />
-            </div>
-            {isOwnProfile && (
-              <div className="flex">
-                <LogoutButton textColor="#878787" textSize="base" />
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
-    );
-  };
+  // useEffect(() => {
+  //   if (userId) {
+  //     const user = myFollow.find((user) => user.id === parseInt(userId));
+  //     setSelectedUser(user);
+  //   }
+  // }, [userId]);
 
   const myPhotocards = [
-    // ... 기존 myPhotocards 데이터
+    { id: 1, title: "Photocard 1", cover: CardImg1 },
+    { id: 2, title: "Photocard 2", cover: CardImg2 },
+    { id: 3, title: "Photocard 3", cover: CardImg3 },
+    { id: 4, title: "Photocard 4", cover: CardImg4 },
   ];
 
   const myReviews = [
-    // ... 기존 myReviews 데이터
+    { id: 1, title: "Review 1", cover: ReviewImg1 },
+    { id: 2, title: "Review 2", cover: ReviewImg2 },
+    { id: 3, title: "Review 3", cover: ReviewImg3 },
+    { id: 4, title: "Review 4", cover: ReviewImg4 },
   ];
 
   return (
@@ -209,15 +121,15 @@ export default function MyPage() {
         <div className="mt-4">
           {activeLink === "progress" && (
             <div className="flex justify-start">
-              <MypageProgress />
+              <MypageProgress userId={userId || user.id} />
             </div>
           )}
           {activeLink === "bookshelf" && (
-            <MypageBookshelf books={myReadBooks} />
+            <MypageBookshelf userId={userId || user.id} />
           )}
           {activeLink === "follow" && (
             <div>
-              <MypageFollow follows={myFollow} />
+              <MypageFollow userId={userId || user.id} />
             </div>
           )}
         </div>
