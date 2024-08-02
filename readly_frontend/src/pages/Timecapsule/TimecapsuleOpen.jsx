@@ -30,7 +30,12 @@ const customModalStyles = {
   },
 };
 
-export default function TimecapsuleOpen({ isOpen, onRequestClose, selectedData }) {
+export default function TimecapsuleOpen({
+  isOpen,
+  onRequestClose,
+  selectedPhotocards,
+  selectedReviews
+}) {
   return (
     <Modal
       isOpen={isOpen}
@@ -46,22 +51,33 @@ export default function TimecapsuleOpen({ isOpen, onRequestClose, selectedData }
       >
         X
       </button>
-      <h2 className="text-2xl font-bold mb-4">user님의 기록입니다</h2>
+      <h2 className="text-2xl font-bold mb-4">타임캡슐 내용</h2>
       <div className="flex-col gap-4">
-        {selectedData &&
-          selectedData.map((book) => (
-            <div key={book.id} className="flex items-center">
+        <h3 className="font-bold mb-2">선택한 포토카드</h3>
+        <div className="flex flex-wrap gap-2">
+          {selectedPhotocards.map((photocard) => (
+            <div key={photocard.id} className="flex items-center">
               <img
-                src={book.cover}
-                alt={book.title}
-                className="w-[10rem] h-auto object-cover mb-2"
+                src={photocard.cover}
+                alt={photocard.title}
+                className="h-[7rem] rounded"
               />
-              <div>
-                <p className="text-center">{book.title}</p>
-                <p className="text-center">{book.description}</p>
-              </div>
             </div>
           ))}
+        </div>
+
+        <h3 className="font-bold mb-2 mt-4">선택한 한줄평</h3>
+        <div className="flex flex-wrap gap-2">
+          {selectedReviews.map((review) => (
+            <div key={review.id} className="flex items-center">
+              <img
+                src={review.cover}
+                alt={review.title}
+                className="h-[7rem] rounded"
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </Modal>
   );

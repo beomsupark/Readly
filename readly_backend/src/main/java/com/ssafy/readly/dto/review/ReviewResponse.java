@@ -16,8 +16,9 @@ public class ReviewResponse {
     private LocalDateTime createdDate;
     private String reviewText;
     private Visibility visibility;
-    private int likeCount;
-    private boolean likeCheck;
+    private long likeCount;
+    private long likeCheck;
+
 
     public ReviewResponse(Review review) {
         this.reviewId = review.getId();
@@ -28,8 +29,7 @@ public class ReviewResponse {
         this.reviewText = review.getText();
         this.visibility = review.getVisibility();
     }
-
-    public ReviewResponse(int reviewId,String bookImage,String bookTitle,String bookAuthor, LocalDateTime createdDate, String reviewText, Visibility visibility, int likeCount, boolean likeCheck) {
+    public ReviewResponse(int reviewId,String bookImage,String bookTitle,String bookAuthor, LocalDateTime createdDate, String reviewText, Visibility visibility, long likeCount, long likeCheck) {
         this.reviewId = reviewId;
         this.bookImage = bookImage;
         this.bookTitle = bookTitle;

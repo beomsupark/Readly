@@ -1,11 +1,16 @@
+// src/components/LoginForm.jsx
 import { useState } from "react";
-// import { login } from "../api/AuthAPI";
+import { useNavigate } from "react-router-dom";
+import { login } from "../../api/AuthAPI";
+import useUserStore from "../../store/userStore";
 
 export default function LoginForm() {
     const [values, setValues] = useState({
-        userid: "",
-        password: "",
+        loginId: "",
+        loginPwd: "",
     });
+    const setUser = useUserStore(state => state.setUser);
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setValues({
@@ -16,18 +21,17 @@ export default function LoginForm() {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-
-        login(values)
-            .then((response) => {
-                localStorage.clear();
-                localStorage.setItem('tokenType', response.tokenType);
-                localStorage.setItem('accessToken', response.accessToken);
-                localStorage.setItem('refreshToken', response.refreshToken);
-                window.location.href = `/home`;
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        try {
+            const response = await login(values);
+            localStorage.setItem('accessToken', response.accessToken);
+            localStorage.setItem('refreshToken', response.refreshToken);
+            setUser(response.loginInfo);
+            navigate('/home');
+            console.log(response)
+        } catch (error) {
+            console.error("Login failed:", error.response?.data || error.message);
+            alert("로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
+        }
     };
 
     return (
@@ -35,8 +39,8 @@ export default function LoginForm() {
             <div>
                 <h2>로그인</h2>
                 <form className="wrapper-box" onSubmit={handleLogin}>
-                    <input type="text" className="form-control" id="userid" placeholder="아이디" onChange={handleChange} value={values.userid} required />
-                    <input type="password" className="form-control" id="password" placeholder="비밀번호" onChange={handleChange} value={values.password} required />
+                    <input type="text" className="form-control" id="loginId" placeholder="아이디" onChange={handleChange} value={values.loginId} required />
+                    <input type="password" className="form-control" id="loginPwd" placeholder="비밀번호" onChange={handleChange} value={values.loginPwd} required />
                     <button type="submit" className="btn btn-submit">로그인</button>
                 </form>
             </div>

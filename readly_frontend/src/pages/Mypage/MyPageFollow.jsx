@@ -1,19 +1,31 @@
 import { useState } from "react";
-
 import LevelIcon1 from "../../assets/level/lv1.png";
 import LevelIcon2 from "../../assets/level/lv2.png";
 import InfoIcon from "../../assets/header/info_img.png";
 import FollowList from "./FollowModal";
+// import FollowUserPageModal from "./FollowUserPageModal";
 
-export default function MypageFollow() {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+export default function MypageFollow({ follows }) {
+  const [followListModalIsOpen, setFollowListModalIsOpen] = useState(false);
+  const [followUserPageModalIsOpen, setFollowUserPageModalIsOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
-  const openModal = () => {
-    setModalIsOpen(true);
+  const openFollowListModal = () => {
+    setFollowListModalIsOpen(true);
   };
 
-  const closeModal = () => {
-    setModalIsOpen(false);
+  const closeFollowListModal = () => {
+    setFollowListModalIsOpen(false);
+  };
+
+  const openFollowUserPageModal = (user) => {
+    setSelectedUser(user);
+    setFollowUserPageModalIsOpen(true);
+  };
+
+  const closeFollowUserPageModal = () => {
+    setFollowUserPageModalIsOpen(false);
+    setSelectedUser(null); // Reset selected user when closing
   };
 
   const levelIcons = {
@@ -21,46 +33,32 @@ export default function MypageFollow() {
     2: LevelIcon2,
   };
 
-  const myFollow = [
-    {
-      id: 1,
-      nickname: "닉네임 1",
-      intro: "한줄소개 1",
-      level: 1,
-    },
-    {
-      id: 2,
-      nickname: "닉네임 2",
-      intro: "한줄소개 2",
-      level: 2,
-    },
-  ];
-
   return (
     <>
       <div className="bg-white rounded-lg shadow p-4 mb-4 relative">
         <div className="flex space-x-2 mb-2 gap-4">
-          {myFollow.map((card) => (
+          {follows.map((user) => (
             <div
-              key={card.id}
-              className="bg-gray-200 p-2 rounded-xl flex-cols items-center bg-[#F5F5F5]"
+              key={user.id}
+              onClick={() => openFollowUserPageModal(user)}
+              className="bg-gray-200 p-2 rounded-xl flex-cols items-center bg-[#F5F5F5] cursor-pointer"
             >
               <img
-                src={levelIcons[card.level]}
-                alt={`Level ${card.level}`}
+                src={levelIcons[user.level]}
+                alt={`Level ${user.level}`}
                 className="w-7 h-7 mr-2"
               />
               <div className="ml-4">
                 <img src={InfoIcon} alt="info" className="w-12 h-10" />
-                <p className="font-semibold">{card.nickname}</p>
-                <p className="text-sm text-gray-600">{card.intro}</p>
+                <p className="font-semibold">{user.nickname}</p>
+                <p className="text-sm text-gray-600">{user.intro}</p>
               </div>
             </div>
           ))}
         </div>
         <div className="absolute top-4 right-4">
           <button
-            onClick={openModal}
+            onClick={openFollowListModal}
             className="text-blue-500 hover:text-blue-700 text-lg font-bold"
           >
             <span className="text-custom-highlight">&gt;</span>{" "}
@@ -70,10 +68,18 @@ export default function MypageFollow() {
       </div>
 
       <FollowList
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        books={myFollow}
+        isOpen={followListModalIsOpen}
+        onRequestClose={closeFollowListModal}
+        books={follows}
       />
+
+      {selectedUser && (
+        <FollowUserPageModal
+          isOpen={followUserPageModalIsOpen}
+          onRequestClose={closeFollowUserPageModal}
+          user={selectedUser}
+        />
+      )}
     </>
   );
 }

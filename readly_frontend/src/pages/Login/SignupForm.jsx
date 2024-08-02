@@ -1,25 +1,22 @@
+// src/components/SignupForm.jsx
 import { useState } from "react";
-// import { signUp, idDuplicateCheck } from "../api/AuthAPI"; // idDuplicateCheck 함수를 불러옵니다.
+import { useNavigate } from "react-router-dom";
+import { signUp } from "../../api/AuthAPI";
 
 export default function SignupForm() {
+    const navigate = useNavigate();
     const [values, setValues] = useState({
-        userid: "",
-        password: "",
-        confirm: "",
-        username: "",
+        loginId: "",
+        loginPwd: "",
         nickname: "",
-        phone: "",
+        memberName: "",
+        phoneNumber: "",
         email: "",
-        birthdate: "",
-        gender: ""
+        birthday: "",
+        gender: "",
+        social: "R",
+        text: ""
     });
-
-    const [idError, setIdError] = useState('');
-    const [passwordError, setPasswordError] = useState('');
-    const [confirmError, setConfirmError] = useState('');
-
-    const [isIdCheck, setIsIdCheck] = useState(false); // 중복 검사를 했는지 안했는지
-    const [isIdAvailable, setIsIdAvailable] = useState(false);
 
     const handleChange = (e) => {
         setValues({
@@ -30,79 +27,13 @@ export default function SignupForm() {
 
     const handleRegister = async (e) => {
         e.preventDefault();
-
-        const idCheckResult = await idCheckHandler(values.userid);
-        if (idCheckResult) setIdError('');
-        else return;
-
-        if (!isIdCheck || !isIdAvailable) {
-            alert('아이디 중복 검사를 해주세요.');
-            return;
-        }
-
-        const passwordCheckResult = passwordCheckHandler(values.password, values.confirm);
-        if (passwordCheckResult) {
-            setPasswordError('');
-            setConfirmError('');
-        } else {
-            return;
-        }
-
-        signUp(values)
-            .then((response) => {
-                window.location.href = `/login`;
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    };
-
-    const idCheckHandler = async (id) => {
-        const idRegex = /^[a-z\d]{5,10}$/;
-        if (id === '') {
-            setIdError('아이디를 입력해주세요.');
-            setIsIdAvailable(false);
-            return false;
-        } else if (!idRegex.test(id)) {
-            setIdError('아이디는 5~10자의 영소문자, 숫자만 입력 가능합니다.');
-            setIsIdAvailable(false);
-            return false;
-        }
         try {
-            const responseData = await idDuplicateCheck(id);
-            if (responseData) {
-                setIdError('사용 가능한 아이디입니다.');
-                setIsIdCheck(true);
-                setIsIdAvailable(true);
-                return true;
-            } else {
-                setIdError('이미 사용중인 아이디입니다.');
-                setIsIdAvailable(false);
-                return false;
-            }
+            await signUp(values);
+            alert("회원가입에 성공했습니다. 로그인 페이지로 이동합니다.");
+            navigate('/login');
         } catch (error) {
-            alert('서버 오류입니다. 관리자에게 문의하세요.');
-            console.error(error);
-            return false;
-        }
-    };
-
-    const passwordCheckHandler = (password, confirm) => {
-        const passwordRegex = /^[a-z\d!@*&-_]{8,16}$/;
-        if (password === '') {
-            setPasswordError('비밀번호를 입력해주세요.');
-            return false;
-        } else if (!passwordRegex.test(password)) {
-            setPasswordError('비밀번호는 8~16자의 영소문자, 숫자, !@*&-_만 입력 가능합니다.');
-            return false;
-        } else if (confirm !== password) {
-            setPasswordError('');
-            setConfirmError('비밀번호가 일치하지 않습니다.');
-            return false;
-        } else {
-            setPasswordError('');
-            setConfirmError('');
-            return true;
+            console.error("Signup failed:", error.response.data);
+            alert("회원가입에 실패했습니다. 다시 시도해주세요.");
         }
     };
 
@@ -111,18 +42,18 @@ export default function SignupForm() {
             <div>
                 <h2>회원가입</h2>
                 <form className="wrapper-box" onSubmit={handleRegister}>
-                    <input type="text" className="form-control" id="userid" placeholder="아이디" onChange={handleChange} value={values.userid} required />
-                    {idError && <small className={isIdAvailable ? 'idAvailable' : ''}>{idError}</small>}
-                    <input type="password" className="form-control" id="password" placeholder="비밀번호" onChange={handleChange} value={values.password} required />
-                    {passwordError && <small>{passwordError}</small>}
-                    <input type="password" className="form-control" id="confirm" placeholder="비밀번호 확인" onChange={handleChange} value={values.confirm} required />
-                    {confirmError && <small>{confirmError}</small>}
-                    <input type="text" className="form-control" id="username" placeholder="이름" onChange={handleChange} value={values.username} required />
+                    <input type="text" className="form-control" id="loginId" placeholder="아이디" onChange={handleChange} value={values.loginId} required />
+                    <input type="password" className="form-control" id="loginPwd" placeholder="비밀번호" onChange={handleChange} value={values.loginPwd} required />
                     <input type="text" className="form-control" id="nickname" placeholder="닉네임" onChange={handleChange} value={values.nickname} required />
-                    <input type="text" className="form-control" id="phone" placeholder="전화번호" onChange={handleChange} value={values.phone} required />
+                    <input type="text" className="form-control" id="memberName" placeholder="이름" onChange={handleChange} value={values.memberName} required />
+                    <input type="tel" className="form-control" id="phoneNumber" placeholder="전화번호" onChange={handleChange} value={values.phoneNumber} required />
                     <input type="email" className="form-control" id="email" placeholder="이메일" onChange={handleChange} value={values.email} required />
-                    <input type="text" className="form-control" id="birthdate" placeholder="생년월일" onChange={handleChange} value={values.birthdate} required />
-                    <input type="text" className="form-control" id="gender" placeholder="성별" onChange={handleChange} value={values.gender} required />
+                    <input type="date" className="form-control" id="birthday" placeholder="생년월일" onChange={handleChange} value={values.birthday} required />
+                    <select className="form-control" id="gender" onChange={handleChange} value={values.gender} required>
+                        <option value="">성별 선택</option>
+                        <option value="M">남성</option>
+                        <option value="F">여성</option>
+                    </select>
                     <button type="submit" className="btn btn-submit">회원가입</button>
                 </form>
             </div>

@@ -29,7 +29,6 @@ CREATE TABLE `groups` (
   `is_inviting` enum('a','r') DEFAULT NULL,
   `created_date` timestamp NULL DEFAULT NULL,
   `max_participants` int DEFAULT NULL,
-  `group_image` varchar(50) DEFAULT NULL,
   `room_id` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

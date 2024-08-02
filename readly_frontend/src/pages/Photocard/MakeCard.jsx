@@ -7,11 +7,13 @@ import AutoCompleteWrapper from "../../components/Form/AutoCompleteWrapper.jsx";
 import Logo from "../../assets/logo/readly_logo.png";
 import useBookStore from "../../store/bookStore";
 import usePhotocardStore from "../../store/photocardStore";
-import { createPhotoCard } from "../../api/photocardAPI";
+import CardModal from "./CardModal.jsx";
+import { CardGenerator } from "./CardGenerator.js";
 
-const TEMP_USER_ID = "1";
-const TEMP_BOOK_ID = 1;
-const TEMP_VISIBILITY = 'A'
+const FONT_URL =
+  "https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap";
+const FONT_NAME = "Noto Sans KR";
+
 export default function MakeCard() {
   const [bookInfo, setBookInfo] = useState("");
   const [selectedBook, setSelectedBook] = useState(null);
@@ -19,11 +21,18 @@ export default function MakeCard() {
   const [visibility, setVisibility] = useState("A");
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const { searchResults, searchBooks, loading } = useBookStore();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCardImage, setSelectedCardImage] = useState(null);
+  const [infoCardImage, setInfoCardImage] = useState(null);
+  const [combinedCardImage, setCombinedCardImage] = useState(null);
+  const [selectedBookInfo, setSelectedBookInfo] = useState(null);
+
+  const { searchResults, searchBooks, loading: isSearching } = useBookStore();
   const {
-    isLoading: isCreatingPhotocard,
-    setPhotoCard,
     photoCard,
+    isLoading: isCreatingPhotocard,
+    updatePhotoCard,
+    createPhotoCard,
   } = usePhotocardStore();
 
   useEffect(() => {
@@ -32,11 +41,22 @@ export default function MakeCard() {
     }
   }, [bookInfo, searchBooks]);
 
+  useEffect(() => {
+    const link = document.createElement("link");
+    link.href = FONT_URL;
+    link.rel = "stylesheet";
+    document.head.appendChild(link);
+
+    document.fonts.ready.then(() => {
+      console.log("Fonts have loaded.");
+    });
+  }, []);
+
   const handleBookInfoChange = useCallback((e) => {
     const value = e.target.value;
     setBookInfo(value);
     setShowSuggestions(value.trim() !== "");
-    setSelectedBook(null); // 입력값이 변경되면 선택된 책 초기화
+    setSelectedBook(null);
   }, []);
 
   const handleSuggestionClick = useCallback((book) => {
@@ -57,38 +77,56 @@ export default function MakeCard() {
       return;
     }
 
-    console.log("Submitting data:", {
-      bookId: TEMP_BOOK_ID,
-      text: quote,
-      visibility: TEMP_VISIBILITY,
-      memberId: TEMP_USER_ID,
-    });
-
     try {
-      const result = await createPhotoCard(
-        TEMP_BOOK_ID,
-        quote,
-        TEMP_VISIBILITY,
-        TEMP_USER_ID
-      );
-      console.log("Received response:", result);
-      setPhotoCard(result);
-      setBookInfo("");
-      setSelectedBook(null);
-      setQuote("");
-      setVisibility("공개");
-    } catch (err) {
-      console.error("포토카드 생성 중 오류 발생:", err);
-      if (err.response) {
-        console.error("Error response:", err.response.data);
-        console.error("Error status:", err.response.status);
-        console.error("Error headers:", err.response.headers);
-      } else if (err.request) {
-        console.error("Error request:", err.request);
+      await createPhotoCard(2, quote, visibility, 1); // selectedBook.id 사용
+      setSelectedBookInfo({
+        title: selectedBook.title,
+        author: selectedBook.author,
+        quote: quote,
+      });
+    } catch (error) {
+      console.error("Error creating photo card:", error);
+      if (error.response && error.response.data) {
+        console.error("Server error:", error.response.data);
+        alert(
+          `포토카드 생성에 실패했습니다. 오류: ${error.response.data.message}`
+        );
       } else {
-        console.error("Error message:", err.message);
+        alert("포토카드 생성에 실패했습니다. 서버 오류가 발생했습니다.");
       }
-      alert("포토카드 생성에 실패했습니다. 다시 시도해주세요.");
+      return;
+    }
+
+    setBookInfo("");
+    setSelectedBook(null);
+    setQuote("");
+    setVisibility("A");
+  };
+  const handleCardSelect = async (imageUrl) => {
+    setSelectedCardImage(imageUrl);
+    if (!selectedBookInfo || !photoCard) {
+      alert(
+        "책 정보나 포토카드 정보가 없습니다. 먼저 포토카드를 생성해주세요."
+      );
+      return;
+    }
+    try {
+      const { infoCard, combinedCard } = await CardGenerator(
+        selectedBookInfo.title,
+        selectedBookInfo.author,
+        selectedBookInfo.quote,
+        FONT_NAME,
+        imageUrl
+      );
+      setInfoCardImage(infoCard);
+      setCombinedCardImage(combinedCard);
+      setIsModalOpen(true);
+
+      // PUT request to update the selected image
+      await updatePhotoCard(imageUrl, photoCard.photoCardId);
+    } catch (error) {
+      console.error("Error creating or updating cards:", error);
+      alert("카드 생성 또는 업데이트에 실패했습니다.");
     }
   };
 
@@ -102,7 +140,7 @@ export default function MakeCard() {
             onChange={handleBookInfoChange}
             suggestions={searchResults}
             onSuggestionClick={handleSuggestionClick}
-            showSuggestions={showSuggestions && !loading}
+            showSuggestions={showSuggestions && !isSearching}
           />
           <FormField
             label="글귀를 입력해주세요"
@@ -118,7 +156,7 @@ export default function MakeCard() {
               <CustomRadioButton
                 options={[
                   { value: "A", label: "공개" },
-                  { value: "E", label: "비공개" }
+                  { value: "E", label: "비공개" },
                 ]}
                 selectedOption={visibility}
                 onChange={setVisibility}
@@ -142,18 +180,26 @@ export default function MakeCard() {
               Loading ....
             </p>
           </div>
-        ) : photoCard ? (
-          <div className="flex-grow grid grid-cols-2 gap-4">
-            {photoCard.images.map((image, index) => (
-              <div key={index} className="relative aspect-w-1 aspect-h-1">
-                <img
-                  src={image.url}
-                  alt={`Generated image ${index + 1}`}
-                  className="absolute inset-0 w-full h-full object-cover rounded-lg shadow-md"
-                />
-              </div>
-            ))}
-            <p>PhotoCard ID: {photoCard.photoCardId}</p>
+        ) : photoCard && photoCard.images && photoCard.images.length > 0 ? (
+          <div className="w-3/4">
+            <div className="flex-grow grid grid-cols-2 gap-4 mb-4">
+              {photoCard.images.map((imageUrl, index) => (
+                <div
+                  key={index}
+                  className="relative aspect-w-3 aspect-h-4 cursor-pointer transition-transform duration-300 hover:scale-105"
+                  onClick={() => handleCardSelect(imageUrl)}
+                >
+                  <img
+                    src={imageUrl}
+                    alt={`Generated image ${index + 1}`}
+                    className="w-full h-full object-cover rounded-lg shadow-md"
+                  />
+                </div>
+              ))}
+            </div>
+            <p className="text-center mt-4 text-xl font-bold text-[#878787]">
+              마음에 드는 포토카드를 선택해주세요
+            </p>
           </div>
         ) : (
           <p className="text-xl text-[#7a7a7a] text-bold">
@@ -161,6 +207,14 @@ export default function MakeCard() {
           </p>
         )}
       </div>
+
+      <CardModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        selectedCard={selectedCardImage}
+        infoCard={infoCardImage}
+        combinedCard={combinedCardImage}
+      />
     </div>
   );
 }
