@@ -1,7 +1,8 @@
 import Modal from "react-modal";
-
 import LevelIcon1 from "../../assets/level/lv1.png";
 import LevelIcon2 from "../../assets/level/lv2.png";
+import LevelIcon3 from "../../assets/level/lv3.png";
+import LevelIcon4 from "../../assets/level/lv4.png";
 import InfoIcon from "../../assets/header/info_img.png";
 
 Modal.setAppElement("#root");
@@ -38,6 +39,8 @@ export default function FollowList({ isOpen, onRequestClose, books }) {
   const levelIcons = {
     1: LevelIcon1,
     2: LevelIcon2,
+    3: LevelIcon3,
+    4: LevelIcon4,
   };
 
   return (

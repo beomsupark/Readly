@@ -28,7 +28,6 @@ export default function Search({ isOpen, onRequestClose, onBookSelect }) {
   const [selectedBook, setSelectedBook] = useState(null);
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const inputRef = useRef(null);
-  const modalRef = useRef(null);
 
   const { searchResults, searchBooks } = useBookStore();
 
@@ -68,11 +67,14 @@ export default function Search({ isOpen, onRequestClose, onBookSelect }) {
     setShowSuggestions(false);
   }, []);
 
-  const handleBookRegister = useCallback((book) => {
-    onBookSelect(book);
-    setIsBookModalOpen(false);
-    onRequestClose();
-  }, [onBookSelect, onRequestClose]);
+  const handleBookRegister = useCallback(
+    (book) => {
+      onBookSelect(book);
+      setIsBookModalOpen(false);
+      onRequestClose();
+    },
+    [onBookSelect, onRequestClose]
+  );
 
   return (
     <Modal
@@ -80,60 +82,53 @@ export default function Search({ isOpen, onRequestClose, onBookSelect }) {
       onRequestClose={onRequestClose}
       style={customModalStyles}
       contentLabel="Search Modal"
+      shouldCloseOnOverlayClick={true}
     >
-      <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-10">
-        <div
-          ref={modalRef}
-          className="bg-white rounded-lg shadow-lg p-6 relative"
-          style={customModalStyles.content}
-        >
-          <div className="flex flex-col h-full">
-            <div className="mb-4 relative ml-20 mr-20">
-              <form onSubmit={handleSearch} className="relative">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  placeholder="검색할 책을 입력하세요"
-                  className="w-full px-3 py-2 pr-8 text-sm rounded-full border"
-                  value={searchQuery}
-                  onChange={handleInputChange}
-                  onFocus={() => setShowSuggestions(true)}
-                />
-                <button
-                  type="submit"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                >
-                  <img src={searchIcon} alt="검색" className="w-5 h-5" />
-                </button>
-              </form>
-              {showSuggestions &&
-                searchQuery.trim() !== "" &&
-                searchResults.length > 0 && (
-                  <ul className="bg-[#F5F5F5] border rounded-lg shadow-lg mt-1 absolute z-10 w-full">
-                    {searchResults.map((book) => (
-                      <li
-                        key={book.id}
-                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                        onClick={() => handleSuggestionClick(book)}
-                      >
-                        {book.title}
-                        <div className="border-b border-custom-border w-full"></div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-            </div>
-
+      <div className="flex flex-col h-full">
+        <div className="mb-4 relative ml-20 mr-20">
+          <form onSubmit={handleSearch} className="relative">
+            <input
+              ref={inputRef}
+              type="text"
+              placeholder="검색할 책을 입력하세요"
+              className="w-full px-3 py-2 pr-8 text-sm rounded-full border"
+              value={searchQuery}
+              onChange={handleInputChange}
+              onFocus={() => setShowSuggestions(true)}
+            />
             <button
-              onClick={onRequestClose}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              type="submit"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2"
             >
-              <span className="text-2xl">&times;</span>
+              <img src={searchIcon} alt="검색" className="w-5 h-5" />
             </button>
-          </div>
+          </form>
+          {showSuggestions &&
+            searchQuery.trim() !== "" &&
+            searchResults.length > 0 && (
+              <ul className="bg-[#F5F5F5] border rounded-lg shadow-lg mt-1 absolute z-10 w-full">
+                {searchResults.map((book) => (
+                  <li
+                    key={book.id}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => handleSuggestionClick(book)}
+                  >
+                    {book.title}
+                    <div className="border-b border-custom-border w-full"></div>
+                  </li>
+                ))}
+              </ul>
+            )}
         </div>
+
+        <button
+          onClick={onRequestClose}
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+        >
+          <span className="text-2xl">&times;</span>
+        </button>
       </div>
-      
+
       {selectedBook && (
         <BookModal
           isOpen={isBookModalOpen}

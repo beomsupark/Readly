@@ -1,10 +1,29 @@
-import { useState } from "react";
-
-
+import { useState, useEffect } from "react";
 import BookshelfList from "./BookshelfModal";
+import { readBooks } from "../../api/mypageAPI";
 
-export default function MypageBookshelf({books}) {
+export default function MypageBookshelf({ userId }) {
+  const [books, setBooks] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        setIsLoading(true);
+        const fetchedBooks = await readBooks(userId);
+        setBooks(fetchedBooks);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching books:', error);
+        setError('책을 불러오는 중 오류가 발생했습니다.');
+        setIsLoading(false);
+      }
+    };
+
+    fetchBooks();
+  }, [userId]);
 
   const openModal = () => {
     setModalIsOpen(true);
@@ -14,21 +33,33 @@ export default function MypageBookshelf({books}) {
     setModalIsOpen(false);
   };
 
+  if (isLoading) {
+    return <div>책을 불러오는 중...</div>;
+  }
 
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <>
       <div className="bg-white rounded-lg shadow p-4 mb-4 relative">
         <div className="flex space-x-2 mb-2">
-          {books.map((book) => (
-            <div key={book.id} className="bg-gray-200 p-2 rounded">
-              <img
-                src={book.cover}
-                alt={book.title}
-                className="w-auto h-[7rem]"
-              />
+          {books.length > 0 ? (
+            books.map((book) => (
+              <div key={book.id} className="bg-gray-200 p-2 rounded">
+                <img
+                  src={book.cover}
+                  alt={book.title}
+                  className="w-auto h-[7rem]"
+                />
+              </div>
+            ))
+          ) : (
+            <div className="bg-gray-200 p-2 rounded w-[5rem] h-[7rem] flex items-center justify-center">
+
             </div>
-          ))}
+          )}
         </div>
 
         <div className="absolute top-4 right-4">

@@ -1,35 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BookImg1 from "../../assets/onboard/book.jpg";
 import ProgressBar from "../../components/ProgressBar/ProgressBar";
 import GoButton from "../../components/GoButton/GoButton";
 import CreateReview from "../../components/Review/CreateReview";
 import Search from "../../components/Search";
+import { proceedingBooks } from '../../api/mypageAPI'; // API 함수 import
 
-const myBooks = [
-  {
-    id: 1,
-    title: "책 제목 1",
-    cover: BookImg1,
-    totalPages: 400,
-    currentPage: 50,
-    review: "",
-  },
-  {
-    id: 2,
-    title: "책 제목 2",
-    cover: BookImg1,
-    totalPages: 250,
-    currentPage: 100,
-    review: "",
-  },
-];
-
-export default function ProgressComponent() {
-  const [books, setBooks] = useState(myBooks);
+export default function MypageProgress({ userId }) {
+  const [books, setBooks] = useState([]);
   const [reviewInputs, setReviewInputs] = useState({});
   const [selectedBook, setSelectedBook] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [searchModalIsOpen, setSearchModalIsOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const fetchedBooks = await proceedingBooks(userId);
+        const formattedBooks = fetchedBooks.map(book => ({
+          id: book.readBookId,
+          title: book.title,
+          cover: book.image || BookImg1,
+          totalPages: book.totalPages,
+          currentPage: book.curruntPage,
+          review: book.detail || "",
+          author: book.author
+        }));
+        setBooks(formattedBooks);
+      } catch (error) {
+        console.error('Failed to fetch books:', error);
+      }
+    };
+
+    fetchBooks();
+  }, [userId]);
 
   const updateCurrentPage = (bookId, newPage) => {
     setBooks(
@@ -51,7 +55,6 @@ export default function ProgressComponent() {
   };
 
   const openSearchModal = () => {
-    console.log("Opening search modal");
     setSearchModalIsOpen(true);
   };
 
@@ -88,6 +91,7 @@ export default function ProgressComponent() {
         totalPages: newBook.totalPages || 100,
         currentPage: 0,
         review: "",
+        author: newBook.author
       };
       
       setBooks(prevBooks => [...prevBooks, bookToAdd]);
@@ -117,6 +121,7 @@ export default function ProgressComponent() {
               />
               <div className="flex-1">
                 <h2 className="text-xl font-semibold mb-2">{book.title}</h2>
+                <p className="text-sm text-gray-600 mb-2">저자: {book.author}</p>
                 <ProgressBar
                   currentPage={book.currentPage}
                   totalPages={book.totalPages}
