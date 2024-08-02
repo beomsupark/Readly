@@ -1,7 +1,7 @@
-import axios from 'axios';
-import useUserStore from '../store/userStore'; // userStore의 실제 경로로 수정해주세요
+import axios from "axios";
+import useUserStore from "../store/userStore"; // userStore의 실제 경로로 수정해주세요
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = "http://localhost:8080/api";
 
 // axios 인스턴스 생성
 const api = axios.create({
@@ -11,9 +11,9 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = useUserStore.getState().token;
-    console.log('Current token:', token);  // 추가된 부분
+    console.log("Current token:", token); // 추가된 부분
     if (token) {
-      config.headers['Authorization'] = `${token}`;
+      config.headers["Authorization"] = `${token}`;
     }
     return config;
   },
@@ -22,20 +22,20 @@ api.interceptors.request.use(
 
 // 응답 인터셉터 추가
 api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        if (error.response && error.response.status === 401) {
-            // 토큰이 만료되었거나 유효하지 않은 경우
-            useUserStore.getState().clearUser();
-            throw new Error('인증에 실패했습니다. 다시 로그인해주세요.');
-        }
-        return Promise.reject(error);
+  (response) => response,
+  async (error) => {
+    if (error.response && error.response.status === 401) {
+      // 토큰이 만료되었거나 유효하지 않은 경우
+      useUserStore.getState().clearUser();
+      throw new Error("인증에 실패했습니다. 다시 로그인해주세요.");
     }
+    return Promise.reject(error);
+  }
 );
 
 export const login = async (loginData) => {
   try {
-    const response = await api.post('/member/login', loginData);
+    const response = await api.post("/member/login", loginData);
     useUserStore.getState().setUser(response.data.loginInfo);
     useUserStore.getState().setToken(response.data.accessToken);
     return response.data;
@@ -46,7 +46,7 @@ export const login = async (loginData) => {
 
 export const signUp = async (signUpData) => {
   try {
-    const response = await api.post('/member/signup', signUpData);
+    const response = await api.post("/member/signup", signUpData);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -55,7 +55,7 @@ export const signUp = async (signUpData) => {
 
 export const logout = async () => {
   try {
-    const response = await api.delete('/member/logout');
+    const response = await api.delete("/member/logout");
     useUserStore.getState().clearUser();
     return response.data;
   } catch (error) {
@@ -65,7 +65,7 @@ export const logout = async () => {
 
 export const getUserInfo = async () => {
   try {
-    const response = await api.get('/member/info');
+    const response = await api.get("/member/info");
     return response.data.memberInfo || response.data;
   } catch (error) {
     console.error("Error in getUserInfo:", error);
@@ -80,15 +80,15 @@ export const getUserInfo = async () => {
 
 export const updateUserInfo = async (updateData) => {
   try {
-    const response = await api.patch('/member', updateData);
-    
+    const response = await api.patch("/member", updateData);
+
     if (response.status === 200) {
       return response.data;
     } else {
-      throw new Error('Failed to update user info');
+      throw new Error("Failed to update user info");
     }
   } catch (error) {
-    console.error('Error updating user info:', error);
+    console.error("Error updating user info:", error);
     throw error;
   }
 };
