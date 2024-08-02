@@ -1,12 +1,12 @@
 // src/components/Logout.jsx
 import { useNavigate } from 'react-router-dom';
 import logoutIcon from "../../assets/header/logout.png";
-import { logout } from '../../api/AuthAPI';
+import { logout } from '../../api/authAPI';
 import useUserStore from "../../store/userStore";
 
 function LogoutButton({ textColor = "#878787", textSize = "base" }) {
   const navigate = useNavigate();
-  // const clearUser = useUserStore(state => state.clearUser);
+  const clearUser = useUserStore(state => state.clearUser);
 
   const handleLogout = async () => {
     try {
@@ -20,7 +20,7 @@ function LogoutButton({ textColor = "#878787", textSize = "base" }) {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('userInfo');
-      // clearUser();
+      clearUser();
       navigate('/');
     }
   };

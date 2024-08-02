@@ -129,7 +129,7 @@ export default function MyPage() {
             {isOwnProfile ? (
               <>
                 <h2 className="text-2xl font-bold">{user.nickname}</h2>
-                <a href="/edit" className="ml-2 text-lg">
+                <a href="/update" className="ml-2 text-lg">
                   ✏️
                 </a>
               </>

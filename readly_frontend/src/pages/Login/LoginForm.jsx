@@ -1,7 +1,7 @@
 // src/components/LoginForm.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../api/AuthAPI";
+import { login } from "../../api/authAPI";
 import useUserStore from "../../store/userStore";
 
 export default function LoginForm() {

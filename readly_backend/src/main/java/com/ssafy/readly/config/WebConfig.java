@@ -10,7 +10,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOriginPatterns("*") // “*“같은 와일드카드를 사용
-                .allowedMethods("GET", "POST") // 허용할 HTTP method
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
                 .allowCredentials(true); // 쿠키 인증 요청 허용
     }
 }

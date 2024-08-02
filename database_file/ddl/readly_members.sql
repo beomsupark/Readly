@@ -24,18 +24,18 @@ DROP TABLE IF EXISTS `members`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `members` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `login_id` varchar(255) DEFAULT NULL,
-  `login_pwd` varchar(255) DEFAULT NULL,
-  `nickname` varchar(255) DEFAULT NULL,
-  `member_name` varchar(255) DEFAULT NULL,
-  `phone_number` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `point` int DEFAULT NULL,
+  `login_id` varchar(16) DEFAULT NULL,
+  `login_pwd` varchar(16) DEFAULT NULL,
+  `nickname` varchar(16) DEFAULT NULL,
+  `member_name` varchar(30) DEFAULT NULL,
+  `phone_number` varchar(13) DEFAULT NULL,
+  `email` varchar(30) DEFAULT NULL,
+  `point` int DEFAULT 0,
   `birthday` date DEFAULT NULL,
-  `join_date` timestamp NULL DEFAULT NULL,
+  `join_date` datetime DEFAULT current_timestamp,
   `gender` enum('F','M') DEFAULT NULL,
-  `social` enum('G','I','K','R') DEFAULT NULL,
-  `introduction` varchar(255) DEFAULT NULL,
+  `social` enum('G','I','K','R') DEFAULT 'R',
+  `introduction` varchar(255) DEFAULT '자기소개를 입력해주세요',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
