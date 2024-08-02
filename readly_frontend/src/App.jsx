@@ -12,7 +12,7 @@ import cloudImg from './assets/background/cloud.png';
 import MakeCard from './pages/Photocard/MakeCard.jsx';
 import SharedBoard from './pages/SharedBoard/SharedBoard.jsx';
 import EditProfile from './pages/Mypage/EditProfile.jsx';
-import Ranking from './pages/Ranking.jsx';
+import Ranking from './pages/Ranking/Ranking.jsx';
 import Community from './pages/Community/Community.jsx';
 import MakeCommunity from './pages/Community/MakeCommunity.jsx';
 import Activity from './pages/Activity/Activity.jsx';
