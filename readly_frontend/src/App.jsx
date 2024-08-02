@@ -1,22 +1,21 @@
 import { Route, Routes, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import useUserStore from "./store/userStore";
-import Login from "./pages/Login/Login.jsx";
-import OnBoard from "./pages/OnBoard.jsx";
-import Home from "./pages/Home.jsx";
-import CustomSidebar from "./components/CustomSidebar.jsx";
-import CustomHeader from "./components/CustomHeader.jsx";
-import "./App.css";
-import MyPage from "./pages/Mypage/MyPage.jsx";
-import cloudImg from "./assets/background/cloud.png";
-import MakeCard from "./pages/Photocard/MakeCard.jsx";
-import SharedBoard from "./pages/SharedBoard/SharedBoard.jsx";
-import UpdateProfile from "./pages/Mypage/UpdateProfile.jsx";
-import Ranking from "./pages/Ranking.jsx";
-import Community from "./pages/Community/Community.jsx";
-import MakeCommunity from "./pages/Community/MakeCommunity.jsx";
-import Activity from "./pages/Activity/Activity.jsx";
-import ProtectedRoute from "./components/ProtectedRoute";
+import Login from './pages/Login/Login.jsx';
+import OnBoard from './pages/OnBoard.jsx';
+import Home from './pages/Home.jsx';
+import CustomSidebar from './components/CustomSidebar.jsx';
+import CustomHeader from './components/CustomHeader.jsx';
+import './App.css';
+import MyPage from './pages/Mypage/MyPage.jsx';
+import cloudImg from './assets/background/cloud.png';
+import MakeCard from './pages/Photocard/MakeCard.jsx';
+import SharedBoard from './pages/SharedBoard/SharedBoard.jsx';
+import EditProfile from './pages/Mypage/EditProfile.jsx';
+import Ranking from './pages/Ranking/Ranking.jsx';
+import Community from './pages/Community/Community.jsx';
+import MakeCommunity from './pages/Community/MakeCommunity.jsx';
+import Activity from './pages/Activity/Activity.jsx';
 
 function App() {
   const location = useLocation();

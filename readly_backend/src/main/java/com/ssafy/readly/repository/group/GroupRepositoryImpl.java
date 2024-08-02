@@ -3,10 +3,9 @@ package com.ssafy.readly.repository.group;
 import com.ssafy.readly.dto.group.GetGroupResponse;
 import com.ssafy.readly.dto.group.MakeGroupRequest;
 import com.ssafy.readly.dto.rank.GetRankGroupResponse;
-import com.ssafy.readly.entity.Group;
-import com.ssafy.readly.entity.GroupTag;
-import com.ssafy.readly.entity.Tag;
+import com.ssafy.readly.entity.*;
 import com.ssafy.readly.enums.IsInviting;
+import com.ssafy.readly.enums.Role;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
@@ -34,10 +33,23 @@ public class GroupRepositoryImpl implements GroupRepository{
                 IsInviting.a // Default value
         );
         em.persist(group);
-        em.flush(); // Ensure the entity is saved to get the ID
+        em.flush();
 
-        // Print a debug message (optional)
-        System.out.println("Group created with ID: " + group.getMaxParticipants());
+        Member member = em.createQuery("SELECT m FROM Member m WHERE m.id = :memberId", Member.class)
+                .setParameter("memberId", makeGroupRequest.getMemberId())
+                .getSingleResult();
+
+        // Add the creator to the group_members table with role 'L'
+        GroupMember groupMember = new GroupMember(
+                Role.L,
+                member,
+                group
+        );
+        em.persist(groupMember);
+
+        // Ensure the relationship is set correctly
+        member.getGroupMembers().add(groupMember);
+        group.getGroupMembers().add(groupMember);
 
         // Process tags
         Set<GroupTag> groupTags = new HashSet<>();
@@ -93,11 +105,51 @@ public class GroupRepositoryImpl implements GroupRepository{
                             group.getTitle(),
                             group.getDescription(),
                             group.getCreatedDate(),
+                            group.getMaxParticipants(),
+                            group.getCurrentParticipants(),
                             tags
                     );
                 })
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void joinGroup(int groupId, int memberId) throws Exception {
+        Group group = em.find(Group.class, groupId);
+        if (group == null) {
+            throw new IllegalArgumentException("Group not found");
+        }
+
+        Member member = em.find(Member.class, memberId);
+        if (member == null) {
+            throw new IllegalArgumentException("Member not found");
+        }
+
+        group.setCurrentParticipants();
+
+        GroupMember groupMember = new GroupMember(Role.M, member, group);
+        em.persist(groupMember);
+    }
+
+    @Override
+    public List<GetGroupResponse> findGroupsByMemberId(int memberId) {
+        List<GroupMember> groupMembers = em.createQuery(
+                        "SELECT gm FROM GroupMember gm WHERE gm.member.id = :memberId", GroupMember.class)
+                .setParameter("memberId", memberId)
+                .getResultList();
+
+        return groupMembers.stream()
+                .map(gm -> {
+                    GetGroupResponse response = new GetGroupResponse();
+                    response.setGroupId(gm.getGroup().getId());
+                    response.setTitle(gm.getGroup().getTitle());
+                    response.setDescription(gm.getGroup().getDescription());
+                    response.setCreatedDate(gm.getGroup().getCreatedDate());
+                    response.setMaxParticipants(gm.getGroup().getMaxParticipants());
+                    response.setCurrentParticipants(gm.getGroup().getCurrentParticipants());
+                    return response;
+                })
+                .collect(Collectors.toList());
+    }
 
 }

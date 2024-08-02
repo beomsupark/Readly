@@ -14,14 +14,21 @@ public class GetGroupResponse {
     private String description;
     private LocalDateTime createdDate;
     private Set<String> tags; // 태그 이름 목록
+    private int maxParticipants;
+    private int currentParticipants;
 
 
 
-    public GetGroupResponse(int id, String title, String description, LocalDateTime createdDate, Set<String> tags) {
+    public GetGroupResponse(int id, String title, String description, LocalDateTime createdDate,int maxParticipants,int currentParticipants,Set<String> tags) {
         this.groupId = id;
         this.title = title;
         this.description = description;
         this.createdDate = createdDate;
+        this.maxParticipants = maxParticipants;
+        this.currentParticipants = currentParticipants;
         this.tags = tags;
+    }
+
+    public GetGroupResponse() {
     }
 }

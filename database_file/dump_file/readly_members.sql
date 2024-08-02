@@ -21,7 +21,9 @@
 
 LOCK TABLES `members` WRITE;
 /*!40000 ALTER TABLE `members` DISABLE KEYS */;
-INSERT INTO `members` VALUES (1,'ssafy1','ssafy1','ssafy1','ssafy1','010-1234-5678','ssafy1@ssafy.com',1,'2024-07-31','2024-07-31 00:37:07','F','G','ssafy1 유저에 대한 설명 입니다.'),(2,'ssafy2','ssafy2','ssafy2','ssafy2','010-1234-5678','ssafy2@ssafy.com',1,'2024-07-31','2024-07-31 00:37:09','M','G','ssafy2 유저에 대한 설명 입니다.');
+INSERT INTO `members`(login_id, login_pwd, nickname, member_name, phone_number, email, point, birthday, join_date, gender) 
+VALUES ('ssafy1', 'ssafy1', 'kimssafy', '김싸피', '010-1234-5678', 'ssafy1@ssafy.com', 500, '1996-08-02', '2024-08-01', 'M'),
+		('ssafy2', 'ssafy2', 'packssafy', '박싸피', '010-2234-5678', 'ssafy2@ssafy.com', 350, '1998-07-31', '2024-08-02', 'F');
 /*!40000 ALTER TABLE `members` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

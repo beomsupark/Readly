@@ -27,10 +27,10 @@ public class SignUpMemberRequest {
     private LocalDate birthday;
     private Gender gender;
     private Social social = Social.R;
-    private String text;
+    private String introduction;
 
     @Builder
-    public SignUpMemberRequest(String loginId, String loginPwd, String nickname, String memberName, String phoneNumber, String email, LocalDate birthday, Gender gender, Social social, String text) {
+    public SignUpMemberRequest(String loginId, String loginPwd, String nickname, String memberName, String phoneNumber, String email, LocalDate birthday, Gender gender, Social social, String introduction) {
         this.loginId = loginId;
         this.loginPwd = loginPwd;
         this.nickname = nickname;
@@ -42,6 +42,6 @@ public class SignUpMemberRequest {
         if(social != null) {
             this.social = social;
         }
-        this.text = text;
+        this.introduction = introduction;
     }
 }

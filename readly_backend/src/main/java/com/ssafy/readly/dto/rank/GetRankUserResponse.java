@@ -9,4 +9,5 @@ public class GetRankUserResponse {
     private int id;
     private String memberName;
     private Long booksReadCount;
+
 }

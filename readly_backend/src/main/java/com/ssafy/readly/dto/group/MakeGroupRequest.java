@@ -9,6 +9,7 @@ import java.util.Set;
 @Getter
 @Setter
 public class MakeGroupRequest {
+    private int memberId;
     private String title;
     private String description;
     private LocalDateTime createdDate;

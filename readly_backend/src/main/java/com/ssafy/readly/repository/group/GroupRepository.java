@@ -13,4 +13,7 @@ public interface GroupRepository {
 
     List<GetGroupResponse> findAllGroup() throws Exception;
 
+    void joinGroup(int groupId, int memberId) throws Exception;
+
+    List<GetGroupResponse> findGroupsByMemberId(int memberId) throws Exception;
 }

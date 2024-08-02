@@ -36,16 +36,21 @@ public class Group {
     private IsInviting isInviting;
     @Column(name = "max_participants", nullable = false)
     private int maxParticipants;
+    @Column(name = "current_participants", nullable = false)
+    private int currentParticipants;
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<GroupTag> groupTags = new HashSet<>();
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
     private List<Proceeding> proceedings = new ArrayList<>();
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
+    private List<GroupMember> groupMembers = new ArrayList<>();
 
-    public Group(String title, String description, LocalDateTime createdDate, int maxParticipants, String roomId, IsInviting isInviting) {
+    public Group(String title, String description, LocalDateTime createdDate, int maxParticipants,  String roomId, IsInviting isInviting) {
         this.title = title;
         this.description = description;
         this.createdDate = createdDate;
         this.maxParticipants = maxParticipants;
+        this.currentParticipants = 1;
         this.isInviting = isInviting;
         this.roomId = roomId;
     }
@@ -64,4 +69,7 @@ public class Group {
         groupTag.setGroup(null); // 이 메서드는 bidirectional consistency를 보장합니다.
     }
 
+    public void setCurrentParticipants() {
+        this.currentParticipants = currentParticipants+1;
+    }
 }
