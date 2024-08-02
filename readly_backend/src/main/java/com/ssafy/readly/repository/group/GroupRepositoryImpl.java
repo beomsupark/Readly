@@ -88,8 +88,11 @@ public class GroupRepositoryImpl implements GroupRepository{
 
     @Override
     public List<GetGroupResponse> findAllGroup() throws Exception {
-        String jpql = "SELECT g FROM Group g LEFT JOIN FETCH g.groupTags gt LEFT JOIN FETCH gt.tag";
+        // Add a condition to the JPQL query to only fetch groups where is_inviting is 'a'
+        String jpql = "SELECT g FROM Group g LEFT JOIN FETCH g.groupTags gt LEFT JOIN FETCH gt.tag WHERE g.isInviting = :isInviting";
         TypedQuery<Group> query = em.createQuery(jpql, Group.class);
+        query.setParameter("isInviting", IsInviting.a); // Set the parameter for the isInviting condition
+
         List<Group> groups = query.getResultList();
 
         return groups.stream()
@@ -112,6 +115,7 @@ public class GroupRepositoryImpl implements GroupRepository{
                 })
                 .collect(Collectors.toList());
     }
+
 
     @Override
     public void joinGroup(int groupId, int memberId) throws Exception {
