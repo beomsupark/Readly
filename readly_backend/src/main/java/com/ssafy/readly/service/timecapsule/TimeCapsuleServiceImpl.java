@@ -43,6 +43,10 @@ public class TimeCapsuleServiceImpl implements TimeCapsuleService {
         List<Review> reviews = timeCapsuleRepository.findByReviewIn(timeCapsuleRequest.getReviewIds());
         List<PhotoCard> photoCards = timeCapsuleRepository.findByPhotoCardIn(timeCapsuleRequest.getPhotoCardIds());
 
+        if(reviews.size() + photoCards.size() == 0) {
+            throw new IllegalArgumentException("포토카드와 리뷰를 선택해야 합니다.");
+        }
+
         for (Review review : reviews) {
             new TimeCapsuleItem(ItemType.R, review, timeCapsule);
         }
