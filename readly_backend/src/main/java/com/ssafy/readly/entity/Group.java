@@ -44,6 +44,8 @@ public class Group {
     private List<Proceeding> proceedings = new ArrayList<>();
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
     private List<GroupMember> groupMembers = new ArrayList<>();
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
+    private List<ReadBook> readBooks = new ArrayList<>();
 
     public Group(String title, String description, LocalDateTime createdDate, int maxParticipants,  String roomId, IsInviting isInviting) {
         this.title = title;
@@ -72,4 +74,5 @@ public class Group {
     public void setCurrentParticipants() {
         this.currentParticipants = currentParticipants+1;
     }
+
 }
