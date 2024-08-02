@@ -27,9 +27,9 @@ const GroupRanking = ({ groupRanking, userGroupsRank, userName }) => {
       <li className="ml-2.5">..</li>
       {userGroupsRank && userGroupsRank.length > 0 ? (
         <>
-          <li className="text-sm text-gray-500">현재 {userName}님이 속해 있는 소모임의 랭킹</li>
+          <li className="text-sm font-bold p-2 text-[#878787] flex items-center justify-between">현재 {userName}님이 속해 있는 소모임의 랭킹</li>
           {userGroupsRank.map((group) => (
-            <li key={group.groupId} className="text-sm font-bold p-2 text-[#878787] flex items-center justify-between">
+            <li key={group.groupId} className="text-sm font-bold ml-4 text-[#878787] flex items-center justify-between">
               <div>
                 {group.rank}등 {group.groupName}
               </div>
