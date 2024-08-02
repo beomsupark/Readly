@@ -20,13 +20,21 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String,Object>> exception(MethodArgumentNotValidException e, HttpServletRequest request) {
         final List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
         Map<String,Object> map = new HashMap<>();
-        String message = "";
+        StringBuilder message = new StringBuilder();
+
         for (FieldError fieldError : fieldErrors) {
             String field = fieldError.getField();
-            message += field + ", ";
+            message.append(field).append(", ");
         }
-        message += "해당 값들이 존재하지 않습니다.";
-        map.put("errorMessage",message);
+
+        if (fieldErrors.size() > 0) {
+            message.setLength(message.length() - 2); // 마지막 ", " 제거
+        }
+
+        message.append(" 값들을 입력해주세요.");
+        map.put("errorMessage", message);
         return new ResponseEntity<Map<String,Object>>(map, HttpStatus.BAD_REQUEST);
     }
+
+    
 }
