@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.querydsl.core.Tuple;
 import com.ssafy.readly.repository.timecapsule.TimeCapsuleRepositoryImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,7 @@ import java.util.List;
 public class TimeCapsuleScheduler {
 
     private final TimeCapsuleRepositoryImpl timeCapsuleRepository;
-    private final JsonRedisPublisher redisPublisher;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Scheduled(cron = "0 0 6 * * ?")
     public void sendNotification() throws JsonProcessingException {
@@ -30,7 +31,8 @@ public class TimeCapsuleScheduler {
 
             String message = period.getMonths() + "달 전에 만든 타임캡슐이 도착했습니다.";
 
-            redisPublisher.publish("timecapsule-channel", new NotificationMessage(memberId, timeCapsuleId, message));
+            NotificationMessage notificationMessage = new NotificationMessage(memberId, timeCapsuleId, message);
+            messagingTemplate.convertAndSend("/timecapsule/notification/" + memberId, notificationMessage);
         }
     }
 }
