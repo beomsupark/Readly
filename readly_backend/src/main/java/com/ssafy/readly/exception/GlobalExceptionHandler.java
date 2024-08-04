@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String,Object>> exception(MethodArgumentNotValidException e, HttpServletRequest request) {
@@ -27,11 +27,11 @@ public class GlobalExceptionHandler {
             message.append(field).append(", ");
         }
 
-        if (fieldErrors.size() > 0) {
+        if (!fieldErrors.isEmpty()) {
             message.setLength(message.length() - 2); // 마지막 ", " 제거
         }
 
-        message.append(" 값들을 입력해주세요.");
+        message.append("의 값을 입력해주세요.");
         map.put("errorMessage", message);
         return new ResponseEntity<Map<String,Object>>(map, HttpStatus.BAD_REQUEST);
     }
@@ -41,6 +41,13 @@ public class GlobalExceptionHandler {
         Map<String, Object> map = new HashMap<>();
         map.put("errorMessage", e.getMessage());
         return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = NoSuchElementException.class)
+    public ResponseEntity<Map<String, Object>> handleNoSuchElementException(NoSuchElementException e) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("errorMessage", e.getMessage());
+        return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = Exception.class)
