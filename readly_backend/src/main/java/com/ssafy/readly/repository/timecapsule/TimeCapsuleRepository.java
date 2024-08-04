@@ -18,4 +18,6 @@ public interface TimeCapsuleRepository {
     List<Review> findByReviewIn(Integer[] reviews);
     List<PhotoCard> findByPhotoCardIn(Integer[] photoCards);
     List<Tuple> findTimeCapsuleByDate(LocalDate date);
+    List<ReviewResponse> findByTimeCapsuleReviews(int timeCapsuleId);
+    List<CreatePhotoCardResponse> findByTimeCapsulePhotoCards(int timeCapsuleId);
 }

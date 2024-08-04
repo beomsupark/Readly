@@ -58,4 +58,13 @@ public class TimeCapsuleServiceImpl implements TimeCapsuleService {
         timeCapsuleRepository.saveTimeCapsule(timeCapsule);
     }
 
+    @Override
+    public List<ReviewResponse> getTimeCapsuleReviews(int timeCapsuleId) {
+        return timeCapsuleRepository.findByTimeCapsuleReviews(timeCapsuleId);
+    }
+
+    @Override
+    public List<CreatePhotoCardResponse> getTimeCapsulePhotoCards(int timeCapsuleId) {
+        return timeCapsuleRepository.findByTimeCapsulePhotoCards(timeCapsuleId);
+    }
 }
