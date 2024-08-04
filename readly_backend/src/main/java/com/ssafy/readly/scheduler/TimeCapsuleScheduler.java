@@ -31,7 +31,7 @@ public class TimeCapsuleScheduler {
 
             String message = period.getMonths() + "달 전에 만든 타임캡슐이 도착했습니다.";
 
-            NotificationMessage notificationMessage = new NotificationMessage(memberId, timeCapsuleId, message);
+            NotificationMessage notificationMessage = new NotificationMessage(timeCapsuleId, message);
             messagingTemplate.convertAndSend("/timecapsule/notification/" + memberId, notificationMessage);
         }
     }

@@ -8,7 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class NotificationMessage {
-    private Integer memberId;
     private Integer timeCapsuleId;
     private String message;
 }
