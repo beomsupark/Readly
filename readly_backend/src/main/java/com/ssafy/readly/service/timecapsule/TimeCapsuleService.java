@@ -10,4 +10,6 @@ public interface TimeCapsuleService {
     List<ReviewResponse> getReviewsByPeriod(TimeCapsuleRequest timeCapsuleRequest);
     List<CreatePhotoCardResponse> getPhotoCardsByPeriod(TimeCapsuleRequest timeCapsuleRequest);
     void saveTimeCapsule(TimeCapsuleRequest timeCapsuleRequest);
+    List<ReviewResponse> getTimeCapsuleReviews(int timeCapsuleId);
+    List<CreatePhotoCardResponse> getTimeCapsulePhotoCards(int timeCapsuleId);
 }

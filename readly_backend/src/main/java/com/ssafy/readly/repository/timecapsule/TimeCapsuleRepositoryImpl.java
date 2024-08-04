@@ -1,5 +1,6 @@
 package com.ssafy.readly.repository.timecapsule;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -17,6 +18,8 @@ import java.util.List;
 import static com.ssafy.readly.entity.QBook.book;
 import static com.ssafy.readly.entity.QPhotoCard.photoCard;
 import static com.ssafy.readly.entity.QReview.review;
+import static com.ssafy.readly.entity.QTimeCapsule.timeCapsule;
+import static com.ssafy.readly.entity.QTimeCapsuleItem.timeCapsuleItem;
 
 @Repository
 public class TimeCapsuleRepositoryImpl implements TimeCapsuleRepository {
@@ -98,6 +101,39 @@ public class TimeCapsuleRepositoryImpl implements TimeCapsuleRepository {
     public List<PhotoCard> findByPhotoCardIn(Integer[] photoCards) {
         return queryFactory.selectFrom(photoCard)
                 .where(photoCard.id.in(photoCards))
+                .fetch();
+    }
+
+    @Override
+    public List<Tuple> findTimeCapsuleByDate(LocalDate date) {
+        return queryFactory
+                .select(timeCapsule.id, timeCapsule.member.id, photoCard.createdDate)
+                .from(timeCapsule)
+                .where(timeCapsule.releaseDate.eq(date))
+                .fetch();
+    }
+
+    @Override
+    public List<ReviewResponse> findByTimeCapsuleReviews(int timeCapsuleId) {
+        return queryFactory
+                .select(Projections.constructor(ReviewResponse.class,
+                        review.id, book.image, book.title, book.author, review.createdDate, review.text))
+                .from(timeCapsuleItem)
+                .join(timeCapsuleItem.review, review)
+                .join(review.book, book)
+                .where(timeCapsuleItem.timeCapsule.id.eq(timeCapsuleId))
+                .fetch();
+    }
+
+    @Override
+    public List<CreatePhotoCardResponse> findByTimeCapsulePhotoCards(int timeCapsuleId) {
+        return queryFactory
+                .select(Projections.constructor(CreatePhotoCardResponse.class,
+                        photoCard.id, photoCard.text, book.title, book.author, photoCard.photoCardImage, photoCard.createdDate))
+                .from(timeCapsuleItem)
+                .join(timeCapsuleItem.photoCard, photoCard)
+                .join(photoCard.book, book)
+                .where(timeCapsuleItem.timeCapsule.id.eq(timeCapsuleId))
                 .fetch();
     }
 }

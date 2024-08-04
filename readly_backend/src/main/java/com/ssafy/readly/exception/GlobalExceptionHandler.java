@@ -11,22 +11,49 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String,Object>> exception(MethodArgumentNotValidException e, HttpServletRequest request) {
         final List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
         Map<String,Object> map = new HashMap<>();
-        String message = "";
+        StringBuilder message = new StringBuilder();
+
         for (FieldError fieldError : fieldErrors) {
             String field = fieldError.getField();
-            message += field + ", ";
+            message.append(field).append(", ");
         }
-        message += "해당 값들이 존재하지 않습니다.";
-        map.put("errorMessage",message);
+
+        if (!fieldErrors.isEmpty()) {
+            message.setLength(message.length() - 2); // 마지막 ", " 제거
+        }
+
+        message.append("의 값을 입력해주세요.");
+        map.put("errorMessage", message);
         return new ResponseEntity<Map<String,Object>>(map, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgumentException(IllegalArgumentException e) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("errorMessage", e.getMessage());
+        return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = NoSuchElementException.class)
+    public ResponseEntity<Map<String, Object>> handleNoSuchElementException(NoSuchElementException e) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("errorMessage", e.getMessage());
+        return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = Exception.class)
+    public ResponseEntity<Map<String, Object>> handleGenericException(Exception e) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("errorMessage", e.getMessage());
+        return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
