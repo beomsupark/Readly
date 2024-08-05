@@ -2,10 +2,8 @@ package com.ssafy.readly.repository.member;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.readly.dto.member.FindMemberRequest;
 import com.ssafy.readly.dto.member.LoginMemberRequest;
 import com.ssafy.readly.dto.member.LoginMemberResponse;
-import com.ssafy.readly.dto.member.UpdateMemberRequest;
 import com.ssafy.readly.entity.Member;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
@@ -33,24 +31,28 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public Optional<LoginMemberResponse> login(LoginMemberRequest longinMember) {
-        LoginMemberResponse loginMember = queryFactory.select(Projections.constructor(LoginMemberResponse.class,
+        return Optional.ofNullable(queryFactory
+                .select(Projections.constructor(LoginMemberResponse.class,
                         member.id, member.nickname, member.point, member.introduction))
                 .from(member)
                 .where(member.loginId.eq(longinMember.getLoginId()),
-                        member.loginPwd.eq(longinMember.getLoginPwd())).fetchOne();
-
-        return Optional.ofNullable(loginMember);
+                        member.loginPwd.eq(longinMember.getLoginPwd()))
+                .fetchOne());
     }
 
     @Override
-    public void logout(String userId) {
-
+    public Optional<String> findByToken(int id) {
+        return Optional.ofNullable(
+                queryFactory
+                .select(member.token)
+                .from(member)
+                .where(member.id.eq(id))
+                .fetchOne());
     }
 
     @Override
     public Optional<Member> findById(int id) {
-        Member findMember = em.find(Member.class, id);
-        return Optional.ofNullable(findMember);
+        return Optional.ofNullable(em.find(Member.class, id));
     }
 
     @Override
@@ -61,23 +63,4 @@ public class MemberRepositoryImpl implements MemberRepository {
                 .where(member.loginId.eq(loginId))
                 .fetchOne();
     }
-
-    @Override
-    public void updateMember(UpdateMemberRequest updateMember) {
-        Member findMember = em.find(Member.class, updateMember.getId());
-        findMember.changeMember(
-                updateMember.getNickname(),
-                updateMember.getNickname(),
-                updateMember.getPhoneNumber(),
-                updateMember.getEmail(),
-                updateMember.getBirthDate(),
-                updateMember.getGender(),
-                updateMember.getIntroduction());
-    }
-
-    @Override
-    public String checkMember(FindMemberRequest findMember) {
-        return "";
-    }
-
 }

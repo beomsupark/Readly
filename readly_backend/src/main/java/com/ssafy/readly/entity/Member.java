@@ -38,6 +38,7 @@ public class Member {
     @Enumerated(value = STRING)
     private Social social;
     private String introduction;
+    private String token;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<ReadBook> readBooks = new ArrayList<>();
@@ -52,7 +53,7 @@ public class Member {
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
     private List<GroupMember> groupMembers = new ArrayList<>();
 
-    public Member(String loginId, String loginPwd, String nickname, String memberName, String phoneNumber, String email, LocalDate birthday, Gender gender, Social social, String introduction) {
+    public Member(String loginId, String loginPwd, String nickname, String memberName, String phoneNumber, String email, LocalDate birthday, Gender gender, Social social) {
         this.loginId = loginId;
         this.loginPwd = loginPwd;
         this.nickname = nickname;
@@ -62,7 +63,11 @@ public class Member {
         this.birthday = birthday;
         this.gender = gender;
         this.social = social;
-        this.introduction = introduction;
+        this.joinDate = LocalDateTime.now();
+        this.introduction = "안녕하세요! " + nickname + "입니다.";
+        if(social == null) {
+            this.social = Social.R;
+        }
     }
 
     public void changeMember(String nickname, String memberName, String phoneNumber, String email, LocalDate birthday, Gender gender, String introduction) {
@@ -73,5 +78,15 @@ public class Member {
         this.birthday = birthday;
         this.gender = gender;
         this.introduction = introduction;
+    }
+
+    public void addToken(String token) {
+        if(token != null && !token.isEmpty()) {
+            this.token = token;
+        }
+    }
+
+    public void deleteToken() {
+        this.token = null;
     }
 }

@@ -33,17 +33,16 @@ class MemberServiceImplTest {
     @Test
     public void signUpTest() {
         // Given
-        SignUpMemberRequest signUpMember = SignUpMemberRequest.builder()
-                .loginId("ehddls")
-                .loginPwd("1234")
-                .nickname("동동인")
-                .memberName("서동인")
-                .phoneNumber("000-1111-2222")
-                .email("ehddls@naver.com")
-                .birthday(LocalDate.of(1996, 7, 25))
-                .gender(Gender.M)
-                .social(Social.R)
-                .build();
+        SignUpMemberRequest signUpMember = new SignUpMemberRequest(
+                "ehddls",
+                "1234",
+                "동동인",
+                "서동인",
+                "000-1111-2222",
+                "ehddls@naver.com",
+                LocalDate.of(1996, 7, 25),
+                Gender.M,
+                Social.R);
 
         // When
         memberServiceImpl.singnUp(signUpMember);
@@ -53,22 +52,22 @@ class MemberServiceImplTest {
         assertThat(findMember).isPresent();
 
         findMember.ifPresent(member ->
-                assertThat(member.getSocial()).isEqualTo(Social.R));
+                assertThat(member.getLoginId()).isEqualTo("ehddls"));
     }
 
     @Test
     public void dupcheckDuplicateIdTest() {
         // Given
-        SignUpMemberRequest signUpMember = SignUpMemberRequest.builder()
-                .loginId("ehddls")
-                .loginPwd("1234")
-                .nickname("동동인")
-                .memberName("서동인")
-                .phoneNumber("000-1111-2222")
-                .email("ehddls@naver.com")
-                .birthday(LocalDate.of(1996, 7, 25))
-                .gender(Gender.M)
-                .build();
+        SignUpMemberRequest signUpMember = new SignUpMemberRequest(
+                "ehddls",
+                "1234",
+                "동동인",
+                "서동인",
+                "000-1111-2222",
+                "ehddls@naver.com",
+                LocalDate.of(1996, 7, 25),
+                Gender.M,
+                Social.R);
 
         memberServiceImpl.singnUp(signUpMember);
 
