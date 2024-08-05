@@ -1,24 +1,22 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import ActivityProgress from "./ActivityProgress";
 import ActivityChat from "./ActivityChat";
 import ActivityRTC from "./ActivityRTC";
 import ActivityBoard from "./ActivityBoard";
 import ActivityHeader from "./ActivityHeader";
-import groupData from "./groupdata";
-
-const groupList = [
-  { id: 1, title: "셜록홈즈 책 같이 보면서 회의 할 소모임" },
-  { id: 2, title: "group2" },
-];
+import { getMemberGroups } from "../../api/communityAPI";
+import useUserStore from "../../store/userStore";
 
 export default function Activity() {
-  const { groupId } = useParams(); // URL에서 groupId를 가져옵니다
+  const { groupId } = useParams();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('진행도');
   const [isGroupListOpen, setIsGroupListOpen] = useState(false);
-  const [selectedGroupId, setSelectedGroupId] = useState(parseInt(groupId) || 1);
-  const [selectedGroupData, setSelectedGroupData] = useState(null);
+  const [selectedGroupId, setSelectedGroupId] = useState(null);
+  const [groupList, setGroupList] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
+  const { user, token } = useUserStore();
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -27,17 +25,40 @@ export default function Activity() {
   const tabs = ['진행도', '소통', '화상', '회의록'];
 
   useEffect(() => {
-    const currentGroupId = parseInt(groupId) || 1;
-    setSelectedGroupId(currentGroupId);
-    setSelectedGroupData(groupData[currentGroupId]);
-    setSelectedGroup(groupList.find(group => group.id === currentGroupId));
-  }, [groupId]);
+    const fetchGroups = async () => {
+      try {
+        if (!user || !user.id) {
+          console.error("User information not found");
+          // 로그인 페이지로 리다이렉트 또는 에러 처리
+          return;
+        }
+
+        const groups = await getMemberGroups(user.id, token);
+        setGroupList(groups);
+        
+        if (groups.length > 0) {
+          const initialGroupId = parseInt(groupId) || groups[0].groupId;
+          setSelectedGroupId(initialGroupId);
+          setSelectedGroup(groups.find(group => group.groupId === initialGroupId));
+          if (!groupId) {
+            navigate(`/activity/${initialGroupId}`);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch groups:", error);
+      }
+    };
+
+    fetchGroups();
+  }, [groupId, navigate, user, token]);
 
   useEffect(() => {
-    console.log("Activity: selectedGroupData updated", selectedGroupData);
-  }, [selectedGroupData]);
+    if (groupList.length > 0 && selectedGroupId) {
+      setSelectedGroup(groupList.find(group => group.groupId === selectedGroupId));
+    }
+  }, [selectedGroupId, groupList]);
 
-  if (!selectedGroupData) {
+  if (!selectedGroup) {
     return <div>Loading...</div>;
   }
 
@@ -76,10 +97,10 @@ export default function Activity() {
       </div>
 
       <div>
-        {activeTab === "진행도" && <ActivityProgress groupData={selectedGroupData} />}
-        {activeTab === "소통" && <ActivityChat groupData={selectedGroupData} />}
-        {activeTab === "화상" && <ActivityRTC groupData={selectedGroupData} />}
-        {activeTab === "회의록" && <ActivityBoard groupData={selectedGroupData} />}
+        {activeTab === "진행도" && <ActivityProgress groupData={selectedGroup} />}
+        {activeTab === "소통" && <ActivityChat groupData={selectedGroup} />}
+        {activeTab === "화상" && <ActivityRTC groupData={selectedGroup} />}
+        {activeTab === "회의록" && <ActivityBoard groupData={selectedGroup} />}
       </div>
     </>
   )

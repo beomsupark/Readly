@@ -1,15 +1,16 @@
 import { useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import CustomHeader from "../../components/CustomHeader";
 
 export default function ActivityHeader({
   isGroupListOpen,
   setIsGroupListOpen,
   setSelectedGroupId,
-  selectedGroupId,
   selectedGroup,
   groupList
 }) {
   const groupListRef = useRef(null);
+  const navigate = useNavigate();
 
   const toggleGroupList = () => {
     setIsGroupListOpen(!isGroupListOpen);
@@ -17,11 +18,9 @@ export default function ActivityHeader({
 
   const selectGroup = (group) => {
     console.log("ActivityHeader: Selecting group", group);
-    setSelectedGroupId(group.id);
+    setSelectedGroupId(group.groupId);
     setIsGroupListOpen(false);
-    
-    // 새 URL로 이동하고 페이지를 새로고침합니다.
-    window.location.href = `/activity/${group.id}`;
+    navigate(`/activity/${group.groupId}`);
   };
 
   useEffect(() => {
@@ -53,10 +52,10 @@ export default function ActivityHeader({
       >
         <span
           className={`text-custom-highlight ${
-            selectedGroup.title.length > 8 ? "text-xl" : "text-2xl"
+            selectedGroup?.title?.length > 8 ? "text-xl" : "text-2xl"
           }`}
         >
-          {selectedGroup.title}
+          {selectedGroup?.title}
         </span>{" "}
         <span className="text-2xl">소모임</span>
       </h2>
@@ -68,7 +67,7 @@ export default function ActivityHeader({
           <ul className="bg-[#F5F5F5] border rounded-lg shadow-lg mt-1 absolute z-10 w-96">
             {groupList.map((group, index) => (
               <li
-                key={group.id}
+                key={group.groupId}
                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                 onClick={() => selectGroup(group)}
               >
