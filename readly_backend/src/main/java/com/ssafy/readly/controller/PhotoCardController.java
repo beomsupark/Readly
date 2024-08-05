@@ -1,38 +1,33 @@
 package com.ssafy.readly.controller;
 
-import com.ssafy.readly.dto.Book.BookRequest;
-import com.ssafy.readly.dto.Book.GetBookResponse;
-import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardRequest;
-import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardResponse;
-import com.ssafy.readly.dto.PhotoCard.CreatePhotoRequest;
-import com.ssafy.readly.dto.PhotoCard.CreatePhotoResponse;
+import com.ssafy.readly.dto.PhotoCard.*;
 import com.ssafy.readly.entity.Book;
 import com.ssafy.readly.entity.Member;
 import com.ssafy.readly.entity.PhotoCard;
 import com.ssafy.readly.service.AIService;
+import com.ssafy.readly.service.S3Uploader;
 import com.ssafy.readly.service.book.BookService;
 import com.ssafy.readly.service.member.MemberService;
 import com.ssafy.readly.service.photocard.PhotoCardService;
-import com.ssafy.readly.service.photocard.PhotoCardServiceImpl;
-import com.ssafy.readly.service.s3upload.S3FileUploadService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
 
-import java.io.ByteArrayInputStream;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.*;
 import org.springframework.web.bind.annotation.RestController;
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.mock.web.MockMultipartFile;
+
+import javax.imageio.ImageIO;
 
 
 @RestController
@@ -46,7 +41,8 @@ public class PhotoCardController {
     private final BookService bookService;
     private final MemberService memberService;
     private final PhotoCardService photoCardServiceImpl;
-    private final S3FileUploadService s3FileUploadService;
+    private final S3Uploader s3Uploader;
+
 
     @PostMapping("/photocard/createimage")
     public ResponseEntity<Map<String, Object>> createPhoto(@RequestBody @Valid CreatePhotoRequest request) throws Exception {
@@ -84,9 +80,9 @@ public class PhotoCardController {
         for (int i = 0; i < 1; i++) {
             String image = aiService.
                     generatePictureV2(prompt);
-            String link = s3FileUploadService.uploadFile(stringToMultipartFile(image,filename));
+            String imageLink = s3Uploader.saveFile(convertUrlToMultipartFile(image));
             //response에 넣기
-            imageList.add(image);
+            imageList.add(imageLink);
         }
         //생성된 이미지 return
         Map<String, Object> responseMap = new HashMap<String, Object>();
@@ -120,31 +116,22 @@ public class PhotoCardController {
         return new ResponseEntity<Map<String, Object>>(responseMap, status);
     }
 
-    private MultipartFile stringToMultipartFile(String base64, String filename) throws Exception {
-        byte[] image = Base64.decodeBase64(base64);
-        int totalCnt = 1024;
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(totalCnt)) {
-            int offset = 0;
-            while (offset < image.length) {
-                int chunkSize = Math.min(totalCnt, image.length - offset);
+    private MultipartFile convertUrlToMultipartFile(String imageUrl) throws IOException {
+        URL url = new URL(imageUrl);
 
-                byte[] byteArray = new byte[chunkSize];
-                System.arraycopy(image, offset, byteArray, 0, chunkSize);
-
-                byteArrayOutputStream.write(byteArray);
-                byteArrayOutputStream.flush();
-
-                offset += chunkSize;
-            }
-
-            // ByteArrayOutputStream -> ByteArrayInputStream
-            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-
-            // MultipartFile 객체 생성
-            MultipartFile multipartFile = new MockMultipartFile(filename, byteArrayInputStream.readAllBytes());
-
-
-            return multipartFile;
+        try(InputStream inputStream = url.openStream();
+            ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            String filename = String.valueOf(UUID.randomUUID());
+            // 1) image url -> byte[]
+            BufferedImage urlImage = ImageIO.read(inputStream);
+            ImageIO.write(urlImage, "png", bos);
+            byte[] byteArray = bos.toByteArray();
+            // 2) byte[] -> MultipartFile
+            MultipartFile multipartFile = new CustomMultipartFile(byteArray, filename);
+            ((CustomMultipartFile) multipartFile).setOriginalFilename(filename);
+            log.info(multipartFile.getOriginalFilename());
+            return multipartFile; // image를 storage에 저장하는 메서드 호출
         }
     }
+
 }
