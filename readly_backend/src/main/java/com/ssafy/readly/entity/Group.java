@@ -72,7 +72,25 @@ public class Group {
     }
 
     public void setCurrentParticipants() {
-        this.currentParticipants = currentParticipants+1;
+        if (this.currentParticipants < this.maxParticipants) {
+            this.currentParticipants += 1;
+            if (this.currentParticipants == this.maxParticipants) {
+                this.isInviting = IsInviting.r; // 최대 인원수에 도달하면 isInviting 값을 r로 설정
+            }
+        } else {
+            throw new IllegalStateException("The group has already reached the maximum number of participants.");
+        }
+    }
+
+    public void decrementCurrentParticipants() {
+        if (this.currentParticipants > 0) {
+            this.currentParticipants -= 1;
+            if (this.isInviting == IsInviting.r && this.currentParticipants < this.maxParticipants) {
+                this.isInviting = IsInviting.a; // 최대 인원수보다 적어지면 isInviting 값을 다시 a로 설정
+            }
+        } else {
+            throw new IllegalStateException("The group has no participants to remove.");
+        }
     }
 
 }

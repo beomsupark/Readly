@@ -47,5 +47,15 @@ public class GroupServiceImpl implements GroupService{
         return groupRepository.findGroupsByMemberId(memberId);
     }
 
+    @Override
+    public void deleteGroup(int groupId) throws Exception {
+        groupRepository.deleteGroup(groupId) ;
+    }
+
+    @Override
+    public void leaveGroup(int groupId, int memberId) throws Exception {
+        groupRepository.leaveGroup(groupId,memberId) ;
+    }
+
 
 }

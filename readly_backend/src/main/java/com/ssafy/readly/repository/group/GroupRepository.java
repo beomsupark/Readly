@@ -16,4 +16,8 @@ public interface GroupRepository {
     void joinGroup(int groupId, int memberId) throws Exception;
 
     List<GetGroupResponse> findGroupsByMemberId(int memberId) throws Exception;
+
+    void deleteGroup(int groupId) throws Exception;
+
+    void leaveGroup(int groupId, int memberId) throws Exception;
 }

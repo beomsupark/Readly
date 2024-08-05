@@ -20,9 +20,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GroupRepositoryImpl implements GroupRepository{
     private final EntityManager em;
-
     @Override
     public String makeGroup(MakeGroupRequest makeGroupRequest) {
+        // Determine the initial value of isInviting based on maxParticipants
+        IsInviting isInviting = makeGroupRequest.getMaxParticipants() == 1 ? IsInviting.r : IsInviting.a;
+
         // Create and persist the Group entity
         Group group = new Group(
                 makeGroupRequest.getTitle(),
@@ -30,7 +32,7 @@ public class GroupRepositoryImpl implements GroupRepository{
                 makeGroupRequest.getCreatedDate(),
                 makeGroupRequest.getMaxParticipants(),
                 makeGroupRequest.getRoomId(),
-                IsInviting.a // Default value
+                isInviting // Set isInviting based on the condition
         );
         em.persist(group);
         em.flush();
@@ -78,6 +80,7 @@ public class GroupRepositoryImpl implements GroupRepository{
 
         return String.valueOf(group.getId());
     }
+
 
     public void updateRoomId(String groupId, String roomId) {
         Group group = em.find(Group.class, Long.parseLong(groupId));
@@ -129,7 +132,11 @@ public class GroupRepositoryImpl implements GroupRepository{
             throw new IllegalArgumentException("Member not found");
         }
 
-        group.setCurrentParticipants();
+        try {
+            group.setCurrentParticipants(); // 현재 인원수 업데이트 및 최대 인원수 도달 시 isInviting 값 변경
+        } catch (IllegalStateException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
 
         GroupMember groupMember = new GroupMember(Role.M, member, group);
         em.persist(groupMember);
@@ -156,4 +163,32 @@ public class GroupRepositoryImpl implements GroupRepository{
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteGroup(int groupId) {
+        Group group = em.find(Group.class, groupId);
+        if (group != null) {
+            em.remove(group);
+        } else {
+            throw new IllegalArgumentException("Group not found");
+        }
+    }
+
+    @Override
+    public void leaveGroup(int groupId, int memberId) {
+        GroupMember groupMember = em.createQuery("SELECT gm FROM GroupMember gm WHERE gm.group.id = :groupId AND gm.member.id = :memberId", GroupMember.class)
+                .setParameter("groupId", groupId)
+                .setParameter("memberId", memberId)
+                .getSingleResult();
+
+        if (groupMember != null) {
+            Group group = groupMember.getGroup();
+            group.decrementCurrentParticipants(); // 현재 인원수 감소
+
+            group.getGroupMembers().remove(groupMember);
+            groupMember.getMember().getGroupMembers().remove(groupMember);
+            em.remove(groupMember);
+        } else {
+            throw new IllegalArgumentException("GroupMember not found");
+        }
+    }
 }

@@ -5,6 +5,7 @@ import com.ssafy.readly.dto.readbook.ReadBookRequestDTO;
 import com.ssafy.readly.repository.readbook.ReadBookRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
@@ -23,5 +24,10 @@ public class ReadBookServiceImpl implements ReadBookService{
     @Override
     public void addGroupReadBook(ReadBookGroupRequestDTO readBookGroupRequestDTO) throws Exception {
         readBookRepository.addGroupReadBook(readBookGroupRequestDTO);
+    }
+
+    @Override
+    public ResponseEntity<?> findReadBooksByGroupId(int groupId) throws Exception {
+        return readBookRepository.findReadBooksByGroupId(groupId);
     }
 }

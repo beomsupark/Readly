@@ -1,5 +1,6 @@
 package com.ssafy.readly.entity;
 
+import com.ssafy.readly.enums.ReadType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,10 @@ public class ReadBook {
 
     @Column(name = "current_page")
     private int currentPage;
+
+    @Column(name = "read_type")
+    @Enumerated(value = EnumType.STRING)
+    private ReadType readType;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "book_id")
