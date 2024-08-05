@@ -2,7 +2,7 @@ package com.ssafy.readly.dto.member;
 
 import com.ssafy.readly.enums.Gender;
 import jakarta.persistence.Enumerated;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -11,9 +11,8 @@ import java.time.LocalDateTime;
 import static jakarta.persistence.EnumType.STRING;
 
 @Getter
-@Builder
+@AllArgsConstructor
 public class MemberResponse {
-
     private int id;
     private String loginId;
     private String nickname;
