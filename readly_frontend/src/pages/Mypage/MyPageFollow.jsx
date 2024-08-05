@@ -21,7 +21,14 @@ export default function MypageFollow({ userId }) {
       try {
         setIsLoading(true);
         const fetchedFollowers = await getFollowers(userId);
-        setFollows(fetchedFollowers);
+        
+        // Calculate level for each follower and add it to the follower object
+        const followersWithLevel = fetchedFollowers.map(user => ({
+          ...user,
+          level: calculateLevel(user.followedPoint)
+        }));
+
+        setFollows(followersWithLevel);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching followers:', error);
@@ -75,11 +82,11 @@ export default function MypageFollow({ userId }) {
               <div
                 key={user.followedId}
                 onClick={() => openFollowUserPageModal(user)}
-                className="bg-gray-200 p-2 rounded-xl flex-cols items-center bg-[#F5F5F5] cursor-pointer"
+                className="bg-gray-200 p-2 rounded-xl flex-cols items-center bg-[#F5F5F5] cursor-pointer w-36"
               >
                 <img
-                  src={levelIcons[calculateLevel(user.followedPoint)]}
-                  alt={`Level ${calculateLevel(user.followedPoint)}`}
+                  src={levelIcons[user.level]}
+                  alt={`Level ${user.level}`}
                   className="w-7 h-7 mr-2"
                 />
                 <div className="ml-4">

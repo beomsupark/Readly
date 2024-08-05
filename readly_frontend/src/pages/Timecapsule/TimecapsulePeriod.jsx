@@ -2,7 +2,7 @@ import Modal from "react-modal";
 import { useState } from "react";
 import GoButton from "../../components/GoButton/GoButton.jsx";
 import TimecapsuleSelect from "./TimecapsuleSelect.jsx";
-
+import { getTimeCapsuleItems } from '../../api/timecapsuleAPI.js'; // API 함수 import
 
 Modal.setAppElement("#root");
 
@@ -35,30 +35,26 @@ const customModalStyles = {
   },
 };
 
-export default function TimecapsulePeriod({ isOpen, onRequestClose, photocard, review }) {
+export default function TimecapsulePeriod({ isOpen, onRequestClose, userId }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [filteredPhotocards, setFilteredPhotocards] = useState([]);
-  const [filteredReviews, setFilteredReviews] = useState([]);
+  const [timeCapsuleItems, setTimeCapsuleItems] = useState({ reviews: [], photoCards: [] });
 
-  const openModal = () => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+  const openModal = async () => {
+    if (!startDate || !endDate) {
+      alert("시작 날짜와 종료 날짜를 모두 입력해주세요.");
+      return;
+    }
 
-    const filteredPhotocards = photocard.filter((card) => {
-      const createDate = new Date(card.create);
-      return createDate >= start && createDate <= end;
-    });
-
-    const filteredReviews = review.filter((review) => {
-      const createDate = new Date(review.create);
-      return createDate >= start && createDate <= end;
-    });
-
-    setFilteredPhotocards(filteredPhotocards);
-    setFilteredReviews(filteredReviews);
-    setModalIsOpen(true);
+    try {
+      const items = await getTimeCapsuleItems(userId, startDate, endDate);
+      setTimeCapsuleItems(items);
+      setModalIsOpen(true);
+    } catch (error) {
+      console.error("Error fetching time capsule items:", error);
+      alert("타임캡슐 아이템을 가져오는 데 실패했습니다.");
+    }
   };
 
   const closeModal = () => {
@@ -101,8 +97,8 @@ export default function TimecapsulePeriod({ isOpen, onRequestClose, photocard, r
       <TimecapsuleSelect
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        photocards={filteredPhotocards}
-        reviews={filteredReviews}
+        reviews={timeCapsuleItems.reviews}
+        photoCards={timeCapsuleItems.photoCards}
       />
     </Modal>
   );

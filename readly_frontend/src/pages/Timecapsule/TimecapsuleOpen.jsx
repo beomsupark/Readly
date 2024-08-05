@@ -1,4 +1,6 @@
+import { useState, useEffect } from "react";
 import Modal from "react-modal";
+import { openTimeCapsule } from '../../api/timecapsuleAPI'; // API 함수 import
 
 Modal.setAppElement("#root");
 
@@ -33,9 +35,30 @@ const customModalStyles = {
 export default function TimecapsuleOpen({
   isOpen,
   onRequestClose,
-  selectedPhotocards,
-  selectedReviews
+  timecapsuleId
 }) {
+  const [timecapsuleContent, setTimecapsuleContent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (isOpen && timecapsuleId) {
+      setLoading(true);
+      openTimeCapsule(timecapsuleId)
+        .then(data => {
+          setTimecapsuleContent(data);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error("Error opening time capsule:", err);
+          setError("타임캡슐을 열 수 없습니다. 다시 시도해주세요.");
+          setLoading(false);
+        });
+    }
+  }, [isOpen, timecapsuleId]);
+
+  if (!isOpen) return null;
+
   return (
     <Modal
       isOpen={isOpen}
@@ -52,33 +75,44 @@ export default function TimecapsuleOpen({
         X
       </button>
       <h2 className="text-2xl font-bold mb-4">타임캡슐 내용</h2>
-      <div className="flex-col gap-4">
-        <h3 className="font-bold mb-2">선택한 포토카드</h3>
-        <div className="flex flex-wrap gap-2">
-          {selectedPhotocards.map((photocard) => (
-            <div key={photocard.id} className="flex items-center">
-              <img
-                src={photocard.cover}
-                alt={photocard.title}
-                className="h-[7rem] rounded"
-              />
-            </div>
-          ))}
-        </div>
+      
+      {loading && <p>로딩 중...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+      
+      {timecapsuleContent && (
+        <div className="flex-col gap-4">
+          <h3 className="font-bold mb-2">포토카드</h3>
+          <div className="flex flex-wrap gap-2">
+            {timecapsuleContent.photoCards.map((photocard) => (
+              <div key={photocard.photoCardId} className="flex items-center">
+                <img
+                  src={photocard.photoCardImage}
+                  alt={photocard.bookTitle}
+                  className="h-[7rem] rounded"
+                />
+                <p className="ml-2">{photocard.bookTitle}</p>
+              </div>
+            ))}
+          </div>
 
-        <h3 className="font-bold mb-2 mt-4">선택한 한줄평</h3>
-        <div className="flex flex-wrap gap-2">
-          {selectedReviews.map((review) => (
-            <div key={review.id} className="flex items-center">
-              <img
-                src={review.cover}
-                alt={review.title}
-                className="h-[7rem] rounded"
-              />
-            </div>
-          ))}
+          <h3 className="font-bold mb-2 mt-4">리뷰</h3>
+          <div className="flex flex-wrap gap-2">
+            {timecapsuleContent.reviews.map((review) => (
+              <div key={review.reviewId} className="flex items-center">
+                <img
+                  src={review.bookImage}
+                  alt={review.bookTitle}
+                  className="h-[7rem] rounded"
+                />
+                <div className="ml-2">
+                  <p className="font-semibold">{review.bookTitle}</p>
+                  <p>{review.reviewText}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </Modal>
   );
 }

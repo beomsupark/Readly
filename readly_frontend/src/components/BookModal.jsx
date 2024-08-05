@@ -4,6 +4,8 @@ import GoButton from "../components/GoButton/GoButton.jsx";
 import aladinLogo from "../assets/onboard/aladinLogo.png";
 import searchIcon from "../assets/header/search.png";
 import tempImg from "../assets/onboard/card1_front.png";
+import { addBookToReadBooks } from "../api/mypageAPI.js";
+import useUserStore from "../store/userStore";
 
 const customModalStyles = {
   overlay: {
@@ -37,6 +39,8 @@ export default function BookModal({
   const modalRef = useRef(null);
   const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [addBookStatus, setAddBookStatus] = useState(null);
+  const user = useUserStore((state) => state.user);
 
   useEffect(() => {
     setLocalSearchQuery(searchQuery);
@@ -70,6 +74,27 @@ export default function BookModal({
     setLocalSearchQuery("");
     setShowSuggestions(false);
   };
+
+  const handleAddBook = async () => {
+    try {
+      const bookId = book.id; // book 객체에서 id를 가져옴
+      const userId = user.id; // user 객체에서 id를 가져옴
+  
+      console.log('Adding book with ID:', bookId); // 디버깅용 로그
+      await addBookToReadBooks(userId, bookId);
+      setAddBookStatus('success');
+      onRequestClose();
+      // onAddBook() 함수가 있다면 호출
+      if (typeof onAddBook === 'function') {
+        onAddBook();
+      }
+    } catch (error) {
+      console.error('Error adding book to read books:', error.response?.data || error.message);
+      setAddBookStatus('error');
+      alert(error.message);
+    }
+  };
+  
 
   return (
     <Modal
@@ -172,7 +197,18 @@ export default function BookModal({
                       </a>
                     </div>
                   </div>
-                  <GoButton text="책 등록하기" className="mt-4" />
+                  <GoButton 
+                    text={addBookStatus === 'loading' ? '등록 중...' : '책 등록하기'} 
+                    className="mt-4" 
+                    onClick={handleAddBook}
+                    disabled={addBookStatus === 'loading'}
+                  />
+                  {addBookStatus === 'success' && (
+                    <p className="text-green-500 mt-2">책이 성공적으로 등록되었습니다.</p>
+                  )}
+                  {addBookStatus === 'error' && (
+                    <p className="text-red-500 mt-2">책 등록에 실패했습니다. 다시 시도해주세요.</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -192,6 +228,7 @@ export default function BookModal({
     </Modal>
   );
 }
+
 function SearchForm({
   searchQuery,
   handleInputChange,
@@ -230,8 +267,6 @@ function SearchForm({
                 setShowSuggestions(false);
               }}
             >
-              {/* 작가이름까지 같이 출력 */}
-              {/* {`${suggestion.title} - ${suggestion.author}`} */}
               {suggestion.title}
               <div className="border-b border-custom-border w-full"></div>
             </li>
