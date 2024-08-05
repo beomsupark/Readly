@@ -37,6 +37,10 @@ export default function Search({ isOpen, onRequestClose, onBookSelect }) {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    console.log('searchResults:', searchResults);
+  }, [searchResults]);
+
   const handleInputChange = useCallback(
     (e) => {
       const value = e.target.value;
@@ -107,9 +111,9 @@ export default function Search({ isOpen, onRequestClose, onBookSelect }) {
             searchQuery.trim() !== "" &&
             searchResults.length > 0 && (
               <ul className="bg-[#F5F5F5] border rounded-lg shadow-lg mt-1 absolute z-10 w-full">
-                {searchResults.map((book) => (
+                {searchResults.map((book, index) => (
                   <li
-                    key={book.id}
+                    key={`${book.id || 'book'}-${index}`}
                     className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                     onClick={() => handleSuggestionClick(book)}
                   >

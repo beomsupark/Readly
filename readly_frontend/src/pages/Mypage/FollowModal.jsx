@@ -35,7 +35,7 @@ const customModalStyles = {
   },
 };
 
-export default function FollowList({ isOpen, onRequestClose, books }) {
+export default function FollowList({ isOpen, onRequestClose, follows }) {
   const levelIcons = {
     1: LevelIcon1,
     2: LevelIcon2,
@@ -59,22 +59,22 @@ export default function FollowList({ isOpen, onRequestClose, books }) {
         X
       </button>
       <h2 className="text-2xl font-bold mb-4">팔로우 하는 사람들이에요!</h2>
-      <div className="flex space-x-2 mb-2 gap-4">
-        {books &&
-          books.map((book) => (
+      <div className="flex flex-wrap space-x-2 mb-2 gap-4">
+        {follows &&
+          follows.map((user) => (
             <div
-              key={book.id}
+              key={user.followedId}
               className="bg-gray-200 w-[7rem] h-[9rem] p-2 rounded-xl flex-cols items-center bg-[#F5F5F5]"
             >
               <img
-                src={levelIcons[book.level]}
-                alt={`Level ${book.level}`}
+                src={levelIcons[user.level]}
+                alt={`Level ${user.level}`}
                 className="w-8 h-8 mr-2"
               />
               <div className="ml-4">
                 <img src={InfoIcon} alt="info" className="w-14 h-12" />
-                <p className="font-semibold">{book.nickname}</p>
-                <p className="text-sm text-gray-600">{book.intro}</p>
+                <p className="font-semibold">{user.followedName}</p>
+                <p className="text-sm text-gray-600">{user.followedText}</p>
               </div>
             </div>
           ))}

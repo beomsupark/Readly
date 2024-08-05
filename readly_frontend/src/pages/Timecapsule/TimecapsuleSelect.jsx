@@ -2,6 +2,7 @@ import { useState } from "react";
 import Modal from "react-modal";
 import GoButton from "../../components/GoButton/GoButton.jsx";
 import TimecapsuleOpen from "./TimecapsuleOpen.jsx";
+import { createTimeCapsule } from '../../api/timecapsuleAPI.js'; // API 함수 import
 
 Modal.setAppElement("#root");
 
@@ -36,45 +37,58 @@ const customModalStyles = {
 export default function TimecapsuleSelect({
   isOpen,
   onRequestClose,
-  photocards,
+  photoCards,
   reviews,
+  userId,
+  startDate,
+  endDate
 }) {
-  const [selectedPhotocards, setSelectedPhotocards] = useState([]);
+  const [selectedPhotoCards, setSelectedPhotoCards] = useState([]);
   const [selectedReviews, setSelectedReviews] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const toggleSelection = (id, type) => {
-    if (type === "photocard") {
-      setSelectedPhotocards((prev) => {
-        const newSelection = prev.includes(id)
-          ? prev.filter((item) => item !== id)
-          : [...prev, id];
-        return newSelection;
-      });
+    if (type === "photoCard") {
+      setSelectedPhotoCards((prev) =>
+        prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      );
     } else if (type === "review") {
-      setSelectedReviews((prev) => {
-        const newSelection = prev.includes(id)
-          ? prev.filter((item) => item !== id)
-          : [...prev, id];
-        return newSelection;
-      });
+      setSelectedReviews((prev) =>
+        prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      );
     }
   };
 
-  const openModal = () => {
-    setModalIsOpen(true);
+  const openModal = async () => {
+    try {
+      const success = await createTimeCapsule(
+        userId,
+        startDate,
+        endDate,
+        selectedReviews,
+        selectedPhotoCards
+      );
+      if (success) {
+        setModalIsOpen(true);
+      } else {
+        alert("타임캡슐 생성에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("Error creating time capsule:", error);
+      alert("타임캡슐 생성 중 오류가 발생했습니다.");
+    }
   };
 
   const closeModal = () => {
     setModalIsOpen(false);
   };
 
-  const selectedPhotocardsData = selectedPhotocards.map((id) =>
-    photocards.find((card) => card.id === id)
+  const selectedPhotoCardsData = selectedPhotoCards.map((id) =>
+    photoCards.find((card) => card.photoCardId === id)
   );
 
   const selectedReviewsData = selectedReviews.map((id) =>
-    reviews.find((review) => review.id === id)
+    reviews.find((review) => review.reviewId === id)
   );
 
   return (
@@ -97,18 +111,18 @@ export default function TimecapsuleSelect({
         <div className="flex-col gap-4">
           <h3 className="font-bold mb-2">내가 만든 포토카드</h3>
           <div className="flex flex-wrap gap-2">
-            {photocards &&
-              photocards.map((book) => (
+            {photoCards &&
+              photoCards.map((card) => (
                 <div
-                  key={book.id}
+                  key={card.photoCardId}
                   className="flex items-center"
-                  onDoubleClick={() => toggleSelection(book.id, "photocard")}
+                  onDoubleClick={() => toggleSelection(card.photoCardId, "photoCard")}
                 >
                   <img
-                    src={book.cover}
-                    alt={book.title}
+                    src={card.photoCardImage}
+                    alt={card.bookTitle}
                     className={`h-[7rem] rounded ${
-                      selectedPhotocards.includes(book.id)
+                      selectedPhotoCards.includes(card.photoCardId)
                         ? "border-2 border-[red]"
                         : ""
                     }`}
@@ -122,17 +136,17 @@ export default function TimecapsuleSelect({
           <h3 className="font-bold mb-2">내가 남긴 한줄평</h3>
           <div className="flex flex-wrap gap-2">
             {reviews &&
-              reviews.map((book) => (
+              reviews.map((review) => (
                 <div
-                  key={book.id}
+                  key={review.reviewId}
                   className="flex items-center"
-                  onDoubleClick={() => toggleSelection(book.id, "review")}
+                  onDoubleClick={() => toggleSelection(review.reviewId, "review")}
                 >
                   <img
-                    src={book.cover}
-                    alt={book.title}
+                    src={review.bookImage}
+                    alt={review.bookTitle}
                     className={`h-[7rem] rounded ${
-                      selectedReviews.includes(book.id)
+                      selectedReviews.includes(review.reviewId)
                         ? "border-2 border-[red]"
                         : ""
                     }`}
@@ -142,13 +156,13 @@ export default function TimecapsuleSelect({
           </div>
         </div>
 
-        <GoButton text="선택" onClick={openModal} />
+        <GoButton text="타임캡슐 생성" onClick={openModal} />
       </Modal>
 
       <TimecapsuleOpen
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        selectedPhotocards={selectedPhotocardsData}
+        selectedPhotoCards={selectedPhotoCardsData}
         selectedReviews={selectedReviewsData}
       />
     </>

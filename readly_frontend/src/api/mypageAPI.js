@@ -58,3 +58,17 @@ export const getMyPhotocards = async (userId) => {
     throw error;
   }
 };
+
+// 책을 read_books에 추가하는 함수
+export const addBookToReadBooks = async (userId, bookId) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/user/add`, {
+      userId,
+      bookId
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error adding book to read books:', error.response?.data || error.message);
+    throw error;
+  }
+};
