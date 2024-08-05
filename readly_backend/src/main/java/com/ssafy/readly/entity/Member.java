@@ -36,7 +36,7 @@ public class Member {
     @Enumerated(value = STRING)
     private Gender gender;
     @Enumerated(value = STRING)
-    private Social social = Social.R;
+    private Social social;
     private String introduction;
     private String token;
 
@@ -64,6 +64,11 @@ public class Member {
         this.gender = gender;
         this.social = social;
         this.introduction = introduction;
+        this.joinDate = LocalDateTime.now();
+        this.introduction = "안녕하세요! " + nickname + "입니다.";
+        if(social == null) {
+            this.social = Social.R;
+        }
     }
 
     public void changeMember(String nickname, String memberName, String phoneNumber, String email, LocalDate birthday, Gender gender, String introduction) {
