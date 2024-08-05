@@ -1,5 +1,6 @@
 package com.ssafy.readly.controller;
 
+import com.ssafy.readly.dto.mypage.CompleteBookRequest;
 import com.ssafy.readly.dto.mypage.GetReadBookResponse;
 import com.ssafy.readly.dto.mypage.UpdateCurrentPageRequest;
 import com.ssafy.readly.service.mypage.MypageService;
@@ -71,4 +72,10 @@ public class MypageController {
         return ResponseEntity.ok("Successfully updated current page");
     }
 
+
+    @PatchMapping("/member/read-books/complete")
+    public ResponseEntity<?> completeBook(@RequestBody CompleteBookRequest request) throws Exception {
+        mypageService.completeBook(request);
+        return ResponseEntity.ok("Successfully marked book as completed");
+    }
 }

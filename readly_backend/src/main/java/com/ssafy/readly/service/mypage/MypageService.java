@@ -15,5 +15,5 @@ public interface MypageService {
     public List<GetMyPhotocardResponse> getPhotoCard(int userId) throws Exception;
     public List<GetMyFollowerResponse> getFollower(int userId) throws Exception;
     public int updateCurrentPage(UpdateCurrentPageRequest request) throws Exception;
-
+    void completeBook(CompleteBookRequest request) throws Exception;
 }

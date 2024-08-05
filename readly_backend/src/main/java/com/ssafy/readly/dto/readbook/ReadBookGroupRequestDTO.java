@@ -6,4 +6,5 @@ import lombok.Data;
 public class ReadBookGroupRequestDTO {
     private int groupId;
     private int bookId;
+    private int oldBookId;
 }

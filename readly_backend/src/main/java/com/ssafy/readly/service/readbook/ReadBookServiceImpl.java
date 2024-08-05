@@ -2,6 +2,7 @@ package com.ssafy.readly.service.readbook;
 
 import com.ssafy.readly.dto.readbook.ReadBookGroupRequestDTO;
 import com.ssafy.readly.dto.readbook.ReadBookRequestDTO;
+import com.ssafy.readly.dto.readbook.UpdateReadBookPageRequestDTO;
 import com.ssafy.readly.repository.readbook.ReadBookRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,5 +30,10 @@ public class ReadBookServiceImpl implements ReadBookService{
     @Override
     public ResponseEntity<?> findReadBooksByGroupId(int groupId) throws Exception {
         return readBookRepository.findReadBooksByGroupId(groupId);
+    }
+
+    @Override
+    public void updateUserReadBookPage(UpdateReadBookPageRequestDTO updateReadBookPageRequestDTO) throws Exception {
+        readBookRepository.updateUserReadBookPage(updateReadBookPageRequestDTO);
     }
 }

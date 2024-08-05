@@ -72,4 +72,9 @@ public class MypageServiceImpl implements MypageService {
     public int updateCurrentPage(UpdateCurrentPageRequest request) throws Exception {
         return mypageRepository.updateCurrentPage(request);
     }
+
+    @Override
+    public void completeBook(CompleteBookRequest request) throws Exception {
+        mypageRepository.completeBook(request);
+    }
 }

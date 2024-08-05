@@ -132,6 +132,20 @@ public class GroupRepositoryImpl implements GroupRepository{
             throw new IllegalArgumentException("Member not found");
         }
 
+
+        // GroupMember 존재 여부 확인
+        TypedQuery<GroupMember> query = em.createQuery(
+                "SELECT gm FROM GroupMember gm WHERE gm.group.id = :groupId AND gm.member.id = :memberId",
+                GroupMember.class
+        );
+        query.setParameter("groupId", groupId);
+        query.setParameter("memberId", memberId);
+
+        List<GroupMember> existingGroupMembers = query.getResultList();
+        if (!existingGroupMembers.isEmpty()) {
+            throw new IllegalArgumentException("Member is already part of the group");
+        }
+
         try {
             group.setCurrentParticipants(); // 현재 인원수 업데이트 및 최대 인원수 도달 시 isInviting 값 변경
         } catch (IllegalStateException e) {

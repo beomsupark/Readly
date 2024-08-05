@@ -2,6 +2,7 @@ package com.ssafy.readly.controller;
 
 import com.ssafy.readly.dto.readbook.ReadBookGroupRequestDTO;
 import com.ssafy.readly.dto.readbook.ReadBookRequestDTO;
+import com.ssafy.readly.dto.readbook.UpdateReadBookPageRequestDTO;
 import com.ssafy.readly.service.readbook.ReadBookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,5 +27,10 @@ public class ReadBookController {
     @GetMapping("/group/read-books/{groupId}")
     public ResponseEntity<?> getReadBooksByGroupId(@PathVariable int groupId) throws Exception {
         return readBookService.findReadBooksByGroupId(groupId);
+    }
+
+    @PatchMapping("/user/update-page")
+    public void updateUserReadBookPage(@RequestBody UpdateReadBookPageRequestDTO updateReadBookPageRequestDTO) throws Exception {
+        readBookService.updateUserReadBookPage(updateReadBookPageRequestDTO);
     }
 }
