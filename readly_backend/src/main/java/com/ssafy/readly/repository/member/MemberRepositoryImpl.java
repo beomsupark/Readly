@@ -2,7 +2,6 @@ package com.ssafy.readly.repository.member;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.readly.dto.member.FindMemberRequest;
 import com.ssafy.readly.dto.member.LoginMemberRequest;
 import com.ssafy.readly.dto.member.LoginMemberResponse;
 import com.ssafy.readly.dto.member.UpdateMemberRequest;
@@ -43,8 +42,13 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public void logout(String userId) {
-
+    public Optional<String> findByToken(int id) {
+        return Optional.ofNullable(
+                queryFactory
+                .select(member.token)
+                .from(member)
+                .where(member.id.eq(id))
+                .fetchOne());
     }
 
     @Override
@@ -67,17 +71,11 @@ public class MemberRepositoryImpl implements MemberRepository {
         Member findMember = em.find(Member.class, updateMember.getId());
         findMember.changeMember(
                 updateMember.getNickname(),
-                updateMember.getNickname(),
+                updateMember.getMemberName(),
                 updateMember.getPhoneNumber(),
                 updateMember.getEmail(),
                 updateMember.getBirthDate(),
                 updateMember.getGender(),
                 updateMember.getIntroduction());
     }
-
-    @Override
-    public String checkMember(FindMemberRequest findMember) {
-        return "";
-    }
-
 }

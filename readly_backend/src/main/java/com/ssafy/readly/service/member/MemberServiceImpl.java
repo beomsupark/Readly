@@ -17,6 +17,12 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepositoryImpl memberRepository;
 
+    @Override
+    public Member getMemberEntity(int id) {
+        Optional<Member> findMember = memberRepository.findById(id);
+        return findMember.orElseThrow(() -> new NoSuchElementException("해당 회원은 존재하지 않습니다."));
+    }
+
     @Transactional
     @Override
     public void singnUp(SignUpMemberRequest signUpMember) {
@@ -52,18 +58,21 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public void saveRefreshToken(int id, String refreshToken) {
-
+        getMemberEntity(id).addToken(refreshToken);
     }
 
     @Override
-    public Object getRefreshToken(int id) {
-        return null;
+    public String getRefreshToken(int id) {
+        return memberRepository.findByToken(id).orElseThrow(
+                () -> new NoSuchElementException("리프레쉬 토큰이 존재하지 않습니다."));
     }
 
+    @Transactional
     @Override
     public void deleteRefreshToken(int id) {
-
+        getMemberEntity(id).deleteToken();
     }
 
     @Override
@@ -86,21 +95,9 @@ public class MemberServiceImpl implements MemberService {
                 .build();
     }
 
-    @Override
-    public Member getMemberEntity(int id) {
-        Optional<Member> findMember = memberRepository.findById(id);
-        return findMember.orElseThrow(() -> new NoSuchElementException("해당 회원은 존재하지 않습니다."));
-    }
-
     @Transactional
     @Override
     public void updateMember(UpdateMemberRequest updateMember) {
         memberRepository.updateMember(updateMember);
     }
-
-    @Override
-    public String checkMember(FindMemberRequest findMember) {
-        return "";
-    }
-
 }

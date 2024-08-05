@@ -26,7 +26,7 @@ public class SignUpMemberRequest {
     private String email;
     private LocalDate birthday;
     private Gender gender;
-    private Social social = Social.R;
+    private Social social;
     private String introduction;
 
     @Builder

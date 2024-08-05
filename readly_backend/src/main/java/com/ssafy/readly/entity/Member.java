@@ -36,8 +36,9 @@ public class Member {
     @Enumerated(value = STRING)
     private Gender gender;
     @Enumerated(value = STRING)
-    private Social social;
+    private Social social = Social.R;
     private String introduction;
+    private String token;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<ReadBook> readBooks = new ArrayList<>();
@@ -73,5 +74,15 @@ public class Member {
         this.birthday = birthday;
         this.gender = gender;
         this.introduction = introduction;
+    }
+
+    public void addToken(String token) {
+        if(token != null && !token.isEmpty()) {
+            this.token = token;
+        }
+    }
+
+    public void deleteToken() {
+        this.token = null;
     }
 }

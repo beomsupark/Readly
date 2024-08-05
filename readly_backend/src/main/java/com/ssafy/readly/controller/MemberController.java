@@ -97,27 +97,20 @@ public class MemberController {
         return new ResponseEntity<Map<String, Object>>(responseMap, status);
     }
 
-    @DeleteMapping("/member/logout/{id}")
-    public ResponseEntity<Map<String, Object>> logout(@PathVariable("id") int id) {
-        Map<String, Object> responseMap = new HashMap<>();
-        HttpStatus status = HttpStatus.ACCEPTED;
-        try {
-            memberService.deleteRefreshToken(id);
-            status = HttpStatus.OK;
-        } catch (Exception e) {
-            responseMap.put("errorMessage", e.getMessage());
-        }
-        return new ResponseEntity<Map<String, Object>>(responseMap, status);
+    @DeleteMapping("/member/{id}/logout")
+    public ResponseEntity<?> logout(@PathVariable("id") int id) throws Exception {
+        memberService.deleteRefreshToken(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/member/refresh/{id}")
+    @GetMapping("/member/{id}/refresh")
     public ResponseEntity<Map<String, Object>> refreshToken(
             @PathVariable("id") int id, HttpServletRequest request) {
         Map<String, Object> responseMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
-        String token = request.getHeader("refreshToken");
-        if(jwtUtil.checkToken(token)) {
-            if (token.equals(memberService.getRefreshToken(id))) {
+        String refreshToken = request.getHeader("refreshToken");
+        if(jwtUtil.checkToken(refreshToken)) {
+            if (refreshToken.equals(memberService.getRefreshToken(id))) {
                 String accessToken = jwtUtil.createAccessToken(id);
                 responseMap.put("accessToken", accessToken);
                 status = HttpStatus.CREATED;
