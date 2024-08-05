@@ -67,4 +67,8 @@ public class ReadBook {
     public void setCurrentPage(int currentPage) {
         this.currentPage = currentPage;
     }
+
+    public void setReadType(ReadType readType) {
+        this.readType = readType;
+    }
 }
