@@ -53,7 +53,7 @@ public class Member {
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
     private List<GroupMember> groupMembers = new ArrayList<>();
 
-    public Member(String loginId, String loginPwd, String nickname, String memberName, String phoneNumber, String email, LocalDate birthday, Gender gender, Social social, String introduction) {
+    public Member(String loginId, String loginPwd, String nickname, String memberName, String phoneNumber, String email, LocalDate birthday, Gender gender, Social social) {
         this.loginId = loginId;
         this.loginPwd = loginPwd;
         this.nickname = nickname;
@@ -63,7 +63,6 @@ public class Member {
         this.birthday = birthday;
         this.gender = gender;
         this.social = social;
-        this.introduction = introduction;
         this.joinDate = LocalDateTime.now();
         this.introduction = "안녕하세요! " + nickname + "입니다.";
         if(social == null) {
