@@ -16,7 +16,6 @@ export const joinGroup = async (groupId, memberId, token) => {
       }
     });
     console.log('Full API response:', response);
-    // 응답 상태 코드를 반환
     return response.status;
   } catch (error) {
     console.error('Error joining group:', error.response ? error.response.data : error.message);
@@ -51,6 +50,16 @@ export const getMemberGroups = async (memberId) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching member groups:', error.response ? error.response.data : error.message);
+    throw error;
+  }
+};
+
+export const getAvailableGroups = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/groups`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching available groups:', error.response ? error.response.data : error.message);
     throw error;
   }
 };
