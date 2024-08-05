@@ -27,11 +27,21 @@ function App() {
   const showCloud = !["/login", "/"].includes(location.pathname);
 
   useEffect(() => {
-    if (
-      location.pathname === "/" ||
-      location.pathname === "/community" ||
-      location.pathname === "/mypage"
-    ) {
+    const scrollablePages = [
+      "/",
+      "/community",
+      "/mypage",
+      "/ranking",
+      "/activity",
+      "/activity/:groupId"
+    ];
+
+    const isScrollable = scrollablePages.some((path) => {
+      const regex = new RegExp(`^${path.replace(/:\w+/g, "\\w+")}$`);
+      return regex.test(location.pathname);
+    });
+
+    if (isScrollable) {
       document.body.style.overflow = "";
     } else {
       document.body.style.overflow = "hidden";

@@ -97,10 +97,10 @@ export default function Activity() {
       </div>
 
       <div>
-        {activeTab === "진행도" && <ActivityProgress groupData={selectedGroup} />}
-        {activeTab === "소통" && <ActivityChat groupData={selectedGroup} />}
-        {activeTab === "화상" && <ActivityRTC groupData={selectedGroup} />}
-        {activeTab === "회의록" && <ActivityBoard groupData={selectedGroup} />}
+        {activeTab === "진행도" && <ActivityProgress groupId={selectedGroupId} />}
+        {activeTab === "소통" && <ActivityChat groupId={selectedGroupId} />}
+        {activeTab === "화상" && <ActivityRTC groupId={selectedGroupId} />}
+        {activeTab === "회의록" && <ActivityBoard groupId={selectedGroupId} />}
       </div>
     </>
   )
