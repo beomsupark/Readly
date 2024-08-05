@@ -1,5 +1,6 @@
 // src/api/communityAPI.js
 import axios from 'axios';
+import useUserStore from "../store/userStore";
 
 const BASE_URL = 'http://localhost:8080/api';
 
@@ -35,6 +36,21 @@ export const createGroup = async (groupData) => {
     return response.status;
   } catch (error) {
     console.error('Error creating group:', error.response ? error.response.data : error.message);
+    throw error;
+  }
+};
+
+export const getMemberGroups = async (memberId) => {
+  try {
+    const { token } = useUserStore.getState();
+    const response = await axios.get(`${BASE_URL}/membergroups/${memberId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching member groups:', error.response ? error.response.data : error.message);
     throw error;
   }
 };
