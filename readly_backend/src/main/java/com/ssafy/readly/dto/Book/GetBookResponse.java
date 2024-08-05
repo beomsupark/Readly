@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class GetBookResponse {
+     private int id;
      private String title;
      private String author;
      private String ISBN;
@@ -15,6 +16,7 @@ public class GetBookResponse {
      private int total_page;
      private String image;
      public GetBookResponse(Book book) {
+          this.id = book.getId();
           this.title = book.getTitle();
           this.author = book.getAuthor();
           this.ISBN = book.getIsbn();
