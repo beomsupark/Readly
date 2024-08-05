@@ -64,4 +64,23 @@ public class GroupController {
         return new ResponseEntity<>(groups, HttpStatus.OK);
     }
 
+    @DeleteMapping("/group/{groupId}")
+    public ResponseEntity<?> deleteGroup(@PathVariable int groupId)  throws Exception {
+        try {
+            groupService.deleteGroup(groupId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/group/{groupId}/member/{memberId}")
+    public ResponseEntity<?> leaveGroup(@PathVariable int groupId, @PathVariable int memberId)  throws Exception {
+        try {
+            groupService.leaveGroup(groupId, memberId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 }

@@ -27,6 +27,7 @@ CREATE TABLE `read_books` (
   `member_id` int NOT NULL,
   `book_id` int NOT NULL,
   `current_page` int DEFAULT 0,
+  `read_type` enum('R','D') DEFAULT 'R',
   `group_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_members_TO_read_books_1` (`member_id`),

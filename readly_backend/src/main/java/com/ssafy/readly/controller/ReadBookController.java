@@ -4,10 +4,8 @@ import com.ssafy.readly.dto.readbook.ReadBookGroupRequestDTO;
 import com.ssafy.readly.dto.readbook.ReadBookRequestDTO;
 import com.ssafy.readly.service.readbook.ReadBookService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,5 +21,10 @@ public class ReadBookController {
     @PostMapping("/group/add")
     public void addGroupReadBook(@RequestBody ReadBookGroupRequestDTO readBookGroupRequestDTO) throws Exception {
         readBookService.addGroupReadBook(readBookGroupRequestDTO);
+    }
+
+    @GetMapping("/group/read-books/{groupId}")
+    public ResponseEntity<?> getReadBooksByGroupId(@PathVariable int groupId) throws Exception {
+        return readBookService.findReadBooksByGroupId(groupId);
     }
 }
