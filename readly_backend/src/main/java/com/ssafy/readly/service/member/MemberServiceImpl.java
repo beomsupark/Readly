@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.security.sasl.AuthenticationException;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -19,8 +20,8 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member getMemberEntity(int id) {
-        Optional<Member> findMember = memberRepository.findById(id);
-        return findMember.orElseThrow(() -> new NoSuchElementException("해당 회원은 존재하지 않습니다."));
+        return memberRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("해당 회원은 존재하지 않습니다."));
     }
 
     @Transactional
@@ -37,8 +38,7 @@ public class MemberServiceImpl implements MemberService {
                 signUpMember.getEmail(),
                 signUpMember.getBirthday(),
                 signUpMember.getGender(),
-                signUpMember.getSocial(),
-                signUpMember.getIntroduction());
+                signUpMember.getSocial());
         memberRepository.signUp(member);
     }
 
@@ -51,14 +51,13 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public LoginMemberResponse login(LoginMemberRequest longinMember) {
-        Optional<LoginMemberResponse> loginMemberResponse = memberRepository.login(longinMember);
-
-        return loginMemberResponse.orElse(null);
+    public LoginMemberResponse login(LoginMemberRequest longinMember) throws AuthenticationException {
+        return memberRepository.login(longinMember).orElseThrow(
+                () -> new AuthenticationException("아이디 또는 비밀번호를 확인해주세요."));
     }
 
-    @Override
     @Transactional
+    @Override
     public void saveRefreshToken(int id, String refreshToken) {
         getMemberEntity(id).addToken(refreshToken);
     }
@@ -77,27 +76,33 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberResponse getMember(int id) {
-        Optional<Member> findMember = memberRepository.findById(id);
-        Member member = findMember.orElseThrow(() -> new NoSuchElementException("해당 회원은 존재하지 않습니다."));
-        return MemberResponse
-                .builder()
-                .id(member.getId())
-                .loginId(member.getLoginId())
-                .nickname(member.getNickname())
-                .memberName(member.getMemberName())
-                .phoneNumber(member.getPhoneNumber())
-                .email(member.getEmail())
-                .point(member.getPoint())
-                .birthday(member.getBirthday())
-                .joinDate(member.getJoinDate())
-                .gender(member.getGender())
-                .introduction(member.getIntroduction())
-                .build();
+        Member member = getMemberEntity(id);
+        return new MemberResponse(
+                member.getId(),
+                member.getLoginId(),
+                member.getNickname(),
+                member.getMemberName(),
+                member.getPhoneNumber(),
+                member.getEmail(),
+                member.getPoint(),
+                member.getBirthday(),
+                member.getJoinDate(),
+                member.getGender(),
+                member.getIntroduction());
     }
 
     @Transactional
     @Override
     public void updateMember(UpdateMemberRequest updateMember) {
-        memberRepository.updateMember(updateMember);
+        Member findMember = getMemberEntity(updateMember.getId());
+
+        findMember.changeMember(
+                updateMember.getNickname(),
+                updateMember.getMemberName(),
+                updateMember.getPhoneNumber(),
+                updateMember.getEmail(),
+                updateMember.getBirthDate(),
+                updateMember.getGender(),
+                updateMember.getIntroduction());
     }
 }

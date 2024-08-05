@@ -10,7 +10,7 @@ public interface MemberService {
     Member getMemberEntity(int id);
     void singnUp(SignUpMemberRequest signUpMember);
     void checkDuplicateId(String loginId);
-    LoginMemberResponse login(LoginMemberRequest longinMember);
+    LoginMemberResponse login(LoginMemberRequest longinMember) throws AuthenticationException;
     void saveRefreshToken(int id, String refreshToken);
     String getRefreshToken(int id);
     void deleteRefreshToken(int id);

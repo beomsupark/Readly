@@ -14,5 +14,4 @@ public interface MemberRepository {
     Optional<String> findByToken(int id);
     Optional<Member> findById(int id);
     Long findByLoginId(String loginId);
-    void updateMember(UpdateMemberRequest UpdateMember);
 }
