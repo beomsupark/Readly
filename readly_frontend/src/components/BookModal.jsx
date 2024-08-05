@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import Modal from "react-modal";
 import GoButton from "../components/GoButton/GoButton.jsx";
 import aladinLogo from "../assets/onboard/aladinLogo.png";
@@ -33,13 +33,10 @@ export default function BookModal({
   suggestions,
   handleSuggestionClick,
   clearSearch,
-  onAddBook,
-  addButtonText = "책 등록하기"
 }) {
   const modalRef = useRef(null);
   const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [addBookStatus, setAddBookStatus] = useState(null);
 
   useEffect(() => {
     setLocalSearchQuery(searchQuery);
@@ -72,24 +69,6 @@ export default function BookModal({
     handleSuggestionClick(suggestion);
     setLocalSearchQuery("");
     setShowSuggestions(false);
-  };
-
-  const handleAddBook = async () => {
-    setAddBookStatus('loading');
-    try {
-      if (!book) {
-        throw new Error('Book object is missing');
-      }
-      if (!book.bookId) {
-        throw new Error('Book ID is missing');
-      }
-      await onAddBook(book);
-      setAddBookStatus('success');
-      onRequestClose();
-    } catch (error) {
-      console.error('Error adding book:', error);
-      setAddBookStatus('error');
-    }
   };
 
   return (
@@ -193,18 +172,7 @@ export default function BookModal({
                       </a>
                     </div>
                   </div>
-                  <GoButton 
-                    text={addBookStatus === 'loading' ? '등록 중...' : addButtonText} 
-                    className="mt-4" 
-                    onClick={handleAddBook}
-                    disabled={addBookStatus === 'loading'}
-                  />
-                  {addBookStatus === 'success' && (
-                    <p className="text-green-500 mt-2">책이 성공적으로 등록되었습니다.</p>
-                  )}
-                  {addBookStatus === 'error' && (
-                    <p className="text-red-500 mt-2">책 등록에 실패했습니다. 다시 시도해주세요.</p>
-                  )}
+                  <GoButton text="책 등록하기" className="mt-4" />
                 </div>
               </div>
             </div>
@@ -224,7 +192,6 @@ export default function BookModal({
     </Modal>
   );
 }
-
 function SearchForm({
   searchQuery,
   handleInputChange,
@@ -256,13 +223,15 @@ function SearchForm({
         <ul className="bg-[#F5F5F5] border rounded-lg shadow-lg mt-1 absolute z-10 w-full">
           {suggestions.map((suggestion) => (
             <li
-              key={suggestion.bookId}
+              key={suggestion.id}
               className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
               onClick={() => {
                 handleSuggestionClick(suggestion);
                 setShowSuggestions(false);
               }}
             >
+              {/* 작가이름까지 같이 출력 */}
+              {/* {`${suggestion.title} - ${suggestion.author}`} */}
               {suggestion.title}
               <div className="border-b border-custom-border w-full"></div>
             </li>
