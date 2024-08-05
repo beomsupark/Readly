@@ -5,6 +5,7 @@ import com.ssafy.readly.dto.group.MakeGroupRequest;
 import com.ssafy.readly.dto.rank.GetRankGroupResponse;
 import com.ssafy.readly.entity.*;
 import com.ssafy.readly.enums.IsInviting;
+import com.ssafy.readly.enums.ReadType;
 import com.ssafy.readly.enums.Role;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
@@ -154,6 +155,26 @@ public class GroupRepositoryImpl implements GroupRepository{
 
         GroupMember groupMember = new GroupMember(Role.M, member, group);
         em.persist(groupMember);
+
+        // Add the member to the ReadBook entry with readType "R" for the group
+        TypedQuery<ReadBook> readBookQuery = em.createQuery(
+                "SELECT rb FROM ReadBook rb WHERE rb.group.id = :groupId AND rb.readType = :readType",
+                ReadBook.class
+        );
+        readBookQuery.setParameter("groupId", groupId);
+        readBookQuery.setParameter("readType", ReadType.R);
+
+        // Assuming there is only one result as per the group constraint
+        ReadBook readBook = readBookQuery.getResultStream().findFirst().orElse(null);
+        if (readBook != null) {
+            ReadBook newReadBook = new ReadBook();
+            newReadBook.setBook(readBook.getBook());
+            newReadBook.setGroup(group);
+            newReadBook.setMember(member);
+            newReadBook.setCurrentPage(0); // Assuming the new member starts reading from page 0
+            newReadBook.setReadType(ReadType.R);
+            em.persist(newReadBook);
+        }
     }
 
     @Override
