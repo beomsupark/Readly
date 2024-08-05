@@ -1,23 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import CardImg1 from "../../assets/onboard/card1_front.png";
-import CardImg2 from "../../assets/onboard/card2.png";
-import CardImg3 from "../../assets/onboard/card3.png";
-import CardImg4 from "../../assets/onboard/card4.png";
-import ReviewImg1 from "../../assets/onboard/review1.png";
-import ReviewImg2 from "../../assets/onboard/review2.png";
-import ReviewImg3 from "../../assets/onboard/review3.png";
-import ReviewImg4 from "../../assets/onboard/review4.png";
+import TimeCat from "../../assets/onboard/time_cat.png";
 import MypageProgress from "./MyPageProgress";
 import MypageBookshelf from "./MyPageBookshelf";
 import MypageFollow from "./MyPageFollow";
-import TimeCat from "../../assets/onboard/time_cat.png";
 import TimecapsulePeriod from "../Timecapsule/TimecapsulePeriod";
 import GoButton from "../../components/GoButton/GoButton";
 import PhotocardList from "./PhotocardListModal";
 import ReviewList from "./ReviewListModal";
 import useUserStore from "../../store/userStore";
 import Myheader from "./MypageHeader";
+import { getMyReviews, getMyPhotocards } from "../../api/mypageAPI";
 
 export default function MyPage() {
   const user = useUserStore(state => state.user);
@@ -26,8 +19,24 @@ export default function MyPage() {
   const [timecapsuleModalIsOpen, setTimecapsuleModalIsOpen] = useState(false);
   const [photocardModalIsOpen, setPhotocardModalIsOpen] = useState(false);
   const [reviewModalIsOpen, setReviewModalIsOpen] = useState(false);
-  // const [selectedUser, setSelectedUser] = useState(null);
+  const [myPhotocards, setMyPhotocards] = useState([]);
+  const [myReviews, setMyReviews] = useState([]);
   const isOwnProfile = !userId;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const photocards = await getMyPhotocards(userId || user.id);
+        const reviews = await getMyReviews(userId || user.id);
+        setMyPhotocards(photocards);
+        setMyReviews(reviews);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [userId, user.id]);
 
   const handleLinkClick = (link) => {
     setActiveLink(link);
@@ -57,26 +66,12 @@ export default function MyPage() {
     setReviewModalIsOpen(false);
   };
 
-  // useEffect(() => {
-  //   if (userId) {
-  //     const user = myFollow.find((user) => user.id === parseInt(userId));
-  //     setSelectedUser(user);
-  //   }
-  // }, [userId]);
-
-  const myPhotocards = [
-    { id: 1, title: "Photocard 1", cover: CardImg1 },
-    { id: 2, title: "Photocard 2", cover: CardImg2 },
-    { id: 3, title: "Photocard 3", cover: CardImg3 },
-    { id: 4, title: "Photocard 4", cover: CardImg4 },
-  ];
-
-  const myReviews = [
-    { id: 1, title: "Review 1", cover: ReviewImg1 },
-    { id: 2, title: "Review 2", cover: ReviewImg2 },
-    { id: 3, title: "Review 3", cover: ReviewImg3 },
-    { id: 4, title: "Review 4", cover: ReviewImg4 },
-  ];
+  const renderEmptyItems = (count) => {
+    return Array(count).fill().map((_, index) => (
+      <div key={`empty-${index}`} className="bg-gray-100 p-2 rounded w-[5rem] h-[5rem]">
+      </div>
+    ));
+  };
 
   return (
     <>
@@ -145,16 +140,20 @@ export default function MyPage() {
           <>
             <div className="relative bg-white rounded-lg shadow p-4 mb-4">
               <h3 className="font-bold mb-2">내가 만든 포토카드</h3>
-              <div className="flex gap-1">
-                {myPhotocards.map((card) => (
-                  <div key={card.id} className="bg-gray-200 p-2 rounded">
-                    <img
-                      src={card.cover}
-                      alt={card.title}
-                      className="w-auto h-[5rem]"
-                    />
-                  </div>
-                ))}
+              <div className="flex flex-wrap gap-1">
+                {myPhotocards.length > 0 ? (
+                  myPhotocards.map((card) => (
+                    <div key={card.photocardId} className="bg-gray-200 p-2 rounded">
+                      <img
+                        src={card.photocardImage}
+                        alt={card.bookTitle}
+                        className="w-[5rem] h-[5rem] object-cover"
+                      />
+                    </div>
+                  ))
+                ) : (
+                  renderEmptyItems(1)
+                )}
               </div>
               <div className="absolute top-4 right-4">
                 <button
@@ -169,16 +168,18 @@ export default function MyPage() {
 
             <div className="relative bg-white rounded-lg shadow p-4">
               <h3 className="font-bold mb-2">내가 남긴 한줄평</h3>
-              <div className="flex gap-1">
-                {myReviews.map((review) => (
-                  <div key={review.id} className="bg-gray-200 p-2 rounded">
-                    <img
-                      src={review.cover}
-                      alt={review.title}
-                      className="w-auto h-[5rem]"
-                    />
-                  </div>
-                ))}
+              <div className="flex flex-wrap gap-1">
+                {myReviews.length > 0 ? (
+                  myReviews.map((review) => (
+                    <div key={review.reviewId} className="bg-gray-200 p-2 rounded w-[5rem] h-[5rem] overflow-hidden">
+                      <p className="text-sm">
+                        {review.reviewText}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  renderEmptyItems(1)
+                )}
               </div>
               <div className="absolute top-4 right-4">
                 <button
