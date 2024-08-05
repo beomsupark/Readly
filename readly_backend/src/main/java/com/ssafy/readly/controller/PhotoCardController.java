@@ -1,29 +1,35 @@
 package com.ssafy.readly.controller;
 
-import com.ssafy.readly.dto.Book.BookRequest;
-import com.ssafy.readly.dto.Book.GetBookResponse;
-import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardRequest;
-import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardResponse;
-import com.ssafy.readly.dto.PhotoCard.CreatePhotoRequest;
-import com.ssafy.readly.dto.PhotoCard.CreatePhotoResponse;
+import com.ssafy.readly.dto.PhotoCard.*;
 import com.ssafy.readly.entity.Book;
 import com.ssafy.readly.entity.Member;
 import com.ssafy.readly.entity.PhotoCard;
 import com.ssafy.readly.service.AIService;
+import com.ssafy.readly.service.S3Uploader;
 import com.ssafy.readly.service.book.BookService;
 import com.ssafy.readly.service.member.MemberService;
 import com.ssafy.readly.service.photocard.PhotoCardService;
-import com.ssafy.readly.service.photocard.PhotoCardServiceImpl;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
+
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.*;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.imageio.ImageIO;
+
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -34,7 +40,9 @@ public class PhotoCardController {
     private final AIService aiService;
     private final BookService bookService;
     private final MemberService memberService;
-    private final com.ssafy.readly.service.photocard.PhotoCardServiceImpl photoCardServiceImpl;
+    private final PhotoCardService photoCardServiceImpl;
+    private final S3Uploader s3Uploader;
+
 
     @PostMapping("/photocard/createimage")
     public ResponseEntity<Map<String, Object>> createPhoto(@RequestBody @Valid CreatePhotoRequest request) throws Exception {
@@ -59,19 +67,22 @@ public class PhotoCardController {
 
         int photoCardId = photoCardServiceImpl.addPhotoCard(photoCard);
 
+        String filename =String.valueOf(photoCardId);
+
         // 프롬프트 생성 로직 구현
 
         String prompt = "";
-        prompt+=book.getTitle()+" 이라는 책에서 ";
-        prompt+= request.getText()+" 라는 글귀에 어울리는 그림 그려줘";
+        prompt += book.getTitle() + " 이라는 책에서 ";
+        prompt += request.getText() + " 라는 글귀에 어울리는 그림 그려줘";
 
         // 이미지 생성
         HttpStatus status = HttpStatus.ACCEPTED;
         for (int i = 0; i < 1; i++) {
             String image = aiService.
                     generatePictureV2(prompt);
+            String imageLink = s3Uploader.saveFile(convertUrlToMultipartFile(image));
             //response에 넣기
-            imageList.add(image);
+            imageList.add(imageLink);
         }
         //생성된 이미지 return
         Map<String, Object> responseMap = new HashMap<String, Object>();
@@ -104,4 +115,23 @@ public class PhotoCardController {
         status = HttpStatus.OK;
         return new ResponseEntity<Map<String, Object>>(responseMap, status);
     }
+
+    private MultipartFile convertUrlToMultipartFile(String imageUrl) throws IOException {
+        URL url = new URL(imageUrl);
+
+        try(InputStream inputStream = url.openStream();
+            ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            String filename = String.valueOf(UUID.randomUUID());
+            // 1) image url -> byte[]
+            BufferedImage urlImage = ImageIO.read(inputStream);
+            ImageIO.write(urlImage, "png", bos);
+            byte[] byteArray = bos.toByteArray();
+            // 2) byte[] -> MultipartFile
+            MultipartFile multipartFile = new CustomMultipartFile(byteArray, filename);
+            ((CustomMultipartFile) multipartFile).setOriginalFilename(filename);
+            log.info(multipartFile.getOriginalFilename());
+            return multipartFile; // image를 storage에 저장하는 메서드 호출
+        }
+    }
+
 }
