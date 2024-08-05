@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 import GoButton from "../../components/GoButton/GoButton.jsx";
 import CreateReview from "../../components/Review/CreateReview.jsx";
-import Search from "../../components/Search.jsx";
 import useUserStore from "../../store/userStore.js";
 import GroupProgressBar from "../../components/ProgressBar/Group/GroupProgressBar.jsx";
 import GroupCurrentPageModal from "../../components/ProgressBar/Group/GroupCurrentPageModal.jsx";
+import BookModal from "../../components/BookModal.jsx";
+import useBookStore from "../../store/bookStore";
 
 const getLayoutClasses = (memberCount) => {
   if (memberCount <= 4) {
@@ -34,14 +35,21 @@ export default function ActivityProgress({ groupId }) {
   const [readBooks, setReadBooks] = useState([]);
   const [reviewInput, setReviewInput] = useState("");
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [searchModalIsOpen, setSearchModalIsOpen] = useState(false);
   const [error, setError] = useState(null);
   const [selectedMemberId, setSelectedMemberId] = useState(null);
   const [currentPageModalIsOpen, setCurrentPageModalIsOpen] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
+  const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const { token, user } = useUserStore();
+  const { books, searchResults, fetchBooks, searchBooks } = useBookStore();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedBook, setSelectedBook] = useState(null);
 
   const layoutClasses = getLayoutClasses(readBooks.length);
+
+  useEffect(() => {
+    fetchBooks().catch((err) => console.error("Failed to fetch books:", err));
+  }, [fetchBooks]);
 
   useEffect(() => {
     const fetchGroupData = async () => {
@@ -124,7 +132,7 @@ export default function ActivityProgress({ groupId }) {
       const rect = event.target.getBoundingClientRect();
       setModalPosition({
         top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX
+        left: rect.left + window.scrollX,
       });
       setSelectedMemberId(memberId);
       setCurrentPageModalIsOpen(true);
@@ -158,34 +166,74 @@ export default function ActivityProgress({ groupId }) {
     }
   };
 
-  const openSearchModal = () => {
-    setSearchModalIsOpen(true);
-  };
+  const handleInputChange = useCallback(
+    (e) => {
+      setSearchQuery(e.target.value);
+      if (e.target.value) {
+        searchBooks(e.target.value);
+      }
+    },
+    [searchBooks]
+  );
 
-  const closeSearchModal = () => {
-    setSearchModalIsOpen(false);
-  };
+  const handleSearch = useCallback(
+    (e) => {
+      e.preventDefault();
+      searchBooks(searchQuery);
+    },
+    [searchQuery, searchBooks]
+  );
 
-  const changeBook = async (newBook) => {
+  const handleSuggestionClick = useCallback((book) => {
+    setSelectedBook(book);
+    setIsBookModalOpen(true);
+    setSearchQuery("");
+  }, []);
+
+  const handleAddBook = async (book) => {
     try {
-      await axios.put(`http://localhost:8080/api/group/change-book`, {
-        groupId,
-        bookId: newBook.id,
-        title: newBook.title,
-        author: newBook.author,
-        totalPages: newBook.totalPages || 100,
+      console.log('Book being added:', book);
+      const requestData = {
+        oldBookId: bookInfo ? bookInfo.book_id : null,
+        groupId: groupId,
+        bookId: book.bookId,
+      };
+      console.log("Request data:", requestData);
+
+      await axios.post("http://localhost:8080/api/group/add", requestData, {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       setBookInfo({
-        book_id: newBook.id,
-        book_title: newBook.title,
-        book_author: newBook.author,
-        book_totalPage: newBook.totalPages || 100,
+        book_id: book.bookId,
+        book_title: book.title,
+        book_author: book.author,
+        book_totalPage: book.total_page || 100,
+        book_image: book.image,
       });
+
+      // 책 등록 후 그룹 데이터를 다시 불러옵니다.
+      const response = await axios.get(
+        `http://localhost:8080/api/group/read-books/${groupId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setBookInfo(response.data.bookInfo);
+      setReadBooks(response.data.readBooks);
     } catch (error) {
-      console.error("Error changing book:", error);
+      console.error("Error adding book to group:", error);
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+        console.error("Error response status:", error.response.status);
+        console.error("Error response headers:", error.response.headers);
+      } else if (error.request) {
+        console.error("No response received:", error.request);
+      } else {
+        console.error("Error setting up request:", error.message);
+      }
+      throw error;
     }
-    closeSearchModal();
   };
 
   if (error) return <div className="text-red-500">{error}</div>;
@@ -202,12 +250,15 @@ export default function ActivityProgress({ groupId }) {
         >
           <div>
             <img
-              src={`http://localhost:8080/api/books/cover/${bookInfo.book_id}`}
+              src={bookInfo.book_image}
               alt={bookInfo.book_title}
               className="w-[8rem] h-[12rem] mr-4"
             />
             <div className="mt-4 flex justify-start">
-              <GoButton text="책 변경하기" onClick={openSearchModal} />
+              <GoButton
+                text="책 등록하기"
+                onClick={() => setIsBookModalOpen(true)}
+              />
             </div>
           </div>
           <div className={`flex-1 ml-4 ${readBooks.length > 4 ? "pr-4" : ""}`}>
@@ -222,7 +273,9 @@ export default function ActivityProgress({ groupId }) {
                         ? "text-[#000000] cursor-pointer font-bold"
                         : "text-[#dadada]"
                     }`}
-                    onClick={(event) => openCurrentPageModal(book.member_id, event)}
+                    onClick={(event) =>
+                      openCurrentPageModal(book.member_id, event)
+                    }
                   >
                     {book.member_info.member_name}
                   </p>
@@ -236,7 +289,9 @@ export default function ActivityProgress({ groupId }) {
                       isEditable={book.member_id === user.id}
                       memberName={book.member_info.member_name}
                       isCurrentUser={book.member_id === user.id}
-                      openModal={(event) => openCurrentPageModal(book.member_id, event)}
+                      openModal={(event) =>
+                        openCurrentPageModal(book.member_id, event)
+                      }
                     />
                   </div>
                 </div>
@@ -263,12 +318,15 @@ export default function ActivityProgress({ groupId }) {
         </div>
       </div>
 
-      <GroupCurrentPageModal 
+      <GroupCurrentPageModal
         isOpen={currentPageModalIsOpen}
         onRequestClose={closeCurrentPageModal}
         onSave={handleSaveCurrentPage}
         position={modalPosition}
-        memberName={readBooks.find(book => book.member_id === selectedMemberId)?.member_info.member_name || ''}
+        memberName={
+          readBooks.find((book) => book.member_id === selectedMemberId)
+            ?.member_info.member_name || ""
+        }
       />
 
       <CreateReview
@@ -279,10 +337,18 @@ export default function ActivityProgress({ groupId }) {
         onReviewSubmit={handleCreateReview}
       />
 
-      <Search
-        isOpen={searchModalIsOpen}
-        onRequestClose={closeSearchModal}
-        onBookSelect={changeBook}
+      <BookModal
+        isOpen={isBookModalOpen}
+        onRequestClose={() => setIsBookModalOpen(false)}
+        book={selectedBook}
+        searchQuery={searchQuery}
+        handleInputChange={handleInputChange}
+        handleSearch={handleSearch}
+        suggestions={searchResults}
+        handleSuggestionClick={handleSuggestionClick}
+        clearSearch={() => setSearchQuery("")}
+        onAddBook={handleAddBook}
+        addButtonText="그룹에 책 등록하기"
       />
     </>
   );

@@ -7,6 +7,8 @@ import ActivityBoard from "./ActivityBoard";
 import ActivityHeader from "./ActivityHeader";
 import { getMemberGroups } from "../../api/communityAPI";
 import useUserStore from "../../store/userStore";
+import axios from 'axios';
+import { GroupDelete, GroupLeave } from './DeleteGroup.jsx';
 
 export default function Activity() {
   const { groupId } = useParams();
@@ -16,13 +18,24 @@ export default function Activity() {
   const [selectedGroupId, setSelectedGroupId] = useState(null);
   const [groupList, setGroupList] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
+  const [userRole, setUserRole] = useState(null);
   const { user, token } = useUserStore();
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
 
-  const tabs = ['진행도', '소통', '화상', '회의록'];
+  const getTabs = () => {
+    const baseTabs = ['진행도', '소통', '화상', '회의록'];
+    if (userRole === 'L') {
+      return [...baseTabs, '그룹 삭제'];
+    } else if (userRole === 'M') {
+      return [...baseTabs, '그룹 탈퇴'];
+    }
+    return baseTabs;
+  };
+
+  const tabs = getTabs();
 
   useEffect(() => {
     const fetchGroups = async () => {
@@ -57,9 +70,33 @@ export default function Activity() {
     }
   }, [selectedGroupId, groupList]);
 
-  if (!selectedGroup) {
-    return <div>Loading...</div>;
-  }
+  useEffect(() => {
+    const fetchGroupData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/group/read-books/${selectedGroupId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const userInfo = response.data.readBooks.find(book => book.member_id === user.id);
+        if (userInfo) {
+          setUserRole(userInfo.member_info.roles);
+        }
+      } catch (error) {
+        console.error("Failed to fetch group data:", error);
+      }
+    };
+
+    if (selectedGroupId) {
+      fetchGroupData();
+    }
+  }, [selectedGroupId, user.id, token]);
+
+  const handleDeleteSuccess = () => {
+    setGroupList(prevGroups => prevGroups.filter(group => group.groupId !== selectedGroupId));
+  };
+
+  const handleLeaveSuccess = (leftGroupId) => {
+    setGroupList(prevGroups => prevGroups.filter(group => group.groupId !== leftGroupId));
+  };
 
   return (
     <>
@@ -100,6 +137,21 @@ export default function Activity() {
         {activeTab === "소통" && <ActivityChat groupId={selectedGroupId} />}
         {activeTab === "화상" && <ActivityRTC groupId={selectedGroupId} />}
         {activeTab === "회의록" && <ActivityBoard groupId={selectedGroupId} />}
+        {activeTab === "그룹 삭제" && userRole === 'L' && (
+          <GroupDelete 
+            groupId={selectedGroupId} 
+            token={token} 
+            onDeleteSuccess={handleDeleteSuccess}
+          />
+        )}
+        {activeTab === "그룹 탈퇴" && userRole === 'M' && (
+          <GroupLeave 
+            groupId={selectedGroupId} 
+            userId={user.id} 
+            token={token} 
+            onLeaveSuccess={handleLeaveSuccess}
+          />
+        )}
       </div>
     </>
   )

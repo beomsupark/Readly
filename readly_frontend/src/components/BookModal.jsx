@@ -1,11 +1,9 @@
-import { useRef, useEffect, useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Modal from "react-modal";
 import GoButton from "../components/GoButton/GoButton.jsx";
 import aladinLogo from "../assets/onboard/aladinLogo.png";
 import searchIcon from "../assets/header/search.png";
 import tempImg from "../assets/onboard/card1_front.png";
-import { addBookToReadBooks } from "../api/mypageAPI.js";
-import useUserStore from "../store/userStore";
 
 const customModalStyles = {
   overlay: {
@@ -35,12 +33,13 @@ export default function BookModal({
   suggestions,
   handleSuggestionClick,
   clearSearch,
+  onAddBook,
+  addButtonText = "책 등록하기"
 }) {
   const modalRef = useRef(null);
   const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [addBookStatus, setAddBookStatus] = useState(null);
-  const user = useUserStore((state) => state.user);
 
   useEffect(() => {
     setLocalSearchQuery(searchQuery);
@@ -76,25 +75,22 @@ export default function BookModal({
   };
 
   const handleAddBook = async () => {
+    setAddBookStatus('loading');
     try {
-      const bookId = book.id; // book 객체에서 id를 가져옴
-      const userId = user.id; // user 객체에서 id를 가져옴
-  
-      console.log('Adding book with ID:', bookId); // 디버깅용 로그
-      await addBookToReadBooks(userId, bookId);
+      if (!book) {
+        throw new Error('Book object is missing');
+      }
+      if (!book.bookId) {
+        throw new Error('Book ID is missing');
+      }
+      await onAddBook(book);
       setAddBookStatus('success');
       onRequestClose();
-      // onAddBook() 함수가 있다면 호출
-      if (typeof onAddBook === 'function') {
-        onAddBook();
-      }
     } catch (error) {
-      console.error('Error adding book to read books:', error.response?.data || error.message);
+      console.error('Error adding book:', error);
       setAddBookStatus('error');
-      alert(error.message);
     }
   };
-  
 
   return (
     <Modal
@@ -198,7 +194,7 @@ export default function BookModal({
                     </div>
                   </div>
                   <GoButton 
-                    text={addBookStatus === 'loading' ? '등록 중...' : '책 등록하기'} 
+                    text={addBookStatus === 'loading' ? '등록 중...' : addButtonText} 
                     className="mt-4" 
                     onClick={handleAddBook}
                     disabled={addBookStatus === 'loading'}
@@ -260,7 +256,7 @@ function SearchForm({
         <ul className="bg-[#F5F5F5] border rounded-lg shadow-lg mt-1 absolute z-10 w-full">
           {suggestions.map((suggestion) => (
             <li
-              key={suggestion.id}
+              key={suggestion.bookId}
               className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
               onClick={() => {
                 handleSuggestionClick(suggestion);
