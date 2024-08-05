@@ -29,13 +29,12 @@ export default function Activity() {
       try {
         if (!user || !user.id) {
           console.error("User information not found");
-          // 로그인 페이지로 리다이렉트 또는 에러 처리
           return;
         }
 
         const groups = await getMemberGroups(user.id, token);
         setGroupList(groups);
-        
+
         if (groups.length > 0) {
           const initialGroupId = parseInt(groupId) || groups[0].groupId;
           setSelectedGroupId(initialGroupId);
