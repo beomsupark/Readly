@@ -34,16 +34,16 @@ export default function BookModal({
   handleSuggestionClick,
   clearSearch,
   onAddBook,
-  addButtonText = "책 등록하기"
+  addButtonText = "책 등록하기",
 }) {
   const modalRef = useRef(null);
-  const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
+  const [localSearchQuery, setLocalSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [addBookStatus, setAddBookStatus] = useState(null);
 
   useEffect(() => {
-    setLocalSearchQuery(searchQuery);
-  }, [searchQuery]);
+    setLocalSearchQuery(""); // 모달이 열릴 때마다 검색 쿼리 초기화
+  }, [isOpen]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -69,27 +69,28 @@ export default function BookModal({
   };
 
   const handleLocalSuggestionClick = (suggestion) => {
-    console.log("선택된 책:", suggestion);  // 여기에 로그 추가
+    console.log("선택된 책:", suggestion);
     handleSuggestionClick(suggestion);
     setLocalSearchQuery("");
     setShowSuggestions(false);
   };
 
   const handleAddBook = async () => {
-    setAddBookStatus('loading');
+    setAddBookStatus("loading");
     try {
       if (!book) {
-        throw new Error('Book object is missing');
+        throw new Error("Book object is missing");
       }
-      if (!book.bookId) {
-        throw new Error('Book ID is missing');
+      if (!book.id && !book.bookId) {
+        throw new Error("Book ID is missing");
       }
-      await onAddBook(book);
-      setAddBookStatus('success');
+      const bookId = book.id || book.bookId;
+      await onAddBook({ ...book, bookId });
+      setAddBookStatus("success");
       onRequestClose();
     } catch (error) {
-      console.error('Error adding book:', error);
-      setAddBookStatus('error');
+      console.error("Error adding book:", error);
+      setAddBookStatus("error");
     }
   };
 
@@ -110,7 +111,6 @@ export default function BookModal({
           showSuggestions={showSuggestions}
           setShowSuggestions={setShowSuggestions}
         />
-
         {book && (
           <>
             <div className="flex flex-col md:flex-row mt-2">
@@ -194,18 +194,14 @@ export default function BookModal({
                       </a>
                     </div>
                   </div>
-                  <GoButton 
-                    text={addBookStatus === 'loading' ? '등록 중...' : addButtonText} 
-                    className="mt-4" 
+                  <GoButton
+                    text={
+                      addBookStatus === "loading" ? "등록 중..." : addButtonText
+                    }
+                    className="mt-4"
                     onClick={handleAddBook}
-                    disabled={addBookStatus === 'loading'}
+                    disabled={addBookStatus === "loading"}
                   />
-                  {addBookStatus === 'success' && (
-                    <p className="text-green-500 mt-2">책이 성공적으로 등록되었습니다.</p>
-                  )}
-                  {addBookStatus === 'error' && (
-                    <p className="text-red-500 mt-2">책 등록에 실패했습니다. 다시 시도해주세요.</p>
-                  )}
                 </div>
               </div>
             </div>
@@ -253,23 +249,25 @@ function SearchForm({
           <img src={searchIcon} alt="검색" className="w-5 h-5" />
         </button>
       </form>
-      {showSuggestions && searchQuery.trim() !== "" && suggestions.length > 0 && (
-        <ul className="bg-[#F5F5F5] border rounded-lg shadow-lg mt-1 absolute z-10 w-full">
-          {suggestions.map((suggestion) => (
-            <li
-              key={suggestion.bookId}
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              onClick={() => {
-                handleSuggestionClick(suggestion);
-                setShowSuggestions(false);
-              }}
-            >
-              {suggestion.title}
-              <div className="border-b border-custom-border w-full"></div>
-            </li>
-          ))}
-        </ul>
-      )}
+      {showSuggestions &&
+        searchQuery.trim() !== "" &&
+        suggestions.length > 0 && (
+          <ul className="bg-[#F5F5F5] border rounded-lg shadow-lg mt-1 absolute z-10 w-full">
+            {suggestions.map((suggestion) => (
+              <li
+                key={suggestion.bookId}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                onClick={() => {
+                  handleSuggestionClick(suggestion);
+                  setShowSuggestions(false);
+                }}
+              >
+                {suggestion.title}
+                <div className="border-b border-custom-border w-full"></div>
+              </li>
+            ))}
+          </ul>
+        )}
     </div>
   );
 }

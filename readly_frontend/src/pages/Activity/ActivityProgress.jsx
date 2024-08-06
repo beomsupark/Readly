@@ -187,12 +187,18 @@ export default function ActivityProgress({ groupId }) {
   const handleSuggestionClick = useCallback((book) => {
     setSelectedBook(book);
     setIsBookModalOpen(true);
-    setSearchQuery("");
+    setSearchQuery(""); // 검색 쿼리 초기화
   }, []);
+
+  const handleCloseBookModal = () => {
+    setIsBookModalOpen(false);
+    setSearchQuery(""); // 모달을 닫을 때 검색 쿼리 초기화
+    setSelectedBook(null); // 선택된 책 초기화
+  };
 
   const handleAddBook = async (book) => {
     try {
-      console.log('Book being added:', book);
+      console.log("Book being added:", book);
       const requestData = {
         oldBookId: bookInfo ? bookInfo.book_id : null,
         groupId: groupId,
@@ -339,7 +345,7 @@ export default function ActivityProgress({ groupId }) {
 
       <BookModal
         isOpen={isBookModalOpen}
-        onRequestClose={() => setIsBookModalOpen(false)}
+        onRequestClose={handleCloseBookModal}
         book={selectedBook}
         searchQuery={searchQuery}
         handleInputChange={handleInputChange}
