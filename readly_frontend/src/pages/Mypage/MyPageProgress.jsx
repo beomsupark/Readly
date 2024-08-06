@@ -4,7 +4,8 @@ import ProgressBar from "../../components/ProgressBar/ProgressBar";
 import GoButton from "../../components/GoButton/GoButton";
 import CreateReview from "../../components/Review/CreateReview";
 import Search from "../../components/Search";
-import { proceedingBooks } from '../../api/mypageAPI'; // API 함수 import
+import { proceedingBooks } from '../../api/mypageAPI';
+import { postReview } from '../../api/reviewAPI';
 
 export default function MypageProgress({ userId }) {
   const [books, setBooks] = useState([]);
@@ -19,6 +20,7 @@ export default function MypageProgress({ userId }) {
         const fetchedBooks = await proceedingBooks(userId);
         const formattedBooks = fetchedBooks.map(book => ({
           id: book.readBookId,
+          bookId: book.bookId,  // 이 줄을 추가
           title: book.title,
           cover: book.image || BookImg1,
           totalPages: book.totalPages,
@@ -66,17 +68,35 @@ export default function MypageProgress({ userId }) {
     setReviewInputs((prev) => ({ ...prev, [bookId]: value }));
   };
 
-  const handleCreateReview = () => {
-    if (selectedBook && reviewInputs[selectedBook.id]?.trim()) {
-      setBooks(
-        books.map((book) =>
-          book.id === selectedBook.id
-            ? { ...book, review: reviewInputs[selectedBook.id] }
-            : book
-        )
+  const handleCreateReview = async ({ bookId, reviewText, visibility }) => {
+    try {
+      console.log('Submitting review:', { bookId, reviewText, visibility });
+      const result = await postReview(
+        userId, 
+        bookId,
+        reviewText,
+        visibility === 'A' // 'A'는 공개, 'E'는 비공개
       );
-      setReviewInputs((prev) => ({ ...prev, [selectedBook.id]: "" }));
-      closeModal();
+  
+      console.log('Review submission result:', result);
+  
+      if (result.status === 'success') {
+        setBooks(
+          books.map((book) =>
+            book.bookId === bookId
+              ? { ...book, review: reviewText }
+              : book
+          )
+        );
+        setReviewInputs((prev) => ({ ...prev, [bookId]: "" }));
+        closeModal();
+      } else {
+        console.error('Failed to create review:', result.message);
+        alert(`리뷰 생성에 실패했습니다: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error creating review:', error);
+      alert('리뷰 생성 중 오류가 발생했습니다.');
     }
   };
 

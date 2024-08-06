@@ -1,4 +1,6 @@
 import Modal from "react-modal";
+import { useEffect } from "react";
+import Review from '../../components/Review/Review';  // Make sure to adjust the import path as needed
 
 Modal.setAppElement("#root");
 
@@ -31,6 +33,10 @@ const customModalStyles = {
 };
 
 export default function ReviewList({ isOpen, onRequestClose, reviews }) {
+  useEffect(() => {
+    console.log("ReviewList received reviews:", reviews); // Log received reviews
+  }, [reviews]);
+
   return (
     <Modal
       isOpen={isOpen}
@@ -47,21 +53,21 @@ export default function ReviewList({ isOpen, onRequestClose, reviews }) {
         X
       </button>
       <h2 className="text-2xl font-bold mb-4">만든 한줄평입니다!</h2>
-      <div className="flex-col gap-4">
-        {reviews &&
-          reviews.map((book) => (
-            <div key={book.id} className="flex items-center">
-              <img
-                src={book.cover}
-                alt={book.title}
-                className="w-[10rem] h-auto object-cover mb-2"
-              />
-              <div>
-                <p className="text-center">{book.title}</p>
-                <p className="text-center">{book.description}</p>
-              </div>
-            </div>
-          ))}
+      <div className="flex gap-3 w-[28rem]">
+        {reviews && reviews.length > 0 ? (
+          reviews.map((review) => (
+            <Review
+              key={review.reviewId}
+              bookImage={review.bookImage}
+              title={review.bookTitle}
+              author={review.bookAuthor}
+              review={review.reviewText}
+              likeCount={review.likeCount} // Make sure this exists in your review data
+            />
+          ))
+        ) : (
+          <p>No reviews available.</p>
+        )}
       </div>
     </Modal>
   );

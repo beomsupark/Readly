@@ -53,14 +53,14 @@ export default function CreateReview({
       alert("글귀를 입력해주세요.");
       return;
     }
-
+  
     // Submit the review
     onReviewSubmit({
-      bookId: book.id, // Assuming book has an id
+      bookId: book.bookId,  // 여기를 book.id에서 book.bookId로 변경
       reviewText,
       visibility,
     });
-
+  
     // Reset the form
     setVisibility("A");
   };
@@ -85,9 +85,9 @@ export default function CreateReview({
         <Review
           bookImage={book.cover}
           title={book.title}
-          author={book.author || "Author Name"} // Replace with actual author if available
+          author={book.author || "Author Name"}
           review={reviewText}
-          likeCount={0} // Initial like count
+          likeCount={0}
         />
       </div>
       <div className="mt-5 ml-3 justify-start sm:w-40 lg:w-48">
