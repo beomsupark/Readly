@@ -2,7 +2,8 @@ import { useState } from "react";
 import Modal from "react-modal";
 import GoButton from "../../components/GoButton/GoButton.jsx";
 import TimecapsuleOpen from "./TimecapsuleOpen.jsx";
-import { createTimeCapsule } from '../../api/timecapsuleAPI.js'; // API 함수 import
+import { createTimeCapsule } from '../../api/timecapsuleAPI.js';
+import useUserStore from '../../store/userStore';
 
 Modal.setAppElement("#root");
 
@@ -39,13 +40,14 @@ export default function TimecapsuleSelect({
   onRequestClose,
   photoCards,
   reviews,
-  userId,
   startDate,
   endDate
 }) {
   const [selectedPhotoCards, setSelectedPhotoCards] = useState([]);
   const [selectedReviews, setSelectedReviews] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const user = useUserStore(state => state.user);
+  const memberId = user ? user.memberId : null;
 
   const toggleSelection = (id, type) => {
     if (type === "photoCard") {
@@ -62,7 +64,7 @@ export default function TimecapsuleSelect({
   const openModal = async () => {
     try {
       const success = await createTimeCapsule(
-        userId,
+        memberId,
         startDate,
         endDate,
         selectedReviews,

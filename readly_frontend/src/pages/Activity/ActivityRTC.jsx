@@ -10,7 +10,7 @@ const dummyPhotoCards = [
   { id: 4, imageUrl: "https://example.com/image4.jpg", text: "오늘의 한줄평" },
 ];
 
-const API_BASE_URL = 'http://i11c207.p.ssafy.io/api';
+const API_BASE_URL = 'https://i11c207.p.ssafy.io/api';
 
 const ActivityRTC = () => {
   const [isVideoConferenceActive, setIsVideoConferenceActive] = useState(false);

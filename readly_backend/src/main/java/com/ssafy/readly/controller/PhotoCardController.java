@@ -1,6 +1,8 @@
 package com.ssafy.readly.controller;
 
 import com.ssafy.readly.dto.PhotoCard.*;
+import com.ssafy.readly.dto.review.ReviewResponse;
+import com.ssafy.readly.dto.review.ReviewSearchRequest;
 import com.ssafy.readly.entity.Book;
 import com.ssafy.readly.entity.Member;
 import com.ssafy.readly.entity.PhotoCard;
@@ -94,7 +96,7 @@ public class PhotoCardController {
         return new ResponseEntity<Map<String, Object>>(responseMap, status);
     }
 
-    @PutMapping("photocard/createcard")
+    @PutMapping("/photocard/createcard")
     public ResponseEntity<Map<String, Object>> createPhotoCard(@RequestBody @Valid CreatePhotoCardRequest request) throws Exception {
         log.info(request.toString());
         HttpStatus status = HttpStatus.ACCEPTED;
@@ -105,7 +107,7 @@ public class PhotoCardController {
         return new ResponseEntity<Map<String, Object>>(responseMap, status);
     }
 
-    @GetMapping("photocard/findbyid/{id}")
+    @GetMapping("/photocard/findbyid/{id}")
     public ResponseEntity<Map<String, Object>> getPhotoCardById(@PathVariable int id) throws Exception {
         log.info(String.valueOf(id));
         HttpStatus status = HttpStatus.ACCEPTED;
@@ -115,6 +117,17 @@ public class PhotoCardController {
         status = HttpStatus.OK;
         return new ResponseEntity<Map<String, Object>>(responseMap, status);
     }
+
+    @PostMapping("/photocard/getPhotoCards")
+    public ResponseEntity<Map<String, Object>> getReviews(@RequestBody PhotoCardSearchRequest request) throws Exception {
+        log.info(request.toString());
+        HttpStatus status = HttpStatus.ACCEPTED;
+        Map<String, Object> responseMap = new HashMap<String, Object>();
+        List<CreatePhotoCardResponse> reviews = photoCardServiceImpl.findPhotoCardsSorted(request);
+        responseMap.put("reviews", reviews);
+        return new ResponseEntity<Map<String, Object>>(responseMap, status);
+    }
+
 
     private MultipartFile convertUrlToMultipartFile(String imageUrl) throws IOException {
         URL url = new URL(imageUrl);

@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class CreatePhotoCardResponse {
     private int photoCardId;
     private String photoCardText;
@@ -15,7 +14,10 @@ public class CreatePhotoCardResponse {
     private String bookTitle;
     private String bookAuthor;
     private String photoCardImage;
-    private LocalDate photoCardCreatedDate;
+    private LocalDateTime photoCardCreatedDate;
+    private long likeCount;
+    private long likeCheck;
+
 
     public CreatePhotoCardResponse(int photoCardId, String photoCardText, String bookTitle, String bookAuthor, String photoCardImage, LocalDateTime photoCardCreatedDate) {
         this.photoCardId = photoCardId;
@@ -23,6 +25,19 @@ public class CreatePhotoCardResponse {
         this.bookTitle = bookTitle;
         this.bookAuthor = bookAuthor;
         this.photoCardImage = photoCardImage;
-        this.photoCardCreatedDate = photoCardCreatedDate.toLocalDate();
+        this.photoCardCreatedDate = photoCardCreatedDate;
+        this.likeCount=0;
+        this.likeCheck=0;
+    }
+    public CreatePhotoCardResponse(int photoCardId,String photoCardText,String memberId, String bookTitle, String bookAuthor, String photoCardImage, LocalDateTime photoCardCreatedDate, long likeCount, long likeCheck) {
+        this.photoCardId = photoCardId;
+        this.photoCardText = photoCardText;
+        this.memberId = memberId;
+        this.bookTitle = bookTitle;
+        this.bookAuthor = bookAuthor;
+        this.photoCardImage = photoCardImage;
+        this.photoCardCreatedDate = photoCardCreatedDate;
+        this.likeCount=likeCount;
+        this.likeCheck=likeCheck;
     }
 }
