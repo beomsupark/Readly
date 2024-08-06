@@ -22,18 +22,18 @@
 LOCK TABLES `members` WRITE;
 /*!40000 ALTER TABLE `members` DISABLE KEYS */;
 INSERT INTO `members` VALUES 
-(1, 'ssafy1', 'ssafy1', 'ssafy1', 'ssafy1', '010-1234-5678', 'ssafy1@ssafy.com', 1, '2024-07-31', '2024-07-31 00:37:07', 'F', 'G', 'ssafy1 유저에 대한 설명 입니다.'),
-(2, 'ssafy2', 'ssafy2', 'ssafy2', 'ssafy2', '010-1234-5678', 'ssafy2@ssafy.com', 1, '2024-07-31', '2024-07-31 00:37:09', 'M', 'G', 'ssafy2 유저에 대한 설명 입니다.'),
-(3, 'ssafy3', 'ssafy3', 'ssafy3', 'ssafy3', '010-1234-5679', 'ssafy3@ssafy.com', 1, '2024-07-31', '2024-07-31 00:40:00', 'F', 'I', 'ssafy3 유저에 대한 설명 입니다.'),
-(4, 'ssafy4', 'ssafy4', 'ssafy4', 'ssafy4', '010-1234-5680', 'ssafy4@ssafy.com', 1, '2024-07-31', '2024-07-31 00:41:00', 'M', 'I', 'ssafy4 유저에 대한 설명 입니다.'),
-(5, 'ssafy5', 'ssafy5', 'ssafy5', 'ssafy5', '010-1234-5681', 'ssafy5@ssafy.com', 1, '2024-07-31', '2024-07-31 00:42:00', 'F', 'K', 'ssafy5 유저에 대한 설명 입니다.'),
-(6, 'ssafy6', 'ssafy6', 'ssafy6', 'ssafy6', '010-1234-5682', 'ssafy6@ssafy.com', 1, '2024-07-31', '2024-07-31 00:43:00', 'M', 'K', 'ssafy6 유저에 대한 설명 입니다.'),
-(7, 'ssafy7', 'ssafy7', 'ssafy7', 'ssafy7', '010-1234-5683', 'ssafy7@ssafy.com', 1, '2024-07-31', '2024-07-31 00:44:00', 'F', 'R', 'ssafy7 유저에 대한 설명 입니다.'),
-(8, 'ssafy8', 'ssafy8', 'ssafy8', 'ssafy8', '010-1234-5684', 'ssafy8@ssafy.com', 1, '2024-07-31', '2024-07-31 00:45:00', 'M', 'R', 'ssafy8 유저에 대한 설명 입니다.'),
-(9, 'ssafy9', 'ssafy9', 'ssafy9', 'ssafy9', '010-1234-5685', 'ssafy9@ssafy.com', 1, '2024-07-31', '2024-07-31 00:46:00', 'F', 'G', 'ssafy9 유저에 대한 설명 입니다.'),
-(10, 'ssafy10', 'ssafy10', 'ssafy10', 'ssafy10', '010-1234-5686', 'ssafy10@ssafy.com', 1, '2024-07-31', '2024-07-31 00:47:00', 'M', 'G', 'ssafy10 유저에 대한 설명 입니다.'),
-(11, 'ssafy11', 'ssafy11', 'ssafy11', 'ssafy11', '010-1234-5687', 'ssafy11@ssafy.com', 1, '2024-07-31', '2024-07-31 00:48:00', 'F', 'I', 'ssafy11 유저에 대한 설명 입니다.'),
-(12, 'ssafy12', 'ssafy12', 'ssafy12', 'ssafy12', '010-1234-5688', 'ssafy12@ssafy.com', 1, '2024-07-31', '2024-07-31 00:49:00', 'M', 'I', 'ssafy12 유저에 대한 설명 입니다.');
+(1, 'ssafy1', 'ssafy1', 'ssafy1', 'ssafy1', '010-1234-5678', 'ssafy1@ssafy.com', 1, '2024-07-31', '2024-07-31 00:37:07', 'F', 'G', 'ssafy1 유저에 대한 설명 입니다.',NULL),
+(2, 'ssafy2', 'ssafy2', 'ssafy2', 'ssafy2', '010-1234-5678', 'ssafy2@ssafy.com', 1, '2024-07-31', '2024-07-31 00:37:09', 'M', 'G', 'ssafy2 유저에 대한 설명 입니다.',NULL),
+(3, 'ssafy3', 'ssafy3', 'ssafy3', 'ssafy3', '010-1234-5679', 'ssafy3@ssafy.com', 1, '2024-07-31', '2024-07-31 00:40:00', 'F', 'I', 'ssafy3 유저에 대한 설명 입니다.',NULL),
+(4, 'ssafy4', 'ssafy4', 'ssafy4', 'ssafy4', '010-1234-5680', 'ssafy4@ssafy.com', 1, '2024-07-31', '2024-07-31 00:41:00', 'M', 'I', 'ssafy4 유저에 대한 설명 입니다.',NULL),
+(5, 'ssafy5', 'ssafy5', 'ssafy5', 'ssafy5', '010-1234-5681', 'ssafy5@ssafy.com', 1, '2024-07-31', '2024-07-31 00:42:00', 'F', 'K', 'ssafy5 유저에 대한 설명 입니다.',NULL),
+(6, 'ssafy6', 'ssafy6', 'ssafy6', 'ssafy6', '010-1234-5682', 'ssafy6@ssafy.com', 1, '2024-07-31', '2024-07-31 00:43:00', 'M', 'K', 'ssafy6 유저에 대한 설명 입니다.',NULL),
+(7, 'ssafy7', 'ssafy7', 'ssafy7', 'ssafy7', '010-1234-5683', 'ssafy7@ssafy.com', 1, '2024-07-31', '2024-07-31 00:44:00', 'F', 'R', 'ssafy7 유저에 대한 설명 입니다.',NULL),
+(8, 'ssafy8', 'ssafy8', 'ssafy8', 'ssafy8', '010-1234-5684', 'ssafy8@ssafy.com', 1, '2024-07-31', '2024-07-31 00:45:00', 'M', 'R', 'ssafy8 유저에 대한 설명 입니다.',NULL),
+(9, 'ssafy9', 'ssafy9', 'ssafy9', 'ssafy9', '010-1234-5685', 'ssafy9@ssafy.com', 1, '2024-07-31', '2024-07-31 00:46:00', 'F', 'G', 'ssafy9 유저에 대한 설명 입니다.',NULL),
+(10, 'ssafy10', 'ssafy10', 'ssafy10', 'ssafy10', '010-1234-5686', 'ssafy10@ssafy.com', 1, '2024-07-31', '2024-07-31 00:47:00', 'M', 'G', 'ssafy10 유저에 대한 설명 입니다.',NULL),
+(11, 'ssafy11', 'ssafy11', 'ssafy11', 'ssafy11', '010-1234-5687', 'ssafy11@ssafy.com', 1, '2024-07-31', '2024-07-31 00:48:00', 'F', 'I', 'ssafy11 유저에 대한 설명 입니다.',NULL),
+(12, 'ssafy12', 'ssafy12', 'ssafy12', 'ssafy12', '010-1234-5688', 'ssafy12@ssafy.com', 1, '2024-07-31', '2024-07-31 00:49:00', 'M', 'I', 'ssafy12 유저에 대한 설명 입니다.',NULL);
 /*!40000 ALTER TABLE `members` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
