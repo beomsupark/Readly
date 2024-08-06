@@ -72,18 +72,7 @@ export default function ActivityProgress({ groupId }) {
         setReadBooks(response.data.readBooks);
       } catch (error) {
         console.error("Error fetching group data:", error);
-        if (error.response) {
-          console.error("Response data:", error.response.data);
-          console.error("Response status:", error.response.status);
-          console.error("Response headers:", error.response.headers);
-        } else if (error.request) {
-          console.error("No response received:", error.request);
-        } else {
-          console.error("Error setting up request:", error.message);
-        }
-        setError(
-          "데이터를 불러오는 데 실패했습니다. 잠시 후 다시 시도해주세요."
-        );
+        // ... (에러 처리 코드)
       }
     };
 
@@ -91,25 +80,25 @@ export default function ActivityProgress({ groupId }) {
   }, [groupId, token]);
 
   const updateCurrentPage = async (memberId, newPage) => {
-    if (user.id !== memberId) {
-      console.log("You can only update your own progress.");
-      return;
-    }
-
     try {
-      await axios.put(`http://localhost:8080/api/group/update-page`, {
-        groupId,
-        memberId,
-        currentPage: newPage,
-      });
+      await axios.patch(
+        `http://localhost:8080/api/user/update-page`,
+        {
+          bookId: bookInfo.book_id,
+          memberId,
+          currentPage: newPage,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       setReadBooks((prevReadBooks) =>
         prevReadBooks.map((book) =>
-          book.member_id === memberId
-            ? { ...book, current_page: newPage }
-            : book
+          book.member_id === memberId ? { ...book, currentPage: newPage } : book
         )
       );
+      console.log(`Updated page for member ${memberId} to ${newPage}`);
     } catch (error) {
       console.error("Error updating current page:", error);
     }
@@ -192,7 +181,7 @@ export default function ActivityProgress({ groupId }) {
 
   const handleAddBook = async (book) => {
     try {
-      console.log('Book being added:', book);
+      console.log("Book being added:", book);
       const requestData = {
         oldBookId: bookInfo ? bookInfo.book_id : null,
         groupId: groupId,
@@ -212,7 +201,6 @@ export default function ActivityProgress({ groupId }) {
         book_image: book.image,
       });
 
-      // 책 등록 후 그룹 데이터를 다시 불러옵니다.
       const response = await axios.get(
         `http://localhost:8080/api/group/read-books/${groupId}`,
         {
@@ -281,18 +269,19 @@ export default function ActivityProgress({ groupId }) {
                   </p>
                   <div className="flex-1">
                     <GroupProgressBar
-                      currentPage={book.current_page}
+                      key={`progress-${book.member_id}`}
+                      currentPage={book.currentPage}
                       totalPages={bookInfo.book_totalPage}
                       onUpdateCurrentPage={(newPage) =>
                         updateCurrentPage(book.member_id, newPage)
                       }
                       isEditable={book.member_id === user.id}
                       memberName={book.member_info.member_name}
-                      isCurrentUser={book.member_id === user.id}
                       openModal={(event) =>
                         openCurrentPageModal(book.member_id, event)
                       }
                     />
+                    {console.log(`Current Page for ${book.member_info.member_name}:`, book.currentPage)}
                   </div>
                 </div>
               ))}
