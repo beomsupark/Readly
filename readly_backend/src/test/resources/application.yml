@@ -18,3 +18,12 @@ jwt:
 
 OPENVIDU_URL: https://i11c207.p.ssafy.io:8443/
 OPENVIDU_SECRET: readlywebrtc
+
+cloud:
+  aws:
+    s3:
+      bucket: c207-bucket
+    region:
+      auto: false
+    stack:
+      auto: false
