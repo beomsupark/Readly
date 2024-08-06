@@ -51,31 +51,41 @@ export default function ActivityProgress({ groupId }) {
     fetchBooks().catch((err) => console.error("Failed to fetch books:", err));
   }, [fetchBooks]);
 
-  useEffect(() => {
-    const fetchGroupData = async () => {
-      if (!groupId) {
-        console.log("GroupId is not available yet");
-        return;
-      }
+  const fetchGroupData = async () => {
+    if (!groupId) {
+      console.log("GroupId is not available yet");
+      return;
+    }
 
-      setError(null);
-      try {
-        console.log(`Fetching data for groupId: ${groupId}`);
-        const response = await axios.get(
-          `http://localhost:8080/api/group/read-books/${groupId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        console.log("API Response:", response.data);
+    setError(null);
+    try {
+      console.log(`Fetching data for groupId: ${groupId}`);
+      const response = await axios.get(
+        `http://localhost:8080/api/group/read-books/${groupId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log("API Response:", response.data);
+      
+      if (response.data && response.data.bookInfo && response.data.readBooks) {
         setBookInfo(response.data.bookInfo);
-        setReadBooks(response.data.readBooks);
-      } catch (error) {
-        console.error("Error fetching group data:", error);
-        // ... (에러 처리 코드)
+        const updatedReadBooks = response.data.readBooks.map(book => ({
+          ...book,
+          currentPage: book.currentPage || 0
+        }));
+        setReadBooks(updatedReadBooks);
+      } else {
+        console.error("Invalid data structure in API response");
+        setError("데이터 구조가 올바르지 않습니다.");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching group data:", error);
+      setError("데이터를 불러오는 데 실패했습니다. 잠시 후 다시 시도해주세요.");
+    }
+  };
 
+  useEffect(() => {
     fetchGroupData();
   }, [groupId, token]);
 
@@ -92,13 +102,21 @@ export default function ActivityProgress({ groupId }) {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
+  
       setReadBooks((prevReadBooks) =>
         prevReadBooks.map((book) =>
           book.member_id === memberId ? { ...book, currentPage: newPage } : book
         )
       );
       console.log(`Updated page for member ${memberId} to ${newPage}`);
+      
+      // 로컬 스토리지에 currentPage 값 저장
+      const storedPages = JSON.parse(localStorage.getItem(`group_${groupId}_pages`) || '{}');
+      storedPages[memberId] = newPage;
+      localStorage.setItem(`group_${groupId}_pages`, JSON.stringify(storedPages));
+      
+      // 업데이트 후 그룹 데이터를 다시 가져옵니다
+      fetchGroupData();
     } catch (error) {
       console.error("Error updating current page:", error);
     }
@@ -201,14 +219,7 @@ export default function ActivityProgress({ groupId }) {
         book_image: book.image,
       });
 
-      const response = await axios.get(
-        `http://localhost:8080/api/group/read-books/${groupId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setBookInfo(response.data.bookInfo);
-      setReadBooks(response.data.readBooks);
+      fetchGroupData();
     } catch (error) {
       console.error("Error adding book to group:", error);
       if (error.response) {
