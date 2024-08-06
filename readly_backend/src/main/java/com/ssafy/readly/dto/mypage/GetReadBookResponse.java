@@ -11,15 +11,17 @@ public class GetReadBookResponse {
     private String image;
     private String author;
     private String detail;
+    private int BookId;
     private int currentPage;
     private int totalPages;
 
-    public GetReadBookResponse(int readBookId, String title, String image, String author, String detail,int currentPage, int totalPages) {
+    public GetReadBookResponse(int readBookId, String title, String image, String author, String detail,int BookId, int currentPage, int totalPages) {
         this.readBookId = readBookId;
         this.title = title;
         this.image = image;
         this.author = author;
         this.detail = detail;
+        this.BookId = BookId;
         this.currentPage = currentPage;
         this.totalPages = totalPages;
     }
@@ -30,6 +32,7 @@ public class GetReadBookResponse {
         this.image = readBook.getBook().getImage();
         this.author = readBook.getBook().getAuthor();
         this.detail = readBook.getBook().getDetail();
+        this.BookId = readBook.getBook().getId();
         this.currentPage = readBook.getCurrentPage();
         this.totalPages = readBook.getBook().getTotalPage();
     }
