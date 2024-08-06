@@ -1,4 +1,3 @@
-// GroupCurrentPageModal.jsx
 import { useState } from "react";
 import Modal from "react-modal";
 import GoButton from "../../../components/GoButton/GoButton.jsx";
@@ -45,8 +44,12 @@ export default function GroupCurrentPageModal({
   };
 
   const handleSave = () => {
-    onSave(newPage);
-    setNewPage(""); // Clear input after saving
+    if (newPage !== "") {
+      onSave(newPage);
+      setNewPage(""); // Clear input after saving
+    } else {
+      console.log("New page value is empty");
+    }
   };
 
   return (

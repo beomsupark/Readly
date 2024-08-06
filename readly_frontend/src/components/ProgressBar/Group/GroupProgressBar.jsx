@@ -1,33 +1,37 @@
-// GroupProgressBar.jsx
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import GroupCurrentPageModal from './GroupCurrentPageModal';
 
-export default function GroupProgressBar({ currentPage, totalPages, onUpdateCurrentPage, isEditable, memberName }) {
+export default function GroupProgressBar({ 
+  currentPage, 
+  totalPages,
+  onUpdateCurrentPage, 
+  isEditable, 
+  memberName,
+  openModal 
+}) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, left: 0 });
   const progressBarRef = useRef(null);
 
-  const openModal = () => {
-    if (progressBarRef.current) {
-      const rect = progressBarRef.current.getBoundingClientRect();
-      setModalPosition({
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX
-      });
-    }
-    setModalIsOpen(true);
-  };
+  useEffect(() => {
+    console.log('GroupProgressBar props:', { currentPage, totalPages, isEditable, memberName });
+  }, [currentPage, totalPages, isEditable, memberName]);
 
   const closeModal = () => {
     setModalIsOpen(false);
   };
 
   const handleSave = (newPage) => {
-    onUpdateCurrentPage(parseInt(newPage, 10));
-    closeModal();
+    const parsedPage = parseInt(newPage, 10);
+    if (!isNaN(parsedPage)) {
+      onUpdateCurrentPage(parsedPage);
+      closeModal();
+    } else {
+      console.error("Invalid page number");
+    }
   };
 
-  const percentage = Math.round((currentPage / totalPages) * 100);
+  const percentage = currentPage && totalPages ? Math.round((currentPage / totalPages) * 100) : 0;
 
   return (
     <div ref={progressBarRef}>
@@ -40,10 +44,13 @@ export default function GroupProgressBar({ currentPage, totalPages, onUpdateCurr
         </div>
       </div>
       <div className="flex justify-between text-sm mt-1">
-        <button onClick={isEditable ? openModal : undefined} className={isEditable ? "cursor-pointer" : "cursor-default"}>
-          p {currentPage}
+        <button 
+          onClick={isEditable ? openModal : undefined} 
+          className={isEditable ? "cursor-pointer" : "cursor-default"}
+        >
+          p {currentPage || 0}
         </button>
-        <span>p {totalPages}</span>
+        <span>p {totalPages || 100}</span>
       </div>
 
       <GroupCurrentPageModal 

@@ -123,7 +123,7 @@ public class ReadBookRepositoryImpl implements ReadBookRepository{
             data.put("id", rb.getId());
             data.put("member_id", rb.getMember().getId());
             data.put("book_id", rb.getBook().getId());
-            data.put("current_page", rb.getCurrentPage());
+            data.put("currentPage", rb.getCurrentPage());
             data.put("read_type", rb.getReadType());
             data.put("group_id", rb.getGroup().getId());
 
