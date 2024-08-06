@@ -41,7 +41,7 @@ public class ReviewQueryDSLRepositoryImpl implements ReviewQueryDSLRepository {
         OrderSpecifier[] orderSpecifiers = createOrderSpecifier(reviewRequest);
 
         List<ReviewResponse> list = query.select(Projections.constructor(ReviewResponse.class,
-                        like.timeCapsuleItem.review.id,
+                        review.id,
                         book.image,
                         book.title,
                         book.author,
@@ -50,11 +50,14 @@ public class ReviewQueryDSLRepositoryImpl implements ReviewQueryDSLRepository {
                         review.visibility,
                         like.count(),
                         ExpressionUtils.as(
-                                JPAExpressions.select(like.count()).from(like.member, member).where(member.id.eq(review.member.id)), "check"))
+                                JPAExpressions.select(like.count())
+                                        .from(like)
+                                        .join(like.member,member)
+                                        .where(member.id.eq(review.member.id)), "check"))
                 ).from(like)
                 .join(like.timeCapsuleItem, timeCapsuleItem)
                 .rightJoin(timeCapsuleItem.review, review)
-                .join(review.book, book).groupBy(like.timeCapsuleItem.review.id)
+                .join(review.book, book).groupBy(review.id,review.member.id)
                 .orderBy(orderSpecifiers)
                 .offset(reviewRequest.getPageNumber())
                 .limit(reviewRequest.getPageSize())
