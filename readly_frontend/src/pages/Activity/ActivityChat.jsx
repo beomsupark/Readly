@@ -1,82 +1,120 @@
 import { useState, useEffect, useRef } from 'react';
-import WebSocketClient from './services/websocket';
-import { createMessageDto } from './services/messageDto';
-import { fetchChatHistory } from './services/api';
+import {
+  MainContainer,
+  ChatContainer,
+  MessageList,
+  Message,
+  MessageInput,
+  Avatar
+} from '@chatscope/chat-ui-kit-react';
+import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
+import SockJS from 'sockjs-client';
+import { Stomp } from '@stomp/stompjs';
+import InfoImg from '../../assets/header/info_img.png';
 
-const socketUrl = 'ws://localhost:8080/chat';
-let webSocketClient = null; // WebSocketClient 인스턴스가 모든 컴포넌트에서 공유되도록
+export default function ActivityChat({ groupId }) {
+  const [messages, setMessages] = useState([]);
+  const stompClient = useRef(null);
 
-const App = () => {
-    const [messages, setMessages] = useState([]);
-    const [inputMessage, setInputMessage] = useState('');
-    const messageListRef = useRef(null);
-
-    useEffect(() => {
-        if (!webSocketClient) {
-            webSocketClient = new WebSocketClient(socketUrl);
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/api/history`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ roomId: groupId })
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
         }
-
-        const loadChatHistory = async () => {
-            try {
-                const history = await fetchChatHistory('7');
-                setMessages(history);
-                scrollToBottom();
-            } catch (error) {
-                console.error('Failed to load chat history:', error);
-            }
-        };
-
-        const messageListener = (message) => {
-            setMessages(prevMessages => [...prevMessages, message]);
-            scrollToBottom();
-        };
-
-        webSocketClient.addMessageListener(messageListener);
-
-        loadChatHistory();
-
-        return () => {
-            webSocketClient.removeMessageListener(messageListener);
-        };
-    }, []);
-
-    const scrollToBottom = () => {
-        if (messageListRef.current) {
-            messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
-        }
+        const data = await response.json();
+        setMessages(data.map(msg => ({
+          message: msg.content,
+          direction: msg.from === 'self' ? 'outgoing' : 'incoming'
+        })));
+      } catch (error) {
+        console.error('Failed to fetch messages:', error);
+      }
     };
 
-    const sendMessage = () => {
-        if (inputMessage.trim() === '') return;
+    if (groupId) {
+      fetchMessages();
+    }
 
-        const message = createMessageDto(inputMessage, 'user1', '7');
-        
-        // 메시지를 로컬 상태에 추가하여 즉시 화면에 표시
-        setMessages(prevMessages => [...prevMessages, message]);
+    const socket = new SockJS('http://localhost:8080/gs-guide-websocket');
+    stompClient.current = Stomp.over(socket);
 
-        webSocketClient.send(message);
-        setInputMessage('');
-        scrollToBottom();
+    stompClient.current.connect({}, () => {
+      stompClient.current.subscribe(`/topic/messages/${groupId}`, (message) => {
+        const receivedMessage = JSON.parse(message.body);
+        setMessages(prevMessages => [
+          ...prevMessages,
+          {
+            message: receivedMessage.content,
+            direction: receivedMessage.from === 'self' ? 'outgoing' : 'incoming'
+          }
+        ]);
+      });
+
+      stompClient.current.subscribe(`/topic/history/${groupId}`, (message) => {
+        const receivedMessages = JSON.parse(message.body);
+        setMessages(receivedMessages.map(msg => ({
+          message: msg.content,
+          direction: msg.from === 'self' ? 'outgoing' : 'incoming'
+        })));
+      });
+    });
+
+    return () => {
+      if (stompClient.current) {
+        stompClient.current.disconnect();
+      }
+    };
+  }, [groupId]);
+
+  const handleSend = (message) => {
+    const chatMessage = {
+      roomId: groupId,
+      from: 'self',
+      content: message
     };
 
-    return (
-        <div>
-            <div style={{ height: '300px', overflowY: 'scroll' }} ref={messageListRef}>
-                {messages.map((msg, index) => (
-                    <div key={index}>
-                        <strong>{msg.sender}:</strong> {msg.message}
-                    </div>
-                ))}
-            </div>
-            <input
-                type="text"
-                value={inputMessage}
-                onChange={e => setInputMessage(e.target.value)}
-                onKeyPress={e => e.key === 'Enter' && sendMessage()}
-            />
-            <button onClick={sendMessage}>Send</button>
-        </div>
-    );
-};
+    if (stompClient.current && stompClient.current.connected) {
+      stompClient.current.send('/app/chat', {}, JSON.stringify(chatMessage));
+    }
 
-export default App;
+    setMessages([...messages, {
+      message: message,
+      direction: 'outgoing',
+      position: 'last'
+    }]);
+  };
+
+  return (
+    <MainContainer className="w-[30rem] h-[35rem] mt-5 mx-auto">
+      <ChatContainer>
+        <MessageList>
+          {messages.map((msg, index) => (
+            <Message
+              key={index}
+              model={msg}
+              avatarPosition="cl"
+              avatarSpacer={false}
+              className={msg.direction === 'incoming' ? 'pl-0' : ''}
+            >
+              {msg.direction === 'incoming' && (
+                <>
+                  <Avatar src={InfoImg} name="Info" className="ml-0" />
+                  <Message.CustomContent className="ml-2">{msg.message}</Message.CustomContent>
+                </>
+              )}
+            </Message>
+          ))}
+        </MessageList>
+        <MessageInput placeholder="메세지 작성" onSend={handleSend} />
+      </ChatContainer>
+    </MainContainer>
+  );
+}

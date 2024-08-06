@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 public class ReadBookRepositoryImpl implements ReadBookRepository{
 
     private final EntityManager em;
-
     @Override
     public void addUserReadBook(ReadBookRequestDTO readBookRequestDTO) {
         int memberId = readBookRequestDTO.getMemberId();
@@ -42,13 +41,24 @@ public class ReadBookRepositoryImpl implements ReadBookRepository{
             throw new IllegalArgumentException("잘못된 책 ID입니다.");
         }
 
-        ReadBook readBook = new ReadBook();
-        readBook.setMember(member);
-        readBook.setBook(book);
-        readBook.setCurrentPage(0);
+        // Check for existing ReadBook entry
+        TypedQuery<ReadBook> query = em.createQuery(
+                "SELECT rb FROM ReadBook rb WHERE rb.member.id = :memberId AND rb.book.id = :bookId", ReadBook.class);
+        query.setParameter("memberId", memberId);
+        query.setParameter("bookId", bookId);
+        List<ReadBook> existingReadBooks = query.getResultList();
 
-        em.persist(readBook);
+        if (existingReadBooks.isEmpty()) {
+            ReadBook readBook = new ReadBook();
+            readBook.setMember(member);
+            readBook.setBook(book);
+            readBook.setCurrentPage(0);
+            readBook.setReadType(ReadType.R); // 기본값으로 설정하지만 명시적으로 설정해 줍니다.
+
+            em.persist(readBook);
+        }
     }
+
     @Override
     public void addGroupReadBook(ReadBookGroupRequestDTO readBookGroupRequestDTO){
         int groupId = readBookGroupRequestDTO.getGroupId();
@@ -77,14 +87,26 @@ public class ReadBookRepositoryImpl implements ReadBookRepository{
         }
 
         for (GroupMember groupMember : groupMembers) {
-            ReadBook readBook = new ReadBook();
-            readBook.setMember(groupMember.getMember());
-            readBook.setBook(book);
-            readBook.setCurrentPage(0);
-            readBook.setGroup(groupMember.getGroup());  // 그룹 설정 추가
-            em.persist(readBook);
+            // Check for existing ReadBook entry
+            TypedQuery<ReadBook> existingQuery = em.createQuery(
+                    "SELECT rb FROM ReadBook rb WHERE rb.member.id = :memberId AND rb.book.id = :bookId AND rb.group.id = :groupId", ReadBook.class);
+            existingQuery.setParameter("memberId", groupMember.getMember().getId());
+            existingQuery.setParameter("bookId", bookId);
+            existingQuery.setParameter("groupId", groupId);
+            List<ReadBook> existingReadBooks = existingQuery.getResultList();
+
+            if (existingReadBooks.isEmpty()) {
+                ReadBook readBook = new ReadBook();
+                readBook.setMember(groupMember.getMember());
+                readBook.setBook(book);
+                readBook.setCurrentPage(0);
+                readBook.setGroup(groupMember.getGroup());  // 그룹 설정 추가
+                readBook.setReadType(ReadType.R); // 기본값으로 설정하지만 명시적으로 설정해 줍니다.
+                em.persist(readBook);
+            }
         }
     }
+
 
     @Override
     public ResponseEntity<?> findReadBooksByGroupId(int groupId) {
@@ -101,7 +123,7 @@ public class ReadBookRepositoryImpl implements ReadBookRepository{
             data.put("id", rb.getId());
             data.put("member_id", rb.getMember().getId());
             data.put("book_id", rb.getBook().getId());
-            data.put("current_page", rb.getCurrentPage());
+            data.put("currentPage", rb.getCurrentPage());
             data.put("read_type", rb.getReadType());
             data.put("group_id", rb.getGroup().getId());
 

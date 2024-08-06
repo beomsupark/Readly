@@ -34,9 +34,8 @@ public class ReviewController {
 
     private final BookService bookService;
 
-    @PostMapping("/reivew/addreview")
-    public ResponseEntity<Map<String, Object>> addReview(ReviewRequest request) throws Exception {
-        HttpStatus status = HttpStatus.ACCEPTED;
+    @PostMapping("/review/addreview")
+    public ResponseEntity<Map<String, Object>> addReview(@RequestBody ReviewRequest request) throws Exception {        HttpStatus status = HttpStatus.ACCEPTED;
         Map<String, Object> responseMap = new HashMap<String, Object>();
         Member member = memberService.getMemberEntity(request.getMemberId());
         Book book = bookService.getBookByIdForPhoto(request.getBookId());

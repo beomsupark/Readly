@@ -1,5 +1,6 @@
 package com.ssafy.readly.controller;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -35,6 +36,16 @@ public class WebRtcController {
         this.openvidu = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
     }
 
+    @GetMapping("/sessions/check")
+    public ResponseEntity<Boolean> isSessionExisting(@RequestParam String sessionId){
+
+        List<Session> sessions = openvidu.getActiveSessions();
+        boolean sessionExists = sessions.stream()
+                .anyMatch(session -> session.getSessionId().equals(sessionId));
+        return new ResponseEntity<>(sessionExists, HttpStatus.OK);
+
+    }
+
     /**
      * @param params The Session properties
      * @return The Session ID
@@ -42,6 +53,7 @@ public class WebRtcController {
     @PostMapping("/sessions")
     public ResponseEntity<String> initializeSession(@RequestBody(required = false) Map<String, Object> params)
             throws OpenViduJavaClientException, OpenViduHttpException {
+        System.out.println("params is : " + params);
         SessionProperties properties = SessionProperties.fromJson(params).build();
         Session session = openvidu.createSession(properties);
         return new ResponseEntity<>(session.getSessionId(), HttpStatus.OK);
