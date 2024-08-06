@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { OpenVidu } from 'openvidu-browser';
+import axios from 'axios';
+import useUserStore from "../../store/userStore";
 
 const dummyPhotoCards = [
   { id: 1, imageUrl: "https://example.com/image1.jpg", text: "내가 만든 포토카드" },
@@ -7,6 +9,8 @@ const dummyPhotoCards = [
   { id: 3, imageUrl: "https://example.com/image3.jpg", text: "추억의 포토카드" },
   { id: 4, imageUrl: "https://example.com/image4.jpg", text: "오늘의 한줄평" },
 ];
+
+const API_BASE_URL = 'http://i11c207.p.ssafy.io/api';
 
 const ActivityRTC = () => {
   const [isVideoConferenceActive, setIsVideoConferenceActive] = useState(false);
@@ -16,10 +20,16 @@ const ActivityRTC = () => {
   const [session, setSession] = useState(null);
   const [publisher, setPublisher] = useState(null);
   const [subscribers, setSubscribers] = useState([]);
+  const [sessionId, setSessionId] = useState(null);
   const [isRoomCreated, setIsRoomCreated] = useState(false);
+  const { user, token } = useUserStore();
+
+  
+    
   const OV = useRef(null);
 
   useEffect(() => {
+    setIsRoomCreated(checkSessionExists());
     if (isVideoConferenceActive) {
       joinSession();
     } else {
@@ -27,11 +37,37 @@ const ActivityRTC = () => {
     }
   }, [isVideoConferenceActive]);
 
-  // 임시 토큰 반환 함수
+  const checkSessionExists = async()=> {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/rtc/sessions/check`, {
+          params: { sessionId: '1' }
+      });
+      console.log(response.data);
+      return response.data;
+  } catch (error) {
+      console.error('Error checking session existence:', error);
+      this.setState({ loading: false });
+  }
+  }
+  const initializeSession = async () => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/rtc/sessions`,{customSessionId:'1'});
+      setIsRoomCreated(true);
+      return response.data; // 반환된 sessionId를 받음
+    } catch (error) {
+      console.error('세션 초기화 오류:', error);
+    }
+  };
+
   const getToken = async () => {
-    // 실제 환경에서는 서버로부터 토큰을 받아와야 합니다.
-    // 여기서는 테스트 목적으로 하드코딩된 토큰을 반환합니다.
-    return 'YOUR_TEST_TOKEN';
+    try {
+      var sessionId = sessionId;
+      sessionId = await initializeSession();
+      const response = await axios.post(`${API_BASE_URL}/rtc/sessions/${sessionId}/connections`,{});
+      return response.data; // 반환된 토큰을 받음
+    } catch (error) {
+      console.error('토큰 가져오기 오류:', error);
+    }
   };
 
   const joinSession = async () => {
@@ -43,15 +79,21 @@ const ActivityRTC = () => {
       setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
     });
 
+
     mySession.on('streamDestroyed', event => {
       setSubscribers(prevSubscribers =>
         prevSubscribers.filter(sub => sub !== event.stream.streamManager)
       );
     });
 
+    // 예외 발생시 처리
+    mySession.on('exception', (exception) => {
+      console.warn(exception);
+    });
+
     try {
       const token = await getToken();
-      await mySession.connect(token);
+      await mySession.connect(token,{clientData : user.nickname});
 
       const newPublisher = await OV.current.initPublisherAsync(undefined, {
         audioSource: undefined,
@@ -65,10 +107,19 @@ const ActivityRTC = () => {
       });
 
       mySession.publish(newPublisher);
+
+      // var devices = await this.OV.getDevices();
+      // var videoDevices = devices.filter(device => device.kind === 'videoinput');
+      // var currentVideoDeviceId = publisher.stream.getMediaStream().getVideoTracks()[0].getSettings().deviceId;
+      // var currentVideoDevice = videoDevices.find(device => device.deviceId === currentVideoDeviceId);
+      
       setSession(mySession);
       setPublisher(newPublisher);
+      setSessionId(sessionId);
+
+
     } catch (error) {
-      console.error('Error connecting to the session:', error.code, error.message);
+      console.error('세션 연결 오류:', error);
     }
   };
 
@@ -79,16 +130,15 @@ const ActivityRTC = () => {
     setSession(null);
     setPublisher(null);
     setSubscribers([]);
+    setSessionId(null);
     OV.current = null;
   };
 
   const toggleVideoConference = () => {
     if (isVideoConferenceActive) {
-      leaveSession();
-      setIsVideoConferenceActive(false); // 상태 업데이트를 명시적으로 합니다.
+      setIsVideoConferenceActive(false);
     } else {
-      setIsRoomCreated(true);
-      setIsVideoConferenceActive(true); // 상태 업데이트를 명시적으로 합니다.
+      setIsVideoConferenceActive(true);
     }
   };
 
@@ -147,14 +197,14 @@ const ActivityRTC = () => {
               ))}
               {publisher && (
                 <div className="bg-white rounded-lg shadow-md overflow-hidden relative">
-                  <video autoPlay={true} ref={(video) => video && publisher.addVideoElement(video)} />
-                  <p className="absolute bottom-1 left-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">You</p>
+                  <video autoPlay={true} ref={(video) => video && publisher.addVideoElement(video)}/>
+                  <p className="absolute bottom-1 left-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">{JSON.parse(publisher.stream.connection.data).clientData}</p>
                 </div>
               )}
               {subscribers.map((sub, index) => (
                 <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden relative">
-                  <video autoPlay={true} ref={(video) => video && sub.addVideoElement(video)} />
-                  <p className="absolute bottom-1 left-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">Participant {index + 1}</p>
+                   <video autoPlay={true} ref={(video) => video && sub.addVideoElement(video)} />
+                  <p className="absolute bottom-1 left-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">{JSON.parse(sub.stream.connection.data).clientData}</p>
                 </div>
               ))}
             </div>
@@ -203,44 +253,48 @@ const ActivityRTC = () => {
 const ShareModal = ({ onClose, onShare, photoCards }) => {
   const [selectedItems, setSelectedItems] = useState([]);
 
-  const toggleItem = (item) => {
-    if (selectedItems.includes(item)) {
-      setSelectedItems(selectedItems.filter(i => i !== item));
-    } else {
-      setSelectedItems([...selectedItems, item]);
-    }
+  const handleItemSelect = (item) => {
+    setSelectedItems(prevSelectedItems =>
+      prevSelectedItems.includes(item)
+        ? prevSelectedItems.filter(i => i !== item)
+        : [...prevSelectedItems, item]
+    );
+  };
+
+  const handleShareClick = () => {
+    onShare(selectedItems);
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-4 w-3/4 max-w-md">
-        <h2 className="text-lg font-bold mb-4">공유할 항목 선택</h2>
-        <div className="grid grid-cols-2 gap-3 mb-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div className="bg-white rounded-lg p-4 shadow-lg max-w-sm w-full">
+        <h2 className="text-lg font-bold mb-2">공유하기</h2>
+        <div className="grid gap-2 mb-4 grid-cols-2">
           {photoCards.map(card => (
-            <div 
-              key={card.id} 
-              className={`border rounded-lg p-2 cursor-pointer ${selectedItems.includes(card) ? 'border-blue-500' : 'border-gray-300'}`}
-              onClick={() => toggleItem(card)}
-            >
-              <img src={card.imageUrl} alt={card.text} className="w-full h-24 object-cover rounded-md mb-2" />
-              <p className="text-sm text-center">{card.text}</p>
+            <div key={card.id} className="bg-white rounded-lg shadow-md overflow-hidden relative">
+              <img src={card.imageUrl} alt={card.text} className="w-full h-32 object-cover" />
+              <p className="absolute bottom-1 left-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">{card.text}</p>
+              <input
+                type="checkbox"
+                className="absolute top-1 right-1"
+                onChange={() => handleItemSelect(card)}
+                checked={selectedItems.includes(card)}
+              />
             </div>
           ))}
         </div>
-        <div className="flex justify-end space-x-2">
-          <button 
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-500 text-white rounded-lg"
-          >
-            취소
-          </button>
-          <button 
-            onClick={() => onShare(selectedItems)}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg"
-          >
-            공유
-          </button>
-        </div>
+        <button 
+          onClick={handleShareClick}
+          className="px-4 py-2 bg-blue-500 text-white rounded-full shadow-lg"
+        >
+          공유하기
+        </button>
+        <button 
+          onClick={onClose}
+          className="px-4 py-2 bg-gray-500 text-white rounded-full shadow-lg ml-2"
+        >
+          닫기
+        </button>
       </div>
     </div>
   );
