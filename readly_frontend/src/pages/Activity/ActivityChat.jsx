@@ -2,38 +2,48 @@ import { useState, useEffect } from 'react';
 import { Client } from '@stomp/stompjs';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import useUserStore from '../../store/userStore';
+import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
+import {
+  MainContainer,
+  ChatContainer,
+  MessageList,
+  Message,
+  MessageInput,
+  Avatar,
+} from "@chatscope/chat-ui-kit-react";
 
 let stompClient = null;
 
-const ActivityChat = () => {
-  const [currentRoomId, setCurrentRoomId] = useState(null);
+const ActivityChat = ({ groupId }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [isHistoryLoading, setIsHistoryLoading] = useState(false);
   const [messages, setMessages] = useState([]);
-  const [name, setName] = useState('');
   const [message, setMessage] = useState('');
-  const [roomId, setRoomId] = useState('');
+  const { user } = useUserStore(); // Access user data from the store
 
   useEffect(() => {
-    if (isConnected && currentRoomId) {
-      stompClient.subscribe(`/topic/messages/${currentRoomId}`, (message) => {
+    if (groupId) {
+      connect(groupId);
+    }
+    return () => {
+      disconnect();
+    };
+  }, [groupId]);
+
+  useEffect(() => {
+    if (isConnected && groupId) {
+      stompClient.subscribe(`/topic/messages/${groupId}`, (message) => {
         if (!isHistoryLoading) {
           showMessage(JSON.parse(message.body));
         }
       });
 
-      fetchHistory(currentRoomId);
+      fetchHistory(groupId);
     }
-  }, [isConnected, currentRoomId]);
+  }, [isConnected, groupId]);
 
   const connect = () => {
-    if (!roomId) {
-      alert('Please enter a Room ID.');
-      return;
-    }
-
-    setCurrentRoomId(roomId);
-
     stompClient = new Client({
       brokerURL: 'ws://localhost:8080/gs-guide-websocket',
     });
@@ -58,7 +68,7 @@ const ActivityChat = () => {
   const fetchHistory = async (roomId) => {
     try {
       setIsHistoryLoading(true);
-      const response = await axios.get(`http://localhost:8080/history/${roomId}`);
+      const response = await axios.get(`http://localhost:8080/api/history/${roomId}`);
       const fetchedMessages = Array.isArray(response.data) ? response.data : [];
       showHistory(fetchedMessages);
       setIsHistoryLoading(false);
@@ -81,9 +91,10 @@ const ActivityChat = () => {
       stompClient.publish({
         destination: '/app/chat',
         body: JSON.stringify({
-          roomId: currentRoomId,
-          from: name,
+          roomId: groupId,
+          from: user.nickname,
           content: message,
+          avatar: user.avatar, // Assuming user avatar URL is stored in user.avatar
         }),
       });
       setMessage('');
@@ -99,111 +110,34 @@ const ActivityChat = () => {
   };
 
   return (
-    <div className="container" id="main-content">
-      <noscript>
-        <h2 style={{ color: '#ff0000' }}>
-          Seems your browser  support Javascript! Websocket relies on
-          Javascript being enabled. Please enable Javascript and reload this
-          page!
-        </h2>
-      </noscript>
-      <div className="row">
-        <div className="col-md-6">
-          <form
-            className="form-inline"
-            onSubmit={(e) => {
-              e.preventDefault();
-              isConnected ? disconnect() : connect();
-            }}
-          >
-            <div className="form-group">
-              <label htmlFor="connect">WebSocket connection:</label>
-              <button
-                id="connect"
-                className="btn btn-default"
-                type="submit"
-                disabled={isConnected}
+    <div style={{ position: "relative", height: "500px" }}>
+      <MainContainer>
+        <ChatContainer>
+          <MessageList>
+            {messages.map((msg, index) => (
+              <Message
+                key={index}
+                model={{
+                  message: msg.content,
+                  sentTime: "just now",
+                  sender: msg.from,
+                  direction: msg.from === user.nickname ? "outgoing" : "incoming",
+                  avatar: msg.avatar, // Include avatar in the message model
+                }}
+                avatarSpacer
               >
-                Connect
-              </button>
-              <button
-                id="disconnect"
-                className="btn btn-default"
-                type="submit"
-                disabled={!isConnected}
-              >
-                Disconnect
-              </button>
-            </div>
-          </form>
-        </div>
-        <div className="col-md-6">
-          <form
-            className="form-inline"
-            onSubmit={(e) => {
-              e.preventDefault();
-              sendMessage();
-            }}
-          >
-            <div className="form-group">
-              <label htmlFor="roomId">Room ID:</label>
-              <input
-                type="text"
-                id="roomId"
-                className="form-control"
-                placeholder="Room ID here..."
-                value={roomId}
-                onChange={(e) => setRoomId(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="name">Your name:</label>
-              <input
-                type="text"
-                id="name"
-                className="form-control"
-                placeholder="Your name here..."
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="message">Message:</label>
-              <input
-                type="text"
-                id="message"
-                className="form-control"
-                placeholder="Your message here..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-              />
-            </div>
-            <button id="send" className="btn btn-default" type="submit">
-              Send
-            </button>
-          </form>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-md-12">
-          <table id="conversation" className="table table-striped">
-            <thead>
-              <tr>
-                <th>Messages</th>
-              </tr>
-            </thead>
-            <tbody id="messages">
-              {messages.map((msg, index) => (
-                <tr key={index}>
-                  <td>
-                    <strong>{msg.from}:</strong> {msg.content}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                <Avatar src={"https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"} name={user.nickname} />
+              </Message>
+            ))}
+          </MessageList>
+          <MessageInput 
+            placeholder="Type message here" 
+            value={message}
+            onChange={(value) => setMessage(value)}
+            onSend={() => sendMessage()}
+          />
+        </ChatContainer>
+      </MainContainer>
     </div>
   );
 };
