@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { createPhotoCard, updatePhotoCard, getPhotoCrad } from '../api/photocardAPI';
+import { createPhotoCard, updatePhotoCard, getPhotoCard } from '../api/photocardAPI';
 
 const usePhotocardStore = create((set, get) => ({
   photoCard: null,
@@ -37,7 +37,7 @@ const usePhotocardStore = create((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const { searchType, orderType } = get();
-      const response = await getPhotoCrad(
+      const response = await getPhotoCard(
         searchType,
         orderType,
         10, // 페이지 크기, 필요에 따라 조정
