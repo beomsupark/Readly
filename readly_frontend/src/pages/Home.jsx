@@ -58,7 +58,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="mt-1 ml-2 max-w-6xl mx-auto lg:px-1">
+      <div className="mt-1 ml-2 max-w-6xl lg:px-1">
         <h2 className="font-bold text-xl mb-1">
           가장 <span className="text-custom-highlight">인기</span> 많은{" "}
           <span className="text-custom-highlight">책</span>

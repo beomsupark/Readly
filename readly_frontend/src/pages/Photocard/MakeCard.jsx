@@ -78,7 +78,7 @@ export default function MakeCard() {
     }
 
     try {
-      await createPhotoCard(2, quote, visibility, 1); // selectedBook.id 사용
+      await createPhotoCard(selectedBook.id, quote, visibility, 1); // selectedBook.id 사용
       setSelectedBookInfo({
         title: selectedBook.title,
         author: selectedBook.author,
