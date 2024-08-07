@@ -18,6 +18,17 @@ public class CreatePhotoCardResponse {
     private long likeCount;
     private long likeCheck;
 
+    public CreatePhotoCardResponse(int photoCardId,String memberId, String photoCardText, String bookTitle, String bookAuthor, String photoCardImage, LocalDateTime photoCardCreatedDate) {
+        this.photoCardId = photoCardId;
+        this.photoCardText = photoCardText;
+        this.memberId = memberId;
+        this.bookTitle = bookTitle;
+        this.bookAuthor = bookAuthor;
+        this.photoCardImage = photoCardImage;
+        this.photoCardCreatedDate = photoCardCreatedDate;
+        this.likeCount=0;
+        this.likeCheck=0;
+    }
 
     public CreatePhotoCardResponse(int photoCardId, String photoCardText, String bookTitle, String bookAuthor, String photoCardImage, LocalDateTime photoCardCreatedDate) {
         this.photoCardId = photoCardId;
