@@ -5,7 +5,7 @@ const BASE_URL = 'http://localhost:8080/api'; // Spring Boot 서버 주소
 export const proceedingBooks = async (userId) => {
   try {
     const response = await axios.get(`${BASE_URL}/member/proceeding-books/${userId}`);
-    console.log(response);
+    console.log('proceedingBooks: ',response);
     return response.data.proceedingBooks;
   } catch (error) {
     console.error('Error fetching proceeding books:', error.response ? error.response.data : error.message);
