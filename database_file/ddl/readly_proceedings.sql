@@ -24,8 +24,9 @@ DROP TABLE IF EXISTS `proceedings`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `proceedings` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `created_date` timestamp NULL DEFAULT NULL,
-  `content` varchar(255) DEFAULT NULL,
+  `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `title` varchar(20),
+  `content` varchar(255),
   `group_id` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_groups_TO_proceedings_1` (`group_id`),
