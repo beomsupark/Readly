@@ -40,19 +40,22 @@ public class TimeCapsuleServiceImpl implements TimeCapsuleService {
 
         TimeCapsule timeCapsule = new TimeCapsule(timeCapsuleRequest.getStartDate(), timeCapsuleRequest.getEndDate(), member);
 
-        List<Review> reviews = timeCapsuleRepository.findByReviewIn(timeCapsuleRequest.getReviewIds());
-        List<PhotoCard> photoCards = timeCapsuleRepository.findByPhotoCardIn(timeCapsuleRequest.getPhotoCardIds());
+        if(timeCapsuleRequest.getReviewIds() != null) {
+            List<Review> reviews = timeCapsuleRepository.findByReviewIn(timeCapsuleRequest.getReviewIds());
+            for (Review review : reviews) {
+                new TimeCapsuleItem(ItemType.R, review, timeCapsule);
+            }
+        }
 
-        if(reviews.size() + photoCards.size() == 0) {
+        if(timeCapsuleRequest.getPhotoCardIds() != null) {
+            List<PhotoCard> photoCards = timeCapsuleRepository.findByPhotoCardIn(timeCapsuleRequest.getPhotoCardIds());
+            for (PhotoCard photoCard : photoCards) {
+                new TimeCapsuleItem(ItemType.P, photoCard, timeCapsule);
+            }
+        }
+
+        if(timeCapsuleRequest.getReviewIds() == null && timeCapsuleRequest.getPhotoCardIds() == null) {
             throw new IllegalArgumentException("포토카드와 리뷰를 선택해야 합니다.");
-        }
-
-        for (Review review : reviews) {
-            new TimeCapsuleItem(ItemType.R, review, timeCapsule);
-        }
-
-        for(PhotoCard photoCard : photoCards) {
-            new TimeCapsuleItem(ItemType.P, photoCard, timeCapsule);
         }
 
         timeCapsuleRepository.saveTimeCapsule(timeCapsule);
