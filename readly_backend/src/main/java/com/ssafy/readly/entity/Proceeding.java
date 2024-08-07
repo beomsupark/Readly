@@ -20,6 +20,7 @@ public class Proceeding {
     private int id;
     private LocalDateTime createdDate;
     private String content;
+    private String title;
 
     @ManyToOne
     @JoinColumn(name = "group_id")
