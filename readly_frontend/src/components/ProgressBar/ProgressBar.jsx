@@ -18,13 +18,10 @@ export default function ProgressBar({
     if (progressBarRef.current) {
       const rect = progressBarRef.current.getBoundingClientRect();
   
-      // 모달의 위치를 조정하는 부분
       let top = rect.top;
       let left = rect.left;
   
-      // 아래로 내려가는 정도를 조정하려면 top 값을 조정합니다.
-      top += 10; // 20픽셀 아래로 추가 이동 (원하는 만큼 조정 가능)
-  
+      top += 10;
   
       setModalPosition({
         top: top,
@@ -34,7 +31,6 @@ export default function ProgressBar({
     setModalIsOpen(true);
   };
   
-
   const closeModal = () => {
     setModalIsOpen(false);
   };
@@ -47,6 +43,10 @@ export default function ProgressBar({
     } else {
       console.error("Invalid page number");
     }
+  };
+
+  const handleComplete = () => {
+    onUpdateCurrentPage(totalPages);
   };
 
   const percentage = Math.round((currentPage / totalPages) * 100);
@@ -65,7 +65,10 @@ export default function ProgressBar({
         <button onClick={openModal} className="cursor-pointer">
           p {currentPage || 0}
         </button>
-        <span>p {totalPages || 100}</span>
+        <div>
+          <span className="mr-2">p {totalPages || 100}</span>
+          <button onClick={handleComplete}>완료</button>
+        </div>
       </div>
 
       <CurrentPageModal

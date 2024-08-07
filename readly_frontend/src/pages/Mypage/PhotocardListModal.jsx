@@ -49,16 +49,16 @@ export default function PhotocardList({ isOpen, onRequestClose, photocards }) {
       <h2 className="text-2xl font-bold mb-4">만든 포토카드입니다!</h2>
       <div className="flex-col gap-4">
         {photocards &&
-          photocards.map((book) => (
-            <div key={book.id} className="flex items-center">
+          photocards.map((card) => (
+            <div key={card.photocardId} className="flex items-center">
               <img
-                src={book.cover}
-                alt={book.title}
+                src={card.photocardImage}
+                alt={card.bookTitle}
                 className="w-[10rem] h-auto object-cover mb-2"
               />
               <div>
-                <p className="text-center">{book.title}</p>
-                <p className="text-center">{book.description}</p>
+                <p className="text-center">{card.bookTitle}</p>
+                <p className="text-center">{card.bookDescription}</p>
               </div>
             </div>
           ))}

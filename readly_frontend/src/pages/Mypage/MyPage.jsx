@@ -159,7 +159,7 @@ export default function MyPage() {
 
             <div className="relative bg-white rounded-lg shadow p-4">
               <h3 className="font-bold mb-2">내가 남긴 한줄평</h3>
-              <div className="flex gap-3 w-[17rem] h-[6rem]">
+              <div className="flex gap-3 w-[7rem] h-[6rem]">
                 {myReviews.length > 0 ? (
                   myReviews.map((review) => (
                     <Review
