@@ -25,4 +25,9 @@ public class Like {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "timeCapsule_item_id")
     private TimeCapsuleItem timeCapsuleItem;
+
+    public Like(Member member, TimeCapsuleItem timeCapsuleItem) {
+        this.member = member;
+        this.timeCapsuleItem = timeCapsuleItem;
+    }
 }
