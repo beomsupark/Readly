@@ -5,5 +5,6 @@ import lombok.Getter;
 @Getter
 public class LikeRequest {
     private int memberId;
-    private int timeCapsuleItemId;
+    private int reviewId;
+    private int photoCardId;
 }

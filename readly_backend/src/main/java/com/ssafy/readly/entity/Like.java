@@ -23,7 +23,7 @@ public class Like {
     private Member member;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "timeCapsule_item_id")
+    @JoinColumn(name = "timecapsule_item_id")
     private TimeCapsuleItem timeCapsuleItem;
 
     public Like(Member member, TimeCapsuleItem timeCapsuleItem) {

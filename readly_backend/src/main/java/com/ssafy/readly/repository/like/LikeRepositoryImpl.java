@@ -8,10 +8,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class LikeRepositoryImpl implements LikeRepository{
-
     private final EntityManager em;
 
+    @Override
     public void save(Like like) {em.persist(like);}
 
+    @Override
     public void delete(Like like) {em.remove(like);}
 }

@@ -47,6 +47,16 @@ public class TimeCapsuleItem {
         addTimeCapsule(timeCapsule);
     }
 
+    public TimeCapsuleItem(ItemType itemType, Review review) {
+        this.itemType = itemType;
+        this.review = review;
+    }
+
+    public TimeCapsuleItem(ItemType itemType, PhotoCard photoCard) {
+        this.itemType = itemType;
+        this.photoCard = photoCard;
+    }
+
     /* 연관 관계 편의 메소드 */
     public void addTimeCapsule(TimeCapsule timeCapsule){
         this.timeCapsule = timeCapsule;
