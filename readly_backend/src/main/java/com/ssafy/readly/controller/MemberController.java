@@ -58,7 +58,8 @@ public class MemberController {
             @PathVariable("id") int id, HttpServletRequest request) throws Exception {
         Map<String, Object> responseMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
-        if(jwtUtil.checkToken(request.getHeader("Authorization"))) {
+        String accessToken = request.getHeader("Authorization");
+        if(jwtUtil.getMemberId(accessToken) == id &&  jwtUtil.checkToken(accessToken)) {
             MemberResponse memberResponse = memberService.getMember(id);
             responseMap.put("memberInfo", memberResponse);
             status = HttpStatus.OK;
