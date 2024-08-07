@@ -40,7 +40,7 @@ export const updatePhotoCard = async (imageLink, photoCardId) => {
   }
 };
 
-export const getPhotoCrad = async (
+export const getPhotoCard = async (
   searchType,
   orderType,
   pageSize,
@@ -53,7 +53,7 @@ export const getPhotoCrad = async (
       pageSize,
       pageNumber,
     });
-    const response = await axios.post(`${BASE_URL}/review/getReviews`, {
+    const response = await axios.post(`${BASE_URL}/photocard/getPhotoCards`, {
       searchType,
       orderType,
       pageSize,

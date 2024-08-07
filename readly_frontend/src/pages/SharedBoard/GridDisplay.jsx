@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import '../../pages/Photocard/photocard_flip.css';
-import Review from '../../components/Review/Review';
 
 const GridDisplay = ({ items, type }) => {
   const [flippedItems, setFlippedItems] = useState(new Array(items.length).fill(false));
@@ -11,20 +10,15 @@ const GridDisplay = ({ items, type }) => {
     setFlippedItems(updatedFlippedItems);
   };
 
-  // type에 따라 그리드 열 수와 아이템 크기를 조정합니다.
   const gridCols = type === 'review' ? 'sm:grid-cols-2 lg:grid-cols-4' : 'sm:grid-cols-3 lg:grid-cols-6';
   const itemSize = type === 'review' ? 'w-60 h-80' : 'w-40 h-60';
-
-  // 한 행에 들어갈 아이템 수를 조정합니다.
   const itemsPerRow = type === 'review' ? 4 : 6;
 
-  // itemsPerRow개씩 그룹화하여 행을 만듭니다.
   const rows = [];
   for (let i = 0; i < items.length; i += itemsPerRow) {
     rows.push(items.slice(i, i + itemsPerRow));
   }
 
-  // 마지막 행이 itemsPerRow개 미만일 경우 빈 객체로 채웁니다.
   const lastRow = rows[rows.length - 1];
   if (lastRow && lastRow.length < itemsPerRow) {
     for (let i = lastRow.length; i < itemsPerRow; i++) {
@@ -45,22 +39,29 @@ const GridDisplay = ({ items, type }) => {
         >
           <div className={`flip-card ${flippedItems[index] ? 'flipped' : ''}`}>
             <div className="flip-card-front img-container">
-              <img src={item.cover} alt={item.title} />
+              <img src={item.photoCardImage} alt={item.bookTitle} />
             </div>
             <div className="flip-card-back img-container">
-              <img src={item.back} alt={item.title} />
+              <img src={item.photoCardImage} alt={item.bookTitle} />
+              <div className="p-2">
+                <h3 className="font-bold text-sm">{item.bookTitle}</h3>
+                <p className="text-xs">{item.bookAuthor}</p>
+                <p className="text-xs mt-2">{item.photoCardText}</p>
+              </div>
             </div>
           </div>
         </div>
       );
     } else if (type === 'review') {
       return (
-        <Review
-          bookImage={item.bookImage}
-          title={item.title}
-          author={item.author}
-          review={item.review}
-        />
+        <div className="w-full h-full rounded-lg overflow-hidden shadow-lg">
+          <img src={item.bookImage} alt={item.bookTitle} className="w-full h-40 object-cover" />
+          <div className="p-4">
+            <h3 className="font-bold text-sm mb-1">{item.bookTitle}</h3>
+            <p className="text-xs text-gray-600 mb-2">{item.bookAuthor}</p>
+            <p className="text-xs">{item.reviewText}</p>
+          </div>
+        </div>
       );
     }
   };
@@ -70,7 +71,7 @@ const GridDisplay = ({ items, type }) => {
       {rows.map((row, rowIndex) => (
         <div key={rowIndex} className={`grid ${gridCols} gap-6 mb-8`}>
           {row.map((item, index) => (
-            <div key={item.id} className={`${itemSize} relative`}>
+            <div key={type === 'photocard' ? item.photoCardId : item.reviewId} className={`${itemSize} relative`}>
               {renderItem(item, rowIndex * itemsPerRow + index)}
             </div>
           ))}
