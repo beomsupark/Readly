@@ -16,7 +16,7 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Dumping data for table `photocards` 
+-- Dumping data for table `photocards`
 --
 
 LOCK TABLES `photocards` WRITE;
