@@ -3,6 +3,42 @@ import useUserStore from '../store/userStore';  // 경로는 실제 위치에 �
 
 const BASE_URL = 'http://localhost:8080/api';
 
+export const getReviews = async (searchType, orderType, pageSize, pageNumber) => {
+  const token = useUserStore.getState().token;  // 토큰 가져오기
+
+  try {
+    console.log("get review send:", {
+      searchType,
+      orderType,
+      pageSize,
+      pageNumber,
+    });
+    const response = await axios.post(`${BASE_URL}/review/getReviews`, 
+      {
+        searchType,
+        orderType,
+        pageSize,
+        pageNumber
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    
+    console.log('Received reviews:', response.data);
+    return response.data.reviews;
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    if (error.response) {
+      console.error('Error response:', error.response.data);
+    }
+    throw error;
+  }
+};
+
 export const postReview = async (memberId, bookId, text, visibility) => {
   console.log('Sending review data:', { memberId, bookId, text, visibility });
   const token = useUserStore.getState().token;  // 토큰 가져오기

@@ -1,50 +1,60 @@
-import { useState } from 'react'
-import CustomRadioButton from "../../components/RadioButton/CustomRadioButton"
-import GridDisplay from './GridDisplay.jsx'
-
-import CardImg1 from '../../assets/onboard/card1_front.png';
-import CardImg1_back from '../../assets/onboard/card1_back.png';
-import CardImg2 from '../../assets/onboard/card2.png';
-import CardImg3 from '../../assets/onboard/card3.png';
-
-const dummyPhotocards = [
-  { id: 1, title: '책 제목 1', cover: CardImg1, back: CardImg1_back },
-  { id: 2, title: '책 제목 1', cover: CardImg2, back: CardImg1_back },
-  { id: 3, title: '책 제목 1', cover: CardImg3, back: CardImg1_back },
-  { id: 4, title: '책 제목 1', cover: CardImg1, back: CardImg1_back },
-  { id: 5, title: '책 제목 1', cover: CardImg2, back: CardImg1_back },
-  { id: 6, title: '책 제목 1', cover: CardImg3, back: CardImg1_back },
-  { id: 7, title: '책 제목 1', cover: CardImg1, back: CardImg1_back },
-  { id: 8, title: '책 제목 1', cover: CardImg2, back: CardImg1_back },
-  { id: 9, title: '책 제목 1', cover: CardImg3, back: CardImg1_back },
-  { id: 10, title: '책 제목 1', cover: CardImg1, back: CardImg1_back },
-];
-
-const dummyReviews = [
-  {
-    id: 1,
-    bookImage: CardImg1,
-    title: '나는 도대체 왜 피곤할까',
-    author: '에이미 사',
-    review: '우리 몸이 왜 피곤하고 엄증에 관여여 포르몬에 관여여 일고싶게 설명되어있고 WTF방법과 실천까지 자세하게 설명되어 있어서 이대로만 따라하면 난 신선와 물을 가질 수 있을것 같다.',
-  },
-  {
-    id: 2,
-    bookImage: CardImg1,
-    title: '나는 도대체 왜 피곤할까',
-    author: '에이미 사',
-    review: '우리 몸이 왜 피곤하고 엄증에 관여여 포르몬에 관여여 일고싶게 설명되어있고 WTF방법과 실천까지 자세하게 설명되어 있어서 이대로만 따라하면 난 신선와 물을 가질 수 있을것 같다.',
-  },
-  // ... 더 많은 리뷰 데이터
-];
+import { useState, useEffect } from 'react';
+import CustomRadioButton from "../../components/RadioButton/CustomRadioButton";
+import GridDisplay from './GridDisplay.jsx';
+import usePhotocardStore from '../../store/photocardStore';
+import useReviewStore from '../../store/reviewStore';
 
 export default function SharedBoard() {
-  const [visibility, setVisibility] = useState('최신순');
-  const [activeLink, setActiveLink] = useState("photocard"); // Default active link
+  const { 
+    photocards, 
+    loading: photocardsLoading, 
+    error: photocardsError, 
+    fetchPhotocards, 
+    setOrderType: setPhotocardOrderType, 
+    setSearchType: setPhotocardSearchType 
+  } = usePhotocardStore();
+
+  const { 
+    reviews, 
+    loading: reviewsLoading, 
+    error: reviewsError, 
+    fetchReviews, 
+    setOrderType: setReviewOrderType, 
+    setSearchType: setReviewSearchType 
+  } = useReviewStore();
+  
+  const [activeLink, setActiveLink] = useState("photocard");
+
+  useEffect(() => {
+    if (activeLink === "photocard") {
+      fetchPhotocards();
+    } else {
+      fetchReviews();
+    }
+  }, [activeLink]);
+
+  const handleOrderChange = (value) => {
+    const orderType = 'DESC';
+    const searchType = value === 'latest' ? 'TimeStamp' : 'Like';
+    
+    if (activeLink === "photocard") {
+      setPhotocardOrderType(orderType);
+      setPhotocardSearchType(searchType);
+      fetchPhotocards();
+    } else {
+      setReviewOrderType(orderType);
+      setReviewSearchType(searchType);
+      fetchReviews();
+    }
+  };
 
   const handleLinkClick = (link) => {
     setActiveLink(link);
-  }
+  };
+
+  const loading = activeLink === "photocard" ? photocardsLoading : reviewsLoading;
+  const error = activeLink === "photocard" ? photocardsError : reviewsError;
+  const items = activeLink === "photocard" ? photocards : reviews;
 
   return (
     <>
@@ -75,22 +85,27 @@ export default function SharedBoard() {
           </div>
         </div>
 
-        {/* 최신순, 좋아요순, 팔로우만 */}
-        <div className="mt-5 ml-3 justify-start sm:w-40 lg:w-48">
+        {/* 최신순, 좋아요순 */}
+        <div className="ml-3 justify-start sm:w-40 lg:w-48">
           <CustomRadioButton
-            options={['최신순', '좋아요순', '팔로우만']}
-            selectedOption={visibility}
-            onChange={setVisibility}
+            options={[
+              { label: '최신순', value: 'latest' },
+              { label: '좋아요순', value: 'popular' },
+            ]}
+            selectedOption={activeLink === "photocard" 
+              ? (usePhotocardStore.getState().searchType === 'TimeStamp' ? 'latest' : 'popular')
+              : (useReviewStore.getState().searchType === 'TimeStamp' ? 'latest' : 'popular')
+            }
+            onChange={handleOrderChange}
           />
         </div>
       </div>
       <div className="mt-5 -ml-1">
-        {/* 포토카드와 한줄평을 출력하는 공간 */}
-        {activeLink === "photocard" && <GridDisplay items={dummyPhotocards} type="photocard" />}
-        {activeLink === "review" && <GridDisplay items={dummyReviews.map(review => ({
-          ...review,
-          likeCount: review.like // 'like' 필드를 'likeCount'로 매핑
-        }))} type="review" />}
+        {loading && <p>로딩 중...</p>}
+        {error && <p>에러: {error}</p>}
+        {!loading && !error && (
+          <GridDisplay items={items} type={activeLink} />
+        )}
       </div>
     </>
   )
