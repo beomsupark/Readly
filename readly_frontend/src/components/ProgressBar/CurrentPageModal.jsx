@@ -52,7 +52,14 @@ export default function CurrentPageModal({
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      style={{ ...customModalStyles, content: { ...customModalStyles.content, top: `${position.top}px`, left: `${position.left}px` } }}
+      style={{
+        ...customModalStyles,
+        content: {
+          ...customModalStyles.content,
+          top: `${position.top}px`,
+          left: `${position.left}px`,
+        },
+      }}
       ariaHideApp={false}
       shouldCloseOnOverlayClick={true}
       closeTimeoutMS={300}

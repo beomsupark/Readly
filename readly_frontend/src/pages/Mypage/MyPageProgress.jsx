@@ -169,7 +169,6 @@ export default function MyPageProgress({ userId }) {
       }
       throw error;
     }
-    closeSearchModal();
   };
 
   const openReviewModal = (book) => {
@@ -249,7 +248,7 @@ export default function MyPageProgress({ userId }) {
                   currentPage={book.currentPage}
                   totalPages={book.totalPages}
                   onUpdateCurrentPage={(newPage) =>
-                    updateCurrentPage(book.id, newPage)
+                    updateCurrentPage(book.bookId, newPage)
                   }
                 />
               </div>
