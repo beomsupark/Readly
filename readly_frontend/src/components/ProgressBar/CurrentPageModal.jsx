@@ -19,9 +19,6 @@ const customModalStyles = {
     height: "20%",
     minHeight: "15%",
     zIndex: "150",
-    position: "absolute",
-    top: "40%", 
-    left: "150px", 
     borderRadius: "10px",
     boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.25)",
     backgroundColor: "#E5E5E5",
@@ -30,7 +27,12 @@ const customModalStyles = {
   },
 };
 
-export default function CurrentPageModal({ isOpen, onRequestClose, onSave, position }) {
+export default function CurrentPageModal({
+  isOpen,
+  onRequestClose,
+  onSave,
+  position,
+}) {
   const [newPage, setNewPage] = useState("");
 
   const handleInputChange = (event) => {
@@ -38,8 +40,12 @@ export default function CurrentPageModal({ isOpen, onRequestClose, onSave, posit
   };
 
   const handleSave = () => {
-    onSave(newPage);
-    setNewPage(""); // Clear input after saving
+    if (newPage !== "") {
+      onSave(newPage);
+      setNewPage(""); // Clear input after saving
+    } else {
+      console.log("New page value is empty");
+    }
   };
 
   return (
@@ -65,8 +71,8 @@ export default function CurrentPageModal({ isOpen, onRequestClose, onSave, posit
           value={newPage}
           onChange={handleInputChange}
         />
-      
-<GoButton text="저장" onClick={handleSave} />
+
+        <GoButton text="저장" onClick={handleSave} />
       </div>
     </Modal>
   );
