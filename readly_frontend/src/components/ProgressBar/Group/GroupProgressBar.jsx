@@ -35,15 +35,15 @@ export default function GroupProgressBar({
 
   return (
     <div ref={progressBarRef}>
-      <div className="w-full h-8 bg-[#F8F8F8] rounded-full mt-4 overflow-hidden">
+      <div className="w-full h-10 bg-[#F8F8F8] rounded-full mt-1 overflow-hidden">
         <div
-          className="h-full bg-[#E3F7FF] text-center text-black p-1"
+          className="h-full bg-[#E3F7FF] font-bold text-xs text-center text-black p-[0.7rem] leading-4"
           style={{ width: `${percentage}%` }}
         >
           {percentage}%
         </div>
       </div>
-      <div className="flex justify-between text-sm mt-1">
+      <div className="flex justify-between text-xs mt-0.5">
         <button 
           onClick={isEditable ? openModal : undefined} 
           className={isEditable ? "cursor-pointer" : "cursor-default"}

@@ -67,12 +67,12 @@ export default function ActivityProgress({ groupId }) {
         }
       );
       console.log("API Response:", response.data);
-      
+
       if (response.data && response.data.bookInfo && response.data.readBooks) {
         setBookInfo(response.data.bookInfo);
-        const updatedReadBooks = response.data.readBooks.map(book => ({
+        const updatedReadBooks = response.data.readBooks.map((book) => ({
           ...book,
-          currentPage: book.currentPage || 0
+          currentPage: book.currentPage || 0,
         }));
         setReadBooks(updatedReadBooks);
       } else {
@@ -102,19 +102,24 @@ export default function ActivityProgress({ groupId }) {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-  
+
       setReadBooks((prevReadBooks) =>
         prevReadBooks.map((book) =>
           book.member_id === memberId ? { ...book, currentPage: newPage } : book
         )
       );
       console.log(`Updated page for member ${memberId} to ${newPage}`);
-      
+
       // 로컬 스토리지에 currentPage 값 저장
-      const storedPages = JSON.parse(localStorage.getItem(`group_${groupId}_pages`) || '{}');
+      const storedPages = JSON.parse(
+        localStorage.getItem(`group_${groupId}_pages`) || "{}"
+      );
       storedPages[memberId] = newPage;
-      localStorage.setItem(`group_${groupId}_pages`, JSON.stringify(storedPages));
-      
+      localStorage.setItem(
+        `group_${groupId}_pages`,
+        JSON.stringify(storedPages)
+      );
+
       // 업데이트 후 그룹 데이터를 다시 가져옵니다
       fetchGroupData();
     } catch (error) {
@@ -245,7 +250,7 @@ export default function ActivityProgress({ groupId }) {
       </h2>
       <div className={`container mx-auto p-4 ${layoutClasses.padding}`}>
         <div
-          className={`bg-white p-4 rounded-lg mb-4 flex z-100 ${layoutClasses.container}`}
+          className={`bg-white p-4 rounded-lg flex z-100 ${layoutClasses.container}`}
         >
           <div>
             <img
@@ -262,12 +267,12 @@ export default function ActivityProgress({ groupId }) {
           </div>
           <div className={`flex-1 ml-4 ${readBooks.length > 4 ? "pr-4" : ""}`}>
             <h3 className="font-bold mb-2">{bookInfo.book_title}</h3>
-            <p className="mb-4">{bookInfo.book_author}</p>
-            <div className={`grid ${layoutClasses.grid} gap-4`}>
+            <p className="mb-2">{bookInfo.book_author}</p>
+            <div className={`grid ${layoutClasses.grid} gap-2`}>
               {readBooks.map((book) => (
                 <div key={book.member_id} className="flex items-center">
                   <p
-                    className={`mr-4 w-20 truncate ${
+                    className={`mr-2 w-16 truncate text-sm ${
                       book.member_id === user.id
                         ? "text-[#000000] cursor-pointer font-bold"
                         : "text-[#dadada]"
@@ -292,7 +297,6 @@ export default function ActivityProgress({ groupId }) {
                         openCurrentPageModal(book.member_id, event)
                       }
                     />
-                    {console.log(`Current Page for ${book.member_info.member_name}:`, book.currentPage)}
                   </div>
                 </div>
               ))}
@@ -300,7 +304,7 @@ export default function ActivityProgress({ groupId }) {
           </div>
         </div>
       </div>
-      <div className="mt-4">
+      <div>
         <h2 className="font-bold mb-2 text-xl">
           <span className="text-custom-highlight">책 </span>에 대한{" "}
           <span className="text-custom-highlight">한줄평</span>을 남기고
