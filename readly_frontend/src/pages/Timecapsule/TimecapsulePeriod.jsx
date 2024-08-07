@@ -2,7 +2,8 @@ import Modal from "react-modal";
 import { useState } from "react";
 import GoButton from "../../components/GoButton/GoButton.jsx";
 import TimecapsuleSelect from "./TimecapsuleSelect.jsx";
-import { getTimeCapsuleItems } from '../../api/timecapsuleAPI.js'; // API 함수 import
+import { getTimeCapsuleItems } from '../../api/timecapsuleAPI.js';
+import useUserStore from '../../store/userStore';
 
 Modal.setAppElement("#root");
 
@@ -32,14 +33,19 @@ const customModalStyles = {
     backgroundColor: "#E5E5E5",
     padding: "20px",
     overflow: "auto",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
   },
 };
 
-export default function TimecapsulePeriod({ isOpen, onRequestClose, userId }) {
+export default function TimecapsulePeriod({ isOpen, onRequestClose }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [timeCapsuleItems, setTimeCapsuleItems] = useState({ reviews: [], photoCards: [] });
+  const [filteredReviews, setFilteredReviews] = useState([]);
+  const [filteredPhotocards, setFilteredPhotocards] = useState([]);
+  const user = useUserStore(state => state.user);
 
   const openModal = async () => {
     if (!startDate || !endDate) {
@@ -48,12 +54,18 @@ export default function TimecapsulePeriod({ isOpen, onRequestClose, userId }) {
     }
 
     try {
-      const items = await getTimeCapsuleItems(userId, startDate, endDate);
-      setTimeCapsuleItems(items);
+      const { reviews, photocards } = await getTimeCapsuleItems(user.id, startDate, endDate);
+
+      console.log("Filtered reviews:", reviews);
+      console.log("Filtered photocards:", photocards);
+
+      setFilteredReviews(reviews);
+      setFilteredPhotocards(photocards);
+
       setModalIsOpen(true);
     } catch (error) {
       console.error("Error fetching time capsule items:", error);
-      alert("타임캡슐 아이템을 가져오는 데 실패했습니다.");
+      alert("데이터를 가져오는 데 실패했습니다.");
     }
   };
 
@@ -77,7 +89,7 @@ export default function TimecapsulePeriod({ isOpen, onRequestClose, userId }) {
         X
       </button>
       <h2 className="text-xl font-bold mb-4">기간을 입력해주세요!</h2>
-      <div className="flex gap-4">
+      <div className="flex gap-4 mb-4">
         <input
           type="date"
           className="border rounded"
@@ -92,13 +104,17 @@ export default function TimecapsulePeriod({ isOpen, onRequestClose, userId }) {
           onChange={(e) => setEndDate(e.target.value)}
         />
       </div>
-      <GoButton text="확인" onClick={openModal} />
+      <div className="flex justify-end">
+        <GoButton text="확인" onClick={openModal} />
+      </div>
 
       <TimecapsuleSelect
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        reviews={timeCapsuleItems.reviews}
-        photoCards={timeCapsuleItems.photoCards}
+        reviews={filteredReviews}
+        photoCards={filteredPhotocards}
+        startDate={startDate}
+        endDate={endDate}
       />
     </Modal>
   );

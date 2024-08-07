@@ -51,12 +51,12 @@ export default function MypageBookshelf({ userId }) {
                 <img
                   src={book.cover}
                   alt={book.title}
-                  className="w-auto h-[7rem]"
+                  className="w-auto h-[6rem]"
                 />
               </div>
             ))
           ) : (
-            <div className="bg-gray-200 p-2 rounded w-[5rem] h-[7rem] flex items-center justify-center">
+            <div className="bg-gray-200 p-2 rounded w-[5rem] h-[5rem] flex items-center justify-center">
 
             </div>
           )}
