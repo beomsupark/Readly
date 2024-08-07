@@ -53,7 +53,7 @@ export default function ReviewList({ isOpen, onRequestClose, reviews }) {
         X
       </button>
       <h2 className="text-2xl font-bold mb-4">만든 한줄평입니다!</h2>
-      <div className="flex gap-3 w-[28rem]">
+      <div className="flex gap-3 w-[30rem] h-[15rem]">
         {reviews && reviews.length > 0 ? (
           reviews.map((review) => (
             <Review

@@ -39,7 +39,7 @@ export default function Myheader() {
         <div className="flex-cols items-center mr-2">
           {isOwnProfile ? (
             <>
-              <img className="w-16 h-14 mr-2" src={levelIcon} alt="level" />
+              <img className="w-13 h-10 mr-2" src={levelIcon} alt="level" />
               <p className="font-bold text-center text-xl">Lv{userLevel}</p>
             </>
           ) : selectedUser ? (
@@ -49,7 +49,7 @@ export default function Myheader() {
                 src={getLevelIcon(calculateLevel(selectedUser.point))}
                 alt="level"
               />
-              <p className="font-bold text-center text-xl">
+              <p className="font-bold text-center text-md">
                 Lv{calculateLevel(selectedUser.point)}
               </p>
             </>

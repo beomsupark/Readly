@@ -17,7 +17,7 @@ const customModalStyles = {
     left: "0",
   },
   content: {
-    width: "60%",
+    width: "50%",
     maxWidth: "100%",
     height: "80%",
     maxHeight: "80vh",
@@ -81,7 +81,7 @@ export default function CreateReview({
       </button>
 
       <h2 className="text-2xl font-bold mb-4">{book.title} 한줄평</h2>
-      <div className="p-4 rounded-lg mb-4 w-2/5 h-[20rem]">
+      <div className="p-4 rounded-lg mb-4 w-[15rem] h-[19rem]">
         <Review
           bookImage={book.cover}
           title={book.title}
