@@ -30,7 +30,6 @@ CREATE TABLE `photocards` (
   `book_id` int NOT NULL,
   `photocard_image` varchar(1000) DEFAULT NULL,
   `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
-  `photo_card_image` varchar(1000) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_members_TO_photocards_1` (`member_id`),
   KEY `FK_books_TO_photocards_1` (`book_id`),
