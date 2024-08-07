@@ -22,9 +22,10 @@ public class MypageRepositoryImpl implements MypageRepository {
     public List<ReadBook> getReadBook(int userId) throws Exception {
         String jpql = "SELECT r " +
                 "FROM ReadBook r JOIN FETCH r.book b " +
-                "WHERE r.member.id = :userId and b.totalPage = r.currentPage";
+                "WHERE r.member.id = :userId AND r.readType = :readType AND b.totalPage = r.currentPage";
         Query query = entityManager.createQuery(jpql, ReadBook.class);
         query.setParameter("userId", userId);
+        query.setParameter("readType", ReadType.D);
 
         return query.getResultList();
     }
@@ -77,15 +78,44 @@ public class MypageRepositoryImpl implements MypageRepository {
     @Override
     public int updateCurrentPage(UpdateCurrentPageRequest request) throws Exception {
         int currentPage = request.getCurrentPage();
-        int readBookId = request.getReadBookId();
+        int bookId = request.getBookId();
+        int memberId = request.getMemberId();
+
+        // Fetch the Book entity to get the totalPage
+        Book book = entityManager.find(Book.class, bookId);
+        if (book == null) {
+            throw new IllegalArgumentException("Book not found with id: " + bookId);
+        }
+
+        int totalPage = book.getTotalPage();
+
+        // Update the currentPage
         String jpql = "UPDATE ReadBook r " +
                 "SET r.currentPage = :currentPage " +
-                "WHERE r.id = :readBookId";
+                "WHERE r.book.id = :bookId AND r.member.id = :memberId";
         Query query = entityManager.createQuery(jpql);
-        query.setParameter("currentPage", currentPage).setParameter("readBookId", readBookId);
+        query.setParameter("currentPage", currentPage)
+                .setParameter("bookId", bookId)
+                .setParameter("memberId", memberId);
 
-        return query.executeUpdate();
+        int updatedRows = query.executeUpdate();
+
+        // If currentPage equals totalPage, update the readType to 'D'
+        if (currentPage == totalPage) {
+            String jpqlReadType = "UPDATE ReadBook r " +
+                    "SET r.readType = :readType " +
+                    "WHERE r.book.id = :bookId AND r.member.id = :memberId";
+            Query queryReadType = entityManager.createQuery(jpqlReadType);
+            queryReadType.setParameter("readType", ReadType.D)
+                    .setParameter("bookId", bookId)
+                    .setParameter("memberId", memberId);
+
+            queryReadType.executeUpdate();
+        }
+
+        return updatedRows;
     }
+
 
     @Override
     public void completeBook(CompleteBookRequest request) throws Exception {

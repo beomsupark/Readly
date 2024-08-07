@@ -4,7 +4,8 @@ import lombok.Data;
 
 @Data
 public class UpdateCurrentPageRequest {
-    private int readBookId;
+    private int memberId;
+    private int bookId;
     private int currentPage;
 
 }
