@@ -68,7 +68,7 @@ public class JWTUtil {
         }
     }
 
-    public String getMemberId(String authorization) {
+    public int getMemberId(String authorization) {
         Jws<Claims> claims = null;
         try {
             claims = Jwts.parser().setSigningKey(this.generateKey()).parseClaimsJws(authorization);
@@ -76,6 +76,6 @@ public class JWTUtil {
             throw new UnAuthorizedException();
         }
         Map<String, Object> value = claims.getBody();
-        return (String) value.get("id");
+        return (int) value.get("id");
     }
 }

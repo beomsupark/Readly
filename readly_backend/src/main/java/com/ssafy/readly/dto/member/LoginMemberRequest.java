@@ -5,8 +5,8 @@ import lombok.Getter;
 
 @Getter
 public class LoginMemberRequest {
-    @NotBlank
+    @NotBlank(message = "아이디")
     private String loginId;
-    @NotBlank
+    @NotBlank(message = "비밀번호")
     private String loginPwd;
 }
