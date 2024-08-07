@@ -29,7 +29,7 @@ CREATE TABLE `photocards` (
   `member_id` int NOT NULL,
   `book_id` int NOT NULL,
   `photocard_image` varchar(1000) DEFAULT NULL,
-  `created_date` date DEFAULT NULL,
+  `created_date` timestamp DEFAULT CURRENT_TIMESTAMP,
   `photo_card_image` varchar(1000) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_members_TO_photocards_1` (`member_id`),
