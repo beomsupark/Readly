@@ -82,22 +82,22 @@ export default function MypageFollow({ userId }) {
               <div
                 key={user.followedId}
                 onClick={() => openFollowUserPageModal(user)}
-                className="bg-gray-200 p-2 rounded-xl flex-cols items-center bg-[#F5F5F5] cursor-pointer w-36"
+                className="bg-gray-200 p-2 rounded-xl flex items-center bg-[#F5F5F5] cursor-pointer w-36 h-[5rem]"
               >
                 <img
                   src={levelIcons[user.level]}
                   alt={`Level ${user.level}`}
-                  className="w-7 h-7 mr-2"
+                  className="w-7 h-7 mr-2 mb-9"
                 />
                 <div className="ml-4">
                   <img src={InfoIcon} alt="info" className="w-12 h-10" />
                   <p className="font-semibold">{user.followedName}</p>
-                  <p className="text-sm text-gray-600">{user.followedText}</p>
+                  {/* <p className="text-sm text-gray-600">{user.followedText}</p> */}
                 </div>
               </div>
             ))
           ) : (
-            <div className="bg-gray-200 p-2 rounded-xl flex-cols items-center bg-white w-full h-[120px] flex justify-center items-center">
+            <div className="bg-gray-200 p-2 rounded-xl flex-cols items-center bg-white w-full h-[5rem] flex justify-center items-center">
               {/* <p className="text-gray-500">팔로우한 사용자가 없습니다.</p> */}
             </div>
           )}

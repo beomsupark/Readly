@@ -1,72 +1,48 @@
-import { useState, useEffect, useCallback } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import BookImg1 from "../../assets/onboard/book.jpg";
 import ProgressBar from "../../components/ProgressBar/ProgressBar";
 import GoButton from "../../components/GoButton/GoButton";
 import CreateReview from "../../components/Review/CreateReview";
-import BookModal from "../../components/BookModal";
-import useBookStore from "../../store/bookStore";
-import useUserStore from "../../store/userStore";
+import Search from "../../components/Search";
+import { proceedingBooks } from '../../api/mypageAPI';
+import { postReview } from '../../api/reviewAPI';
 
-export default function MyPageProgress({ userId }) {
+export default function MypageProgress({ userId }) {
   const [books, setBooks] = useState([]);
   const [reviewInputs, setReviewInputs] = useState({});
   const [selectedBook, setSelectedBook] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [bookModalIsOpen, setBookModalIsOpen] = useState(false);
-  const { books: searchResults, searchBooks } = useBookStore();
-  const [searchQuery, setSearchQuery] = useState("");
-  const { token } = useUserStore();
-
-  const fetchBooks = useCallback(async () => {
-    try {
-      const response = await axios.get(`http://localhost:8080/api/member/proceeding-books/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const fetchedBooks = response.data.proceedingBooks;
-      const formattedBooks = fetchedBooks.map(book => ({
-        id: book.readBookId,
-        bookId: book.readBookId,
-        title: book.title,
-        cover: book.image || BookImg1,
-        totalPages: book.totalPages,
-        currentPage: book.curruntPage,
-        review: book.detail || "",
-        author: book.author
-      }));
-      setBooks(formattedBooks);
-    } catch (error) {
-      console.error("Failed to fetch books:", error);
-    }
-  }, [userId, token]);
+  const [searchModalIsOpen, setSearchModalIsOpen] = useState(false);
 
   useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        const fetchedBooks = await proceedingBooks(userId);
+        const formattedBooks = fetchedBooks.map(book => ({
+          id: book.readBookId,
+          bookId: book.bookId,  // 이 줄을 추가
+          title: book.title,
+          cover: book.image || BookImg1,
+          totalPages: book.totalPages,
+          currentPage: book.curruntPage,
+          review: book.detail || "",
+          author: book.author
+        }));
+        setBooks(formattedBooks);
+      } catch (error) {
+        console.error('Failed to fetch books:', error);
+      }
+    };
+
     fetchBooks();
-  }, [fetchBooks]);
+  }, [userId]);
 
-  const updateCurrentPage = async (bookId, newPage) => {
-    try {
-      await axios.put(
-        "http://localhost:8080/api/member/proceeding-books/update",
-        {
-          bookId: bookId,
-          memberId: userId,
-          currentPage: newPage,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      setBooks(prevBooks =>
-        prevBooks.map(book =>
-          book.bookId === bookId ? { ...book, currentPage: newPage } : book
-        )
-      );
-      console.log("Page updated successfully");
-    } catch (error) {
-      console.error("Error updating page:", error);
-    }
+  const updateCurrentPage = (bookId, newPage) => {
+    setBooks(
+      books.map((book) =>
+        book.id === bookId ? { ...book, currentPage: newPage } : book
+      )
+    );
   };
 
   const openModal = (book) => {
@@ -80,110 +56,68 @@ export default function MyPageProgress({ userId }) {
     setModalIsOpen(false);
   };
 
-  const openBookModal = () => {
-    setBookModalIsOpen(true);
+  const openSearchModal = () => {
+    setSearchModalIsOpen(true);
   };
 
-  const closeBookModal = () => {
-    setBookModalIsOpen(false);
+  const closeSearchModal = () => {
+    setSearchModalIsOpen(false);
   };
 
   const handleReviewInputChange = (bookId, value) => {
     setReviewInputs((prev) => ({ ...prev, [bookId]: value }));
   };
+
   const handleCreateReview = async ({ bookId, reviewText, visibility }) => {
     try {
-      console.log("Submitting review:", { bookId, reviewText, visibility });
+      console.log('Submitting review:', { bookId, reviewText, visibility });
       const result = await postReview(
-        userId,
+        userId, 
         bookId,
         reviewText,
-        visibility === "A"
+        visibility === 'A' // 'A'는 공개, 'E'는 비공개
       );
-
-      console.log("Review submission result:", result);
-
-      if (result.status === "success") {
+  
+      console.log('Review submission result:', result);
+  
+      if (result.status === 'success') {
         setBooks(
           books.map((book) =>
-            book.bookId === bookId ? { ...book, review: reviewText } : book
+            book.bookId === bookId
+              ? { ...book, review: reviewText }
+              : book
           )
         );
         setReviewInputs((prev) => ({ ...prev, [bookId]: "" }));
         closeModal();
       } else {
-        console.error("Failed to create review:", result.message);
+        console.error('Failed to create review:', result.message);
         alert(`리뷰 생성에 실패했습니다: ${result.message}`);
       }
     } catch (error) {
-      console.error("Error creating review:", error);
-      alert("리뷰 생성 중 오류가 발생했습니다.");
+      console.error('Error creating review:', error);
+      alert('리뷰 생성 중 오류가 발생했습니다.');
     }
   };
 
-  const addNewBook = async (newBook) => {
-    try {
-      console.log("Book being added:", newBook);
-      const requestData = {
-        memberId: userId,
-        bookId: newBook.bookId,
+  const addNewBook = (newBook) => {
+    const isBookExists = books.some(book => book.id === newBook.id);
+    
+    if (!isBookExists) {
+      const bookToAdd = {
+        id: newBook.id,
+        title: newBook.title,
+        cover: newBook.image || BookImg1,
+        totalPages: newBook.totalPages || 100,
+        currentPage: 0,
+        review: "",
+        author: newBook.author
       };
-      console.log("Request data:", requestData);
-
-      await axios.post("http://localhost:8080/api/user/add", requestData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      setBooks((prevBooks) => [
-        ...prevBooks,
-        {
-          id: newBook.bookId,
-          title: newBook.title,
-          cover: newBook.image || BookImg1,
-          totalPages: newBook.totalPages || 100,
-          currentPage: 0,
-          review: "",
-          author: newBook.author,
-        },
-      ]);
-
-      closeBookModal();
-    } catch (error) {
-      console.error("Error adding book to user:", error);
-      if (error.response) {
-        console.error("Error response data:", error.response.data);
-        console.error("Error response status:", error.response.status);
-        console.error("Error response headers:", error.response.headers);
-      } else if (error.request) {
-        console.error("No response received:", error.request);
-      } else {
-        console.error("Error setting up request:", error.message);
-      }
-      throw error;
+      
+      setBooks(prevBooks => [...prevBooks, bookToAdd]);
     }
+    closeSearchModal();
   };
-  const handleInputChange = useCallback(
-    (e) => {
-      setSearchQuery(e.target.value);
-      if (e.target.value) {
-        searchBooks(e.target.value);
-      }
-    },
-    [searchBooks]
-  );
-
-  const handleSearch = useCallback(
-    (e) => {
-      e.preventDefault();
-      searchBooks(searchQuery);
-    },
-    [searchQuery, searchBooks]
-  );
-
-  const handleSuggestionClick = useCallback((book) => {
-    setSelectedBook(book);
-    setSearchQuery("");
-  }, []);
 
   return (
     <>
@@ -209,13 +143,11 @@ export default function MyPageProgress({ userId }) {
                 <h2 className="text-xl font-semibold mb-2">{book.title}</h2>
                 <p className="text-sm text-gray-600 mb-2">저자: {book.author}</p>
                 <ProgressBar
-                  bookId={book.bookId}
                   currentPage={book.currentPage}
                   totalPages={book.totalPages}
                   onUpdateCurrentPage={(newPage) =>
-                    updateCurrentPage(book.bookId, newPage)
+                    updateCurrentPage(book.id, newPage)
                   }
-                  userId={userId}
                 />
                 <div>
                   <h2 className="font-bold mb-2">
@@ -241,7 +173,7 @@ export default function MyPageProgress({ userId }) {
           ))
         )}
         <div className="mt-4 flex justify-start">
-          <GoButton text="책 등록하기" onClick={openBookModal} />
+          <GoButton text="책 등록하기" onClick={openSearchModal} />
         </div>
       </div>
 
@@ -255,18 +187,10 @@ export default function MyPageProgress({ userId }) {
         />
       )}
 
-      <BookModal
-        isOpen={bookModalIsOpen}
-        onRequestClose={closeBookModal}
-        book={selectedBook}
-        searchQuery={searchQuery}
-        handleInputChange={handleInputChange}
-        handleSearch={handleSearch}
-        suggestions={searchResults}
-        handleSuggestionClick={handleSuggestionClick}
-        clearSearch={() => setSearchQuery("")}
-        onAddBook={addNewBook}
-        addButtonText="책 등록하기"
+      <Search
+        isOpen={searchModalIsOpen}
+        onRequestClose={closeSearchModal}
+        onBookSelect={addNewBook}
       />
     </>
   );
