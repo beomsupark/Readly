@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@chatscope/chat-ui-kit-react": "^2.0.3",
+    "@chatscope/chat-ui-kit-styles": "^1.4.0",
     "@stomp/stompjs": "^7.0.0",
     "aos": "^2.3.4",
     "axios": "^1.7.2",
