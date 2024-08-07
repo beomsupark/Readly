@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Modal from "react-modal";
-import GoButton from "../GoButton/GoButton";
+import GoButton from "../../components/GoButton/GoButton.jsx";
 
 Modal.setAppElement("#root");
 
@@ -20,8 +20,8 @@ const customModalStyles = {
     minHeight: "15%",
     zIndex: "150",
     position: "absolute",
-    top: "40%", 
-    left: "150px", 
+    top: "40%",
+    left: "150px",
     borderRadius: "10px",
     boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.25)",
     backgroundColor: "#E5E5E5",
@@ -30,7 +30,13 @@ const customModalStyles = {
   },
 };
 
-export default function CurrentPageModal({ isOpen, onRequestClose, onSave, position }) {
+export default function CurrentPageModal({
+  isOpen,
+  onRequestClose,
+  onSave,
+  position,
+  memberName,
+}) {
   const [newPage, setNewPage] = useState("");
 
   const handleInputChange = (event) => {
@@ -38,15 +44,26 @@ export default function CurrentPageModal({ isOpen, onRequestClose, onSave, posit
   };
 
   const handleSave = () => {
-    onSave(newPage);
-    setNewPage(""); // Clear input after saving
+    if (newPage !== "") {
+      onSave(newPage);
+      setNewPage(""); // 저장 후 입력값 초기화
+    } else {
+      console.log("New page value is empty");
+    }
   };
 
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      style={{ ...customModalStyles, content: { ...customModalStyles.content, top: `${position.top}px`, left: `${position.left}px` } }}
+      style={{
+        ...customModalStyles,
+        content: {
+          ...customModalStyles.content,
+          top: `${position.top}px`,
+          left: `${position.left}px`,
+        },
+      }}
       ariaHideApp={false}
       shouldCloseOnOverlayClick={true}
       closeTimeoutMS={300}
@@ -57,7 +74,11 @@ export default function CurrentPageModal({ isOpen, onRequestClose, onSave, posit
       >
         X
       </button>
-      <h2 className="text-lg font-bold mb-4">읽은 페이지를 입력해주세요!</h2>
+      <h2 className="text-lg font-bold mb-4">
+        {memberName}님의
+        <br />
+        읽은 페이지를 입력해주세요!
+      </h2>
       <div className="flex gap-4">
         <input
           type="text"
@@ -65,8 +86,7 @@ export default function CurrentPageModal({ isOpen, onRequestClose, onSave, posit
           value={newPage}
           onChange={handleInputChange}
         />
-      
-<GoButton text="저장" onClick={handleSave} />
+        <GoButton text="저장" onClick={handleSave} />
       </div>
     </Modal>
   );
