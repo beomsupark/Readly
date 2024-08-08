@@ -19,4 +19,5 @@ public interface ReviewService {
     // 리뷰 좋아요 순 10개
     List<ReviewResponse> findReviewsSorted(ReviewSearchRequest searchRequest);
 
+    long getReviewsCount() throws Exception;
 }
