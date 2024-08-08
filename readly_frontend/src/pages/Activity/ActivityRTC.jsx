@@ -5,7 +5,7 @@ import useUserStore from "../../store/userStore";
 
 
 
-const API_BASE_URL = 'http://i11c207.p.ssafy.io/api';
+const API_BASE_URL = 'https://i11c207.p.ssafy.io/api';
 
 const ActivityRTC = ({ groupId }) => {
   const [isVideoConferenceActive, setIsVideoConferenceActive] = useState(false);
