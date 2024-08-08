@@ -26,7 +26,7 @@ export default function HomePhotocard({ onPhotoCardClick }) {
   };
 
   const handleMorePhotocards = () => {
-    navigate('/photocards');
+    navigate('/sharedboard');
   };
 
   const currentPhotocards = [...photocards.slice(currentIndex, currentIndex + 6)];
@@ -38,7 +38,7 @@ export default function HomePhotocard({ onPhotoCardClick }) {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="w-full ml-3 bg-gray-100">
+    <div className="w-full ml-3 bg-gray-100 mb-4">
       <div className="max-w-full mx-auto px-2 lg:px-2">
         <div className="flex justify-between items-center mb-4">
           <h2 className="font-bold text-2xl">사용자들이 좋아하는 <span className="text-custom-highlight">포토카드</span></h2>
@@ -46,7 +46,7 @@ export default function HomePhotocard({ onPhotoCardClick }) {
             onClick={handleMorePhotocards}
             className="text-gray-500 hover:text-gray-700"
           >
-            <span className="text-sm text-[#868686] font-bold">
+            <span className="text-sm text-[#868686] font-bold p-4">
               더 많은 포토카드를 보고싶으신가요?
             </span>
           </button>
@@ -71,10 +71,6 @@ export default function HomePhotocard({ onPhotoCardClick }) {
                             src={photocard.photoCardImage}
                             alt={photocard.bookTitle || 'Photocard'}
                             className="w-full h-full object-cover rounded-lg"
-                            onError={(e) => {
-                              console.error("Image failed to load:", e.target.src);
-                              e.target.src = "/path/to/fallback/image.jpg";
-                            }}
                           />
                         </div>
                       </div>
@@ -90,7 +86,7 @@ export default function HomePhotocard({ onPhotoCardClick }) {
                 onClick={handleShowMore}
                 className="text-blue-500 hover:text-blue-700 text-lg font-bold"
               >
-                <span className="text-custom-highlight">&gt;</span> <span className="text-[1rem] text-[#868686]"> 더보기</span>
+                <span className="text-custom-highlight">&gt;</span> <span className="text-[1rem] text-[#868686] mr-12"> 더보기</span>
               </button>
             </div>
           </div>
