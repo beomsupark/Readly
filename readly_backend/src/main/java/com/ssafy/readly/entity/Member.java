@@ -89,4 +89,15 @@ public class Member {
     public void deleteToken() {
         this.token = null;
     }
+
+
+    public void addFollower(Follower follower) {
+        followers.add(follower);
+        follower.setFollowing(this);
+    }
+
+    public void removeFollower(Follower follower) {
+        followers.remove(follower);
+        follower.setFollowing(null);
+    }
 }
