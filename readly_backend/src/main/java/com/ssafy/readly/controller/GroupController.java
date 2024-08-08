@@ -53,7 +53,7 @@ public class GroupController {
     }
 
     @GetMapping("/membergroups/{memberId}")
-    public ResponseEntity<List<GetGroupResponse>> getGroupsByMemberId(@PathVariable int memberId) throws Exception {
+    public ResponseEntity<List<GetGroupResponse>> getGroupsByMemberId(@PathVariable("memberId") int memberId) throws Exception {
         List<GetGroupResponse> groups = groupService.findGroupsByMemberId(memberId);
         if (groups.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

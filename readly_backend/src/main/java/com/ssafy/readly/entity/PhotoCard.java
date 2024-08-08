@@ -24,7 +24,7 @@ public class PhotoCard {
     @GeneratedValue(strategy = IDENTITY)
     private int id;
     private String text;
-    @Column(length = 1000)
+    @Column(length = 1000, name = "photocard_image")
     private String photoCardImage;
     @Enumerated(value = STRING)
     private Visibility visibility;

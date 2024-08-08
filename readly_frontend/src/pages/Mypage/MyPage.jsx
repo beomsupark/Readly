@@ -72,7 +72,7 @@ export default function MyPage() {
     return Array(count)
       .fill()
       .map((_, index) => (
-        <div key={`empty-${index}`} className="bg-gray-100 p-2 rounded w-[5rem] h-[5rem]"></div>
+        <div key={`empty-${index}`} className="bg-gray-100 p-2 rounded w-[5rem] h-[6rem]"></div>
       ));
   };
 
@@ -159,7 +159,7 @@ export default function MyPage() {
 
             <div className="relative bg-white rounded-lg shadow p-4">
               <h3 className="font-bold mb-2">내가 남긴 한줄평</h3>
-              <div className="flex gap-3 w-[28rem]">
+              <div className="flex gap-3 w-[7rem] h-[6rem]">
                 {myReviews.length > 0 ? (
                   myReviews.map((review) => (
                     <Review

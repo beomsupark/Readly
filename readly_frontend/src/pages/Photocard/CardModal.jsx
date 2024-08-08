@@ -1,6 +1,6 @@
 import JSZip from "jszip";
-import saveIcon from "../../assets/iconimage/save.png"
-import checkIcon from "../../assets/iconimage/check.png"
+import saveIcon from "../../assets/iconimage/save.png";
+import checkIcon from "../../assets/iconimage/check.png";
 import "./shareIcon.css";
 
 const ShareIcon = ({ onClick, icon, alt }) => {
@@ -11,7 +11,13 @@ const ShareIcon = ({ onClick, icon, alt }) => {
   );
 };
 
-const CardModal = ({ isOpen, onClose, selectedCard, infoCard, combinedCard }) => {
+const CardModal = ({
+  isOpen,
+  onClose,
+  selectedCard,
+  infoCard,
+  combinedCard,
+}) => {
   if (!isOpen) return null;
 
   const handleOutsideClick = (e) => {
@@ -22,11 +28,12 @@ const CardModal = ({ isOpen, onClose, selectedCard, infoCard, combinedCard }) =>
 
   const handleSaveImages = async () => {
     try {
-      const [selectedCardBlob, infoCardBlob, combinedCardBlob] = await Promise.all([
-        fetch(selectedCard).then((r) => r.blob()),
-        fetch(infoCard).then((r) => r.blob()),
-        fetch(combinedCard).then((r) => r.blob()),
-      ]);
+      const [selectedCardBlob, infoCardBlob, combinedCardBlob] =
+        await Promise.all([
+          fetch(selectedCard).then((r) => r.blob()),
+          fetch(infoCard).then((r) => r.blob()),
+          fetch(combinedCard).then((r) => r.blob()),
+        ]);
 
       const zip = new JSZip();
       zip.file("selected_card.png", selectedCardBlob);
@@ -52,30 +59,25 @@ const CardModal = ({ isOpen, onClose, selectedCard, infoCard, combinedCard }) =>
 
   return (
     <div
-      className="fixed inset-0 bg-[#dddddd] bg-opacity-75 flex items-center justify-center z-50"
+      className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50"
       onClick={handleOutsideClick}
     >
-      <div className="bg-white p-6 rounded-lg shadow-xl max-w-4xl w-full">
+      <div className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg p-6 rounded-lg shadow-xl max-w-4xl w-full">
         <div className="flex justify-end mb-4">
           <button onClick={onClose} className="text-2xl">
             &times;
           </button>
         </div>
-        <div className="flex justify-between mb-6">
+        <div className="flex justify-center space-x-8 mb-6">
           <img
             src={selectedCard}
             alt="Selected Card"
-            className="w-[25%] h-[500px] object-contain rounded-lg"
+            className="w-[300px] h-[420px] object-cover rounded-lg"
           />
           <img
             src={infoCard}
             alt="Info Card"
-            className="w-[25%] h-[500px] object-contain rounded-lg"
-          />
-          <img
-            src={combinedCard}
-            alt="Combined Card"
-            className="w-[40%] h-[400px] object-contain rounded-lg"
+            className="w-[300px] h-[420px] object-cover rounded-lg"
           />
         </div>
         <div className="flex justify-center space-x-24">

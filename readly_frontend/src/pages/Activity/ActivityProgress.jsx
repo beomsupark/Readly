@@ -7,6 +7,7 @@ import GroupProgressBar from "../../components/ProgressBar/Group/GroupProgressBa
 import GroupCurrentPageModal from "../../components/ProgressBar/Group/GroupCurrentPageModal.jsx";
 import BookModal from "../../components/BookModal.jsx";
 import useBookStore from "../../store/bookStore";
+import { postReview } from "../../api/reviewAPI";
 
 const getLayoutClasses = (memberCount) => {
   if (memberCount <= 4) {
@@ -34,7 +35,7 @@ export default function ActivityProgress({ groupId }) {
   const [bookInfo, setBookInfo] = useState(null);
   const [readBooks, setReadBooks] = useState([]);
   const [reviewInput, setReviewInput] = useState("");
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [reviewModalIsOpen, setReviewModalIsOpen] = useState(false);
   const [error, setError] = useState(null);
   const [selectedMemberId, setSelectedMemberId] = useState(null);
   const [currentPageModalIsOpen, setCurrentPageModalIsOpen] = useState(false);
@@ -110,7 +111,6 @@ export default function ActivityProgress({ groupId }) {
       );
       console.log(`Updated page for member ${memberId} to ${newPage}`);
 
-      // 로컬 스토리지에 currentPage 값 저장
       const storedPages = JSON.parse(
         localStorage.getItem(`group_${groupId}_pages`) || "{}"
       );
@@ -120,7 +120,6 @@ export default function ActivityProgress({ groupId }) {
         JSON.stringify(storedPages)
       );
 
-      // 업데이트 후 그룹 데이터를 다시 가져옵니다
       fetchGroupData();
     } catch (error) {
       console.error("Error updating current page:", error);
@@ -131,12 +130,12 @@ export default function ActivityProgress({ groupId }) {
     setReviewInput(e.target.value);
   };
 
-  const openModal = () => {
-    setModalIsOpen(true);
+  const openReviewModal = () => {
+    setReviewModalIsOpen(true);
   };
 
-  const closeModal = () => {
-    setModalIsOpen(false);
+  const closeReviewModal = () => {
+    setReviewModalIsOpen(false);
   };
 
   const openCurrentPageModal = (memberId, event) => {
@@ -161,20 +160,29 @@ export default function ActivityProgress({ groupId }) {
     closeCurrentPageModal();
   };
 
-  const handleCreateReview = async () => {
-    if (reviewInput.trim()) {
-      try {
-        await axios.post(`http://localhost:8080/api/group/add-review`, {
-          groupId,
-          bookId: bookInfo.book_id,
-          review: reviewInput,
-        });
+  const handleCreateReview = async ({ bookId, reviewText, visibility }) => {
+    try {
+      console.log("Submitting review:", { bookId, reviewText, visibility });
+      const result = await postReview(
+        user.id,
+        bookId,
+        reviewText,
+        visibility === "A" // 'A'는 공개, 'E'는 비공개
+      );
 
+      console.log("Review submission result:", result);
+
+      if (result.status === "success") {
         setReviewInput("");
-        closeModal();
-      } catch (error) {
-        console.error("Error creating review:", error);
+        closeReviewModal();
+        fetchGroupData(); // 리뷰 생성 후 그룹 데이터를 다시 가져옵니다.
+      } else {
+        console.error("Failed to create review:", result.message);
+        alert(`리뷰 생성에 실패했습니다: ${result.message}`);
       }
+    } catch (error) {
+      console.error("Error creating review:", error);
+      alert("리뷰 생성 중 오류가 발생했습니다.");
     }
   };
 
@@ -318,7 +326,7 @@ export default function ActivityProgress({ groupId }) {
             value={reviewInput}
             onChange={handleReviewInputChange}
           />
-          <GoButton text="생성" onClick={openModal} />
+          <GoButton text="생성" onClick={openReviewModal} />
         </div>
       </div>
 
@@ -334,9 +342,15 @@ export default function ActivityProgress({ groupId }) {
       />
 
       <CreateReview
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        book={bookInfo}
+        isOpen={reviewModalIsOpen}
+        onRequestClose={closeReviewModal}
+        book={{
+          bookId: bookInfo.book_id,
+          title: bookInfo.book_title,
+          author: bookInfo.book_author,
+          cover: bookInfo.book_image,
+          totalPages: bookInfo.book_totalPage,
+        }}
         reviewText={reviewInput}
         onReviewSubmit={handleCreateReview}
       />

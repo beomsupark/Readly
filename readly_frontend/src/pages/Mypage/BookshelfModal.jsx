@@ -52,7 +52,7 @@ export default function BookshelfList({ isOpen, onRequestClose, books }) {
           books.map((book) => (
             <div key={book.id} className="flex items-center">
               <img
-                src={book.cover}
+                src={book.image}
                 alt={book.title}
                 className="w-[10rem] h-auto object-cover mb-2"
               />

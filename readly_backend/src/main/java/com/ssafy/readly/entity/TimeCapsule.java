@@ -3,6 +3,7 @@ package com.ssafy.readly.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class TimeCapsule {
     private LocalDate releaseDate;
     private LocalDate startDate;
     private LocalDate endDate;
+    @CreationTimestamp
     private LocalDate createdDate;
 
     @ManyToOne(fetch = LAZY)

@@ -13,6 +13,7 @@ export default function MypageBookshelf({ userId }) {
       try {
         setIsLoading(true);
         const fetchedBooks = await readBooks(userId);
+        console.log("Fetched books:", fetchedBooks); // 데이터 구조 확인을 위한 로그
         setBooks(fetchedBooks);
         setIsLoading(false);
       } catch (error) {
@@ -49,14 +50,14 @@ export default function MypageBookshelf({ userId }) {
             books.map((book) => (
               <div key={book.id} className="bg-gray-200 p-2 rounded">
                 <img
-                  src={book.cover}
+                  src={book.image}
                   alt={book.title}
-                  className="w-auto h-[7rem]"
+                  className="w-auto h-[6rem]"
                 />
               </div>
             ))
           ) : (
-            <div className="bg-gray-200 p-2 rounded w-[5rem] h-[7rem] flex items-center justify-center">
+            <div className="bg-gray-200 p-2 rounded w-[5rem] h-[5rem] flex items-center justify-center">
 
             </div>
           )}

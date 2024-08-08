@@ -45,7 +45,7 @@ const ActivityChat = ({ groupId }) => {
 
   const connect = () => {
     stompClient = new Client({
-      brokerURL: 'ws://localhost:8080/gs-guide-websocket',
+      brokerURL: 'wss://i11c207.p.ssafy.io//gs-guide-websocket',
     });
 
     stompClient.onConnect = (frame) => {
@@ -68,7 +68,7 @@ const ActivityChat = ({ groupId }) => {
   const fetchHistory = async (roomId) => {
     try {
       setIsHistoryLoading(true);
-      const response = await axios.get(`http://localhost:8080/api/history/${roomId}`);
+      const response = await axios.get(`https://i11c207.p.ssafy.io/api/history/${roomId}`);
       const fetchedMessages = Array.isArray(response.data) ? response.data : [];
       showHistory(fetchedMessages);
       setIsHistoryLoading(false);

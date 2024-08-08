@@ -43,6 +43,7 @@ public class ReviewQueryDSLRepositoryImpl implements ReviewQueryDSLRepository {
         List<ReviewResponse> list = query.select(Projections.constructor(ReviewResponse.class,
                         review.id,
                         book.image,
+                        member.loginId,
                         book.title,
                         book.author,
                         review.createdDate,
@@ -57,6 +58,7 @@ public class ReviewQueryDSLRepositoryImpl implements ReviewQueryDSLRepository {
                 ).from(like)
                 .join(like.timeCapsuleItem, timeCapsuleItem)
                 .rightJoin(timeCapsuleItem.review, review)
+                .join(review.member, member)
                 .join(review.book, book).groupBy(review.id,review.member.id)
                 .orderBy(orderSpecifiers)
                 .offset(reviewRequest.getPageNumber())

@@ -4,10 +4,7 @@ import axios from 'axios';
 import useUserStore from "../../store/userStore";
 
 const dummyPhotoCards = [
-  { id: 1, imageUrl: "https://example.com/image1.jpg", text: "내가 만든 포토카드" },
-  { id: 2, imageUrl: "https://example.com/image2.jpg", text: "내가 남긴 한줄평" },
-  { id: 3, imageUrl: "https://example.com/image3.jpg", text: "추억의 포토카드" },
-  { id: 4, imageUrl: "https://example.com/image4.jpg", text: "오늘의 한줄평" },
+  // Dummy photo cards
 ];
 
 const API_BASE_URL = 'https://i11c207.p.ssafy.io/api';
@@ -23,9 +20,10 @@ const ActivityRTC = () => {
   const [sessionId, setSessionId] = useState(null);
   const [isRoomCreated, setIsRoomCreated] = useState(false);
   const { user, token } = useUserStore();
+  const [isMicOn, setIsMicOn] = useState(true); // Default to true
+  const [isVideoOn, setIsVideoOn] = useState(true); // Default to true
+  const [subMicStatus, setSubMicStatus] = useState({});
 
-  
-    
   const OV = useRef(null);
 
   useEffect(() => {
@@ -37,23 +35,63 @@ const ActivityRTC = () => {
     }
   }, [isVideoConferenceActive]);
 
-  const checkSessionExists = async()=> {
+  useEffect(() => {
+    if (!session) return;
+  
+    const handleSignal = (event) => {
+      const { data, type } = event;
+      const { type: signalType, state } = JSON.parse(data);
+      const connectionId = event.from.connectionId;
+  
+      if (type === 'micStatus' || type === 'videoStatus') {
+        // Find the subscriber using the connection ID
+        const subscriber = session.remoteConnections.find(connection => connection.connectionId === connectionId);
+  
+        if (signalType === 'mic') {
+          setSubMicStatus(prevStatus => ({
+            ...prevStatus,
+            [connectionId]: state
+          }));
+          
+          if (subscriber) {
+            const mediaStream = subscriber.stream.getMediaStream();
+            mediaStream.getAudioTracks().forEach(track => track.enabled = state);
+          }
+        } else if (signalType === 'video') {
+          
+          if (subscriber) {
+            const mediaStream = subscriber.stream.getMediaStream();
+            mediaStream.getVideoTracks().forEach(track => track.enabled = state);
+          }
+        }
+      }
+    };
+  
+    session.on('signal:micStatus', handleSignal);
+    session.on('signal:videoStatus', handleSignal);
+  
+    return () => {
+      session.off('signal:micStatus', handleSignal);
+      session.off('signal:videoStatus', handleSignal);
+    };
+  }, [session]);
+  
+  const checkSessionExists = async() => {
     try {
       const response = await axios.get(`${API_BASE_URL}/rtc/sessions/check`, {
-          params: { sessionId: '1' }
+        params: { sessionId: '1' }
       });
-      console.log(response.data);
       return response.data;
-  } catch (error) {
+    } catch (error) {
       console.error('Error checking session existence:', error);
-      this.setState({ loading: false });
-  }
-  }
+    }
+  };
+
   const initializeSession = async () => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/rtc/sessions`,{customSessionId:'1'});
+      const response = await axios.post(`${API_BASE_URL}/rtc/sessions`, { customSessionId: '1' });
       setIsRoomCreated(true);
-      return response.data; // 반환된 sessionId를 받음
+      return response.data;
     } catch (error) {
       console.error('세션 초기화 오류:', error);
     }
@@ -61,10 +99,9 @@ const ActivityRTC = () => {
 
   const getToken = async () => {
     try {
-      var sessionId = sessionId;
-      sessionId = await initializeSession();
-      const response = await axios.post(`${API_BASE_URL}/rtc/sessions/${sessionId}/connections`,{});
-      return response.data; // 반환된 토큰을 받음
+      const sessionId = await initializeSession();
+      const response = await axios.post(`${API_BASE_URL}/rtc/sessions/${sessionId}/connections`);
+      return response.data;
     } catch (error) {
       console.error('토큰 가져오기 오류:', error);
     }
@@ -79,27 +116,25 @@ const ActivityRTC = () => {
       setSubscribers(prevSubscribers => [...prevSubscribers, subscriber]);
     });
 
-
     mySession.on('streamDestroyed', event => {
       setSubscribers(prevSubscribers =>
         prevSubscribers.filter(sub => sub !== event.stream.streamManager)
       );
     });
 
-    // 예외 발생시 처리
     mySession.on('exception', (exception) => {
       console.warn(exception);
     });
 
     try {
       const token = await getToken();
-      await mySession.connect(token,{clientData : user.nickname});
+      await mySession.connect(token, { clientData: user.nickname });
 
       const newPublisher = await OV.current.initPublisherAsync(undefined, {
         audioSource: undefined,
         videoSource: undefined,
-        publishAudio: true,
-        publishVideo: true,
+        publishAudio: isMicOn,
+        publishVideo: isVideoOn,
         resolution: '640x480',
         frameRate: 30,
         insertMode: 'APPEND',
@@ -108,16 +143,9 @@ const ActivityRTC = () => {
 
       mySession.publish(newPublisher);
 
-      // var devices = await this.OV.getDevices();
-      // var videoDevices = devices.filter(device => device.kind === 'videoinput');
-      // var currentVideoDeviceId = publisher.stream.getMediaStream().getVideoTracks()[0].getSettings().deviceId;
-      // var currentVideoDevice = videoDevices.find(device => device.deviceId === currentVideoDeviceId);
-      
       setSession(mySession);
       setPublisher(newPublisher);
       setSessionId(sessionId);
-
-
     } catch (error) {
       console.error('세션 연결 오류:', error);
     }
@@ -135,15 +163,11 @@ const ActivityRTC = () => {
   };
 
   const toggleVideoConference = () => {
-    if (isVideoConferenceActive) {
-      setIsVideoConferenceActive(false);
-    } else {
-      setIsVideoConferenceActive(true);
-    }
+    setIsVideoConferenceActive(prev => !prev);
   };
 
   const toggleChat = () => {
-    setIsChatOpen(!isChatOpen);
+    setIsChatOpen(prev => !prev);
   };
 
   const openShareModal = () => {
@@ -158,6 +182,42 @@ const ActivityRTC = () => {
     setSharedItems(selectedItems);
     closeShareModal();
   };
+
+  const toggleMic = () => {
+    setIsMicOn(prevState => {
+      const newMicState = !prevState;
+      if (publisher) {
+        const mediaStream = publisher.stream.getMediaStream();
+        mediaStream.getAudioTracks().forEach(track => track.enabled = newMicState);
+  
+        session.signal({
+          data: JSON.stringify({ type: 'mic', state: newMicState }),
+          to: [], // Broadcast to all participants
+          type: 'micStatus'
+        }).catch(error => console.error('Error sending signal:', error));
+      }
+      return newMicState;
+    });
+  };
+
+  const toggleVideo = () => {
+    setIsVideoOn(prevState => {
+      const newVideoState = !prevState;
+      if (publisher) {
+        const mediaStream = publisher.stream.getMediaStream();
+        mediaStream.getVideoTracks().forEach(track => track.enabled = newVideoState);
+  
+        session.signal({
+          data: JSON.stringify({ type: 'video', state: newVideoState }),
+          to: [], // Broadcast to all participants
+          type: 'videoStatus'
+        }).catch(error => console.error('Error sending signal:', error));
+      }
+      return newVideoState;
+    });
+  };
+
+
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 p-4 pb-16 relative z-10">
@@ -197,14 +257,16 @@ const ActivityRTC = () => {
               ))}
               {publisher && (
                 <div className="bg-white rounded-lg shadow-md overflow-hidden relative">
-                  <video autoPlay={true} ref={(video) => video && publisher.addVideoElement(video)}/>
+                  <video autoPlay={true} ref={(video) => video && publisher.addVideoElement(video)} />
                   <p className="absolute bottom-1 left-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">{JSON.parse(publisher.stream.connection.data).clientData}</p>
+                  <p className="absolute bottom-1 right-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs"> {isMicOn ? 'Mic On' : 'Mic Off'}</p>
                 </div>
               )}
               {subscribers.map((sub, index) => (
                 <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden relative">
-                   <video autoPlay={true} ref={(video) => video && sub.addVideoElement(video)} />
+                  <video autoPlay={true} ref={(video) => video && sub.addVideoElement(video)} />
                   <p className="absolute bottom-1 left-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">{JSON.parse(sub.stream.connection.data).clientData}</p>
+                  <p className="absolute bottom-1 right-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs"> {subMicStatus[sub.stream.connection.connectionId] ? 'Mic On' : 'Mic Off'}</p>
                 </div>
               ))}
             </div>
@@ -238,6 +300,18 @@ const ActivityRTC = () => {
               className="bg-purple-500 text-white px-3 py-1 rounded-full shadow-lg text-sm"
             >
               채팅
+            </button>
+            <button 
+              onClick={toggleMic}
+              className="bg-blue-500 text-white px-3 py-1 rounded-full shadow-lg text-sm"
+            >
+              {isMicOn ? '마이크 off' : '마이크 on'}
+            </button>
+            <button 
+              onClick={toggleVideo}
+              className="bg-blue-500 text-white px-3 py-1 rounded-full shadow-lg text-sm"
+            >
+              {isVideoOn ? '카메라 off' : '카메라 on'}
             </button>
           </>
         )}

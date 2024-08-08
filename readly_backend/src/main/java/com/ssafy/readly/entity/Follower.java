@@ -27,12 +27,29 @@ public class Follower {
     private Member followed;
 
     /* 연관 관계 편의 메소드 */
-    public void setMember(Member member){
+    public void setFollowing(Member following) {
         if (this.following != null) {
             this.following.getFollowers().remove(this);
         }
+        this.following = following;
+        if (following != null) {
+            following.getFollowers().add(this);
+        }
+    }
 
-        this.following = member;
-        member.getFollowers().add(this);
+    public void setFollowed(Member followed) {
+        if (this.followed != null) {
+            this.followed.getFollowers().remove(this);
+        }
+        this.followed = followed;
+        if (followed != null) {
+            followed.getFollowers().add(this);
+        }
+    }
+
+    // public 생성자 추가
+    public Follower(Member following, Member followed) {
+        setFollowing(following);
+        setFollowed(followed);
     }
 }

@@ -2,15 +2,18 @@ package com.ssafy.readly.dto.review;
 
 import com.ssafy.readly.entity.Review;
 import com.ssafy.readly.enums.Visibility;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@AllArgsConstructor
 public class ReviewResponse {
 
     private int reviewId;
     private String bookImage;
+    private String memberId;
     private String bookTitle;
     private String bookAuthor;
     private LocalDateTime createdDate;
@@ -18,7 +21,6 @@ public class ReviewResponse {
     private Visibility visibility;
     private long likeCount;
     private long likeCheck;
-
 
     public ReviewResponse(Review review) {
         this.reviewId = review.getId();
