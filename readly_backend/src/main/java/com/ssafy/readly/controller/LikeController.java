@@ -15,13 +15,13 @@ public class LikeController {
 
     @PostMapping("/like")
     public ResponseEntity<?> like(@RequestBody LikeRequest request) {
-        likeService.like(request);
-        return new ResponseEntity<>(HttpStatus.OK);
+        Long likeCount = likeService.like(request);
+        return new ResponseEntity<>(likeCount, HttpStatus.OK);
     }
 
     @DeleteMapping("/like")
     public ResponseEntity<?> unlike(@RequestBody LikeRequest request) {
-        likeService.cancelLike(request);
-        return new ResponseEntity<>(HttpStatus.OK);
+        Long likeCount = likeService.cancelLike(request);
+        return new ResponseEntity<>(likeCount, HttpStatus.OK);
     }
 }

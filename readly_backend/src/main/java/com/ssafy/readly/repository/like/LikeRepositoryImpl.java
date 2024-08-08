@@ -27,4 +27,14 @@ public class LikeRepositoryImpl implements LikeRepository{
                 .where(like.member.id.eq(memberId), like.timeCapsuleItem.id.eq(timeCapsuleItemId))
                 .execute();
     }
+
+    @Override
+    public Long CountByTimeCapsuleItemId(Long timeCapsuleItemId) {
+        return queryFactory
+                .select(like.id.count())
+                .from(like)
+                .where(like.timeCapsuleItem.id.eq(timeCapsuleItemId))
+                .fetchOne();
+
+    }
 }

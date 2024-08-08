@@ -29,7 +29,7 @@ public class TimeCapsuleItemRepositoryImpl implements TimeCapsuleItemRepository 
     public Optional<TimeCapsuleItem> findTimeCapsuleItemByReviewId(Integer reviewId) {
         return Optional.ofNullable(queryFactory
                 .selectFrom(timeCapsuleItem)
-                .where(timeCapsuleItem.review.id.eq(reviewId))
+                .where(timeCapsuleItem.review.id.eq(reviewId), timeCapsuleItem.timeCapsule.isNull())
                 .fetchOne());
     }
 
@@ -37,7 +37,7 @@ public class TimeCapsuleItemRepositoryImpl implements TimeCapsuleItemRepository 
     public Optional<TimeCapsuleItem> findTimeCapsuleItemByPhotoCardId(Integer photoCardId) {
         return Optional.ofNullable(queryFactory
                 .selectFrom(timeCapsuleItem)
-                .where(timeCapsuleItem.photoCard.id.eq(photoCardId))
+                .where(timeCapsuleItem.photoCard.id.eq(photoCardId), timeCapsuleItem.timeCapsule.isNull())
                 .fetchOne());
     }
 }
