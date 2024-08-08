@@ -1,5 +1,7 @@
 package com.ssafy.readly.service.proceeding;
 
+import com.ssafy.readly.dto.proceeding.ProceedingCreateRequestDTO;
+import com.ssafy.readly.dto.proceeding.ProceedingUpdateRequestDTO;
 import com.ssafy.readly.entity.Proceeding;
 
 import com.ssafy.readly.repository.proceeding.ProceedingRepository;
@@ -30,4 +32,20 @@ public class ProceedingServiceImpl implements ProceedingService {
     public Proceeding getProceedingById(int id) throws Exception {
         return  proceedingRepository.getProceedingById(id);
     }
+
+    @Override
+    public Proceeding createProceeding(ProceedingCreateRequestDTO requestDTO) throws Exception {
+        return  proceedingRepository.createProceeding(requestDTO);
+    }
+
+    @Override
+    public Proceeding updateProceeding(int proceedingId, ProceedingUpdateRequestDTO requestDTO) throws Exception {
+        return  proceedingRepository.updateProceeding(proceedingId,requestDTO);
+    }
+
+    @Override
+    public void deleteProceeding(int proceedingId) throws Exception {
+        proceedingRepository.deleteProceeding(proceedingId);
+    }
+
 }
