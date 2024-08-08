@@ -2,6 +2,7 @@ package com.ssafy.readly.controller;
 
 import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardResponse;
 import com.ssafy.readly.dto.review.ReviewResponse;
+import com.ssafy.readly.dto.timecapsule.TimeCapsuleAlarmResponse;
 import com.ssafy.readly.dto.timecapsule.TimeCapsuleRequest;
 import com.ssafy.readly.service.timecapsule.TimeCapsuleServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,6 @@ public class TimeCapsuleController {
     @PostMapping("/items/date")
     public ResponseEntity<Map<String, Object>> getItems(@RequestBody TimeCapsuleRequest timeCapsuleRequest) throws Exception {
         Map<String, Object> responseMap = new HashMap<>();
-        HttpStatus status = HttpStatus.ACCEPTED;
         List<ReviewResponse> reviews = timeCapsuleService.getReviewsByPeriod(timeCapsuleRequest);
         List<CreatePhotoCardResponse> photoCards = timeCapsuleService.getPhotoCardsByPeriod(timeCapsuleRequest);
 
@@ -34,25 +34,32 @@ public class TimeCapsuleController {
 
         responseMap.put("reviews", reviews);
         responseMap.put("photoCards", photoCards);
-        status = HttpStatus.OK;
-        return new ResponseEntity<Map<String, Object>>(responseMap, status);
+        return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
     }
 
     @PostMapping("/timecapsule")
-    public ResponseEntity<?> createTimeCapsule(@RequestBody TimeCapsuleRequest timeCapsuleRequest) throws Exception {
+    public ResponseEntity<Void> createTimeCapsule(@RequestBody TimeCapsuleRequest timeCapsuleRequest) throws Exception {
         timeCapsuleService.saveTimeCapsule(timeCapsuleRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/timecapsule/{memberid}/available-count")
+    public ResponseEntity<Long> getTimeCapsuleCount(@PathVariable("memberid") Integer memberId) throws Exception {
+        return new ResponseEntity<Long>(timeCapsuleService.getTimeCapsuleCount(memberId), HttpStatus.OK);
+    }
+
+    @GetMapping("/timecapsule/{memberid}/alarm")
+    public ResponseEntity<List<TimeCapsuleAlarmResponse>> getAlarm(@PathVariable("memberid") Integer memberId) throws Exception {
+        return new ResponseEntity<List<TimeCapsuleAlarmResponse>>(timeCapsuleService.getTimeCapsuleReleaseDate(memberId), HttpStatus.OK);
     }
 
     @GetMapping("/timecapsule/{timecapsuleid}")
     public ResponseEntity<Map<String, Object>> getTimeCapsuleItems(@PathVariable("timecapsuleid") int timeCapsuleId) throws Exception {
         Map<String, Object> responseMap = new HashMap<>();
-        HttpStatus status = HttpStatus.ACCEPTED;
         List<ReviewResponse> reviews = timeCapsuleService.getTimeCapsuleReviews(timeCapsuleId);
         List<CreatePhotoCardResponse> photoCards = timeCapsuleService.getTimeCapsulePhotoCards(timeCapsuleId);
         responseMap.put("reviews", reviews);
         responseMap.put("photoCards", photoCards);
-        status = HttpStatus.OK;
-        return new ResponseEntity<Map<String, Object>>(responseMap, status);
+        return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
     }
 }
