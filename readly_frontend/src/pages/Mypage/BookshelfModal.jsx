@@ -47,18 +47,18 @@ export default function BookshelfList({ isOpen, onRequestClose, books }) {
         X
       </button>
       <h2 className="text-2xl font-bold mb-4">읽은 책들이에요!</h2>
-      <div className="flex-col gap-4">
+      <div className="flex flex-col gap-4">
         {books &&
           books.map((book) => (
-            <div key={book.id} className="flex items-center">
+            <div key={book.id} className="flex items-center gap-4 mb-4">
               <img
                 src={book.image}
                 alt={book.title}
-                className="w-[10rem] h-auto object-cover mb-2"
+                className="w-[10rem] h-[15rem] object-cover"
               />
               <div>
                 <p className="text-center">{book.title}</p>
-                <p className="text-center">{book.description}</p>
+                <p className="text-center">{book.detail}</p>
               </div>
             </div>
           ))}

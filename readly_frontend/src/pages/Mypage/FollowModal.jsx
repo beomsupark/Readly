@@ -64,7 +64,7 @@ export default function FollowList({ isOpen, onRequestClose, follows }) {
           follows.map((user) => (
             <div
               key={user.followedId}
-              className="bg-gray-200 w-[7rem] h-[9rem] p-2 rounded-xl flex-cols items-center bg-[#F5F5F5]"
+              className="bg-gray-200 w-[9rem] h-[10rem] p-2 rounded-xl flex-cols items-center bg-[#FFFFFF]"
             >
               <img
                 src={levelIcons[user.level]}

@@ -138,8 +138,15 @@ export default function MyPage() {
               <div className="flex flex-wrap gap-1">
                 {myPhotocards.length > 0 ? (
                   myPhotocards.map((card) => (
-                    <div key={card.photocardId} className="bg-gray-200 p-2 rounded">
-                      <img src={card.photocardImage} alt={card.bookTitle} className="w-[5rem] h-[5rem] object-cover" />
+                    <div
+                      key={card.photocardId}
+                      className="bg-gray-200 p-2 rounded w-[5rem] h-[6rem] flex items-center justify-center"
+                    >
+                      <img
+                        src={card.photocardImage}
+                        alt={card.bookTitle}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   ))
                 ) : (
@@ -159,17 +166,18 @@ export default function MyPage() {
 
             <div className="relative bg-white rounded-lg shadow p-4">
               <h3 className="font-bold mb-2">내가 남긴 한줄평</h3>
-              <div className="flex gap-3 w-[7rem] h-[6rem]">
+              <div className="flex flex-wrap gap-3">
                 {myReviews.length > 0 ? (
                   myReviews.map((review) => (
-                    <Review
-                      key={review.reviewId}
-                      bookImage={review.bookImage} // Ensure this field exists
-                      title={review.bookTitle}
-                      author={review.bookAuthor}
-                      review={review.reviewText}
-                      likeCount={review.likeCount} // Ensure this field exists
-                    />
+                    <div key={review.reviewId} className="w-[7rem] h-[6rem]">
+                      <Review
+                        bookImage={review.bookImage} // Ensure this field exists
+                        title={review.bookTitle}
+                        author={review.bookAuthor}
+                        review={review.reviewText}
+                        likeCount={review.likeCount} // Ensure this field exists
+                      />
+                    </div>
                   ))
                 ) : (
                   renderEmptyItems(1)

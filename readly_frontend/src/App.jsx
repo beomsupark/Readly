@@ -17,14 +17,16 @@ import Community from "./pages/Community/Community.jsx";
 import MakeCommunity from "./pages/Community/MakeCommunity.jsx";
 import Activity from "./pages/Activity/Activity.jsx";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Member from "./pages/Member/Member.jsx"
 
 function App() {
   const location = useLocation();
   const isFullScreenPage = ["/login", "/"].includes(location.pathname);
   const notSearchPage =
-    ["/login", "/", "/mypage", "/update"].includes(location.pathname) ||
-    /^\/activity(\/.*)?$/.test(location.pathname);
-  const showCloud = !["/login", "/"].includes(location.pathname);
+    ["/login", "/", "/mypage", "/update", "/member/:memberId"].includes(location.pathname) ||
+    /^\/activity(\/.*)?$/.test(location.pathname) ||
+    /^\/member(\/.*)?$/.test(location.pathname);
+  const showCloud = !["/login", "/", "/sharedboard"].includes(location.pathname);
 
   useEffect(() => {
     const scrollablePages = [
@@ -81,6 +83,7 @@ function App() {
               <Route path="/makecommunity" element={<MakeCommunity />} />
               <Route path="/activity" element={<Activity />} />
               <Route path="/activity/:groupId" element={<Activity />} />
+              <Route path="/member/:memberId" element={<Member />} />
               {/* 다른 라우트들... */}
             </Route>
           </Routes>

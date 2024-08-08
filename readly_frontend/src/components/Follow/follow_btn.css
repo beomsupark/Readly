@@ -1,5 +1,13 @@
-/* Hide the default checkbox */
-.container input {
+.follow-btn-container {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.follow-btn-container input {
   position: absolute;
   opacity: 0;
   cursor: pointer;
@@ -7,34 +15,28 @@
   width: 0;
 }
 
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  cursor: pointer;
-  user-select: none;
+.follow-btn-container .like {
+  fill: none;
+  stroke: gray; /* Change stroke color to gray */
+  width: 40px; /* Adjust width */
+  height: 40px; /* Adjust height */
 }
 
-.container input:checked ~ .like {
+.follow-btn-container input:checked ~ .like {
   animation: kfs-fill-like .5s forwards;
 }
 
-.container .like {
-  fill: none;
-  stroke: white;
-}
-
-.container input:checked ~ .celebrate {
+.follow-btn-container input:checked ~ .celebrate {
   display: block;
 }
 
-.container .celebrate {
+.follow-btn-container .celebrate {
   position: absolute;
-  animation: kfs-celebrate 1s;
-  animation-fill-mode: forwards;
+  animation: kfs-celebrate 1s forwards;
   display: none;
-  stroke: white;
+  stroke: gray; /* Change stroke color to gray */
+  width: 40px; /* Adjust width */
+  height: 40px; /* Adjust height */
 }
 
 @keyframes kfs-celebrate {
@@ -55,15 +57,14 @@
 }
 
 @keyframes kfs-fill-like {
-
   50% {
-    fill: white;
-    stroke: white;
+    fill: gray; /* Change fill color to gray */
+    stroke: gray; /* Change stroke color to gray */
     transform: scale(1.2);
   }
 
   100% {
-    fill: white;
-    stroke: white;
+    fill: gray; /* Change fill color to gray */
+    stroke: gray; /* Change stroke color to gray */
   }
 }
