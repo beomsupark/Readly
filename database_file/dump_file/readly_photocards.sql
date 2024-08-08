@@ -16,77 +16,37 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `photocards`
+--
+
+DROP TABLE IF EXISTS `photocards`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `photocards` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `text` varchar(255) DEFAULT NULL,
+  `visibility` enum('A','E') DEFAULT NULL,
+  `member_id` int NOT NULL,
+  `book_id` int NOT NULL,
+  `photocard_image` varchar(1000) DEFAULT NULL,
+  `created_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `FK_members_TO_photocards_1` (`member_id`),
+  KEY `FK_books_TO_photocards_1` (`book_id`),
+  CONSTRAINT `FK_books_TO_photocards_1` FOREIGN KEY (`book_id`) REFERENCES `books` (`id`),
+  CONSTRAINT `FK_members_TO_photocards_1` FOREIGN KEY (`member_id`) REFERENCES `members` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `photocards`
 --
 
 LOCK TABLES `photocards` WRITE;
 /*!40000 ALTER TABLE `photocards` DISABLE KEYS */;
-INSERT INTO `photocards` VALUES 
-(1, 'Photocard for book 1', 'A', 1, 1, 'https://image.aladin.co.kr/product/34361/47/coversum/k462932903_1.jpg', '2024-08-01'),
-(2, 'Photocard for book 2', 'A', 2, 2, 'https://image.aladin.co.kr/product/34292/25/coversum/k692932177_1.jpg', '2024-08-01'),
-(3, 'Photocard for book 3', 'E', 3, 3, 'https://image.aladin.co.kr/product/34233/47/coversum/k212931234_2.jpg', '2024-08-01'),
-(4, 'Photocard for book 4', 'A', 4, 4, 'https://image.aladin.co.kr/product/33010/94/coversum/8917239501_1.jpg', '2024-08-01'),
-(5, 'Photocard for book 5', 'E', 5, 5, 'https://image.aladin.co.kr/product/34366/35/coversum/k952932003_1.jpg', '2024-08-01'),
-(6, 'Photocard for book 6', 'A', 6, 6, 'https://image.aladin.co.kr/product/34053/16/coversum/893004168x_2.jpg', '2024-08-01'),
-(7, 'Photocard for book 7', 'A', 7, 7, 'https://image.aladin.co.kr/product/34121/16/coversum/s812931190_1.jpg', '2024-08-01'),
-(8, 'Photocard for book 8', 'E', 8, 8, 'https://image.aladin.co.kr/product/33010/92/coversum/8917239498_1.jpg', '2024-08-01'),
-(9, 'Photocard for book 9', 'A', 9, 9, 'https://image.aladin.co.kr/product/34291/69/coversum/k482932175_1.jpg', '2024-08-01'),
-(10, 'Photocard for book 10', 'A', 10, 10, 'https://image.aladin.co.kr/product/33258/31/coversum/8988474910_1.jpg', '2024-08-01'),
-(11, 'Photocard for book 11', 'E', 11, 11, 'https://image.aladin.co.kr/product/33648/90/coversum/k172939414_1.jpg', '2024-08-01'),
-(12, 'Photocard for book 12', 'A', 12, 12, 'https://image.aladin.co.kr/product/33799/80/coversum/k052930572_1.jpg', '2024-08-01'),
-(13, 'Photocard for book 13', 'A', 5, 13, 'https://image.aladin.co.kr/product/33000/47/coversum/k162932003_1.jpg', '2024-08-02'),
-(14, 'Photocard for book 14', 'E', 3, 14, 'https://image.aladin.co.kr/product/33100/25/coversum/k262932177_1.jpg', '2024-08-02'),
-(15, 'Photocard for book 15', 'A', 7, 15, 'https://image.aladin.co.kr/product/33200/47/coversum/k362931234_2.jpg', '2024-08-02'),
-(16, 'Photocard for book 16', 'E', 2, 16, 'https://image.aladin.co.kr/product/33300/94/coversum/8917239601_1.jpg', '2024-08-02'),
-(17, 'Photocard for book 17', 'A', 9, 17, 'https://image.aladin.co.kr/product/33400/35/coversum/k462932003_1.jpg', '2024-08-02'),
-(18, 'Photocard for book 18', 'A', 4, 18, 'https://image.aladin.co.kr/product/33500/16/coversum/893004178x_2.jpg', '2024-08-02'),
-(19, 'Photocard for book 19', 'E', 11, 19, 'https://image.aladin.co.kr/product/33600/47/coversum/k562932003_1.jpg', '2024-08-02'),
-(20, 'Photocard for book 20', 'A', 1, 20, 'https://image.aladin.co.kr/product/33700/25/coversum/k662932177_1.jpg', '2024-08-02'),
-(21, 'Photocard for book 21', 'A', 8, 21, 'https://image.aladin.co.kr/product/33800/47/coversum/k762931234_2.jpg', '2024-08-02'),
-(22, 'Photocard for book 22', 'E', 10, 22, 'https://image.aladin.co.kr/product/33900/94/coversum/8917239701_1.jpg', '2024-08-02'),
-(23, 'Photocard for book 23', 'A', 12, 23, 'https://image.aladin.co.kr/product/34000/35/coversum/k862932003_1.jpg', '2024-08-02'),
-(24, 'Photocard for book 24', 'A', 6, 24, 'https://image.aladin.co.kr/product/34100/16/coversum/893004188x_2.jpg', '2024-08-02'),
-(25, 'Photocard for book 25', 'E', 5, 25, 'https://image.aladin.co.kr/product/34200/47/coversum/k962932003_1.jpg', '2024-08-02'),
-(26, 'Photocard for book 26', 'A', 3, 26, 'https://image.aladin.co.kr/product/34300/25/coversum/l062932177_1.jpg', '2024-08-02'),
-(27, 'Photocard for book 27', 'A', 2, 27, 'https://image.aladin.co.kr/product/34400/47/coversum/l162931234_2.jpg', '2024-08-02'),
-(28, 'Photocard for book 28', 'E', 1, 28, 'https://image.aladin.co.kr/product/34500/94/coversum/8917239801_1.jpg', '2024-08-02'),
-(29, 'Photocard for book 29', 'A', 7, 29, 'https://image.aladin.co.kr/product/34600/35/coversum/l262932003_1.jpg', '2024-08-02'),
-(30, 'Photocard for book 30', 'A', 4, 30, 'https://image.aladin.co.kr/product/34700/16/coversum/893004198x_2.jpg', '2024-08-02'),
-(31, 'Photocard for book 31', 'E', 11, 31, 'https://image.aladin.co.kr/product/34800/47/coversum/l362932003_1.jpg', '2024-08-02'),
-(32, 'Photocard for book 32', 'A', 9, 32, 'https://image.aladin.co.kr/product/34900/25/coversum/l462932177_1.jpg', '2024-08-02'),
-(33, 'Photocard for book 33', 'A', 8, 33, 'https://image.aladin.co.kr/product/35000/47/coversum/l562931234_2.jpg', '2024-08-02'),
-(34, 'Photocard for book 34', 'E', 10, 34, 'https://image.aladin.co.kr/product/35100/94/coversum/8917239901_1.jpg', '2024-08-02'),
-(35, 'Photocard for book 35', 'A', 6, 35, 'https://image.aladin.co.kr/product/35200/35/coversum/l662932003_1.jpg', '2024-08-02'),
-(36, 'Photocard for book 36', 'A', 5, 36, 'https://image.aladin.co.kr/product/35300/16/coversum/893004208x_2.jpg', '2024-08-02'),
-(37, 'Photocard for book 37', 'E', 3, 37, 'https://image.aladin.co.kr/product/35400/47/coversum/l762932003_1.jpg', '2024-08-02'),
-(38, 'Photocard for book 38', 'A', 12, 38, 'https://image.aladin.co.kr/product/35500/25/coversum/l862932177_1.jpg', '2024-08-02'),
-(39, 'Photocard for book 39', 'A', 2, 39, 'https://image.aladin.co.kr/product/35600/47/coversum/l962931234_2.jpg', '2024-08-02'),
-(40, 'Photocard for book 40', 'E', 4, 40, 'https://image.aladin.co.kr/product/35700/94/coversum/8917240001_1.jpg', '2024-08-02'),
-(41, 'Photocard for book 41', 'A', 1, 41, 'https://image.aladin.co.kr/product/35800/35/coversum/m062932003_1.jpg', '2024-08-02'),
-(42, 'Photocard for book 42', 'A', 7, 42, 'https://image.aladin.co.kr/product/35900/16/coversum/893004218x_2.jpg', '2024-08-02'),
-(43, 'Photocard for book 43', 'E', 9, 43, 'https://image.aladin.co.kr/product/36000/47/coversum/m162932003_1.jpg', '2024-08-02'),
-(44, 'Photocard for book 44', 'A', 10, 44, 'https://image.aladin.co.kr/product/36100/25/coversum/m262932177_1.jpg', '2024-08-02'),
-(45, 'Photocard for book 45', 'A', 6, 45, 'https://image.aladin.co.kr/product/36200/47/coversum/m362931234_2.jpg', '2024-08-02'),
-(46, 'Photocard for book 46', 'E', 11, 46, 'https://image.aladin.co.kr/product/36300/94/coversum/8917240101_1.jpg', '2024-08-02'),
-(47, 'Photocard for book 47', 'A', 12, 47, 'https://image.aladin.co.kr/product/36400/35/coversum/m462932003_1.jpg', '2024-08-02'),
-(48, 'Photocard for book 48', 'A', 8, 48, 'https://image.aladin.co.kr/product/36500/16/coversum/893004228x_2.jpg', '2024-08-02'),
-(49, 'Photocard for book 49', 'E', 2, 49, 'https://image.aladin.co.kr/product/36600/47/coversum/m562932003_1.jpg', '2024-08-02'),
-(50, 'Photocard for book 50', 'A', 5, 50, 'https://image.aladin.co.kr/product/36700/25/coversum/m662932177_1.jpg', '2024-08-02'),
-(51, 'Photocard for book 51', 'A', 4, 51, 'https://image.aladin.co.kr/product/36800/47/coversum/m762931234_2.jpg', '2024-08-02'),
-(52, 'Photocard for book 52', 'E', 3, 52, 'https://image.aladin.co.kr/product/36900/94/coversum/8917240201_1.jpg', '2024-08-02'),
-(53, 'Photocard for book 53', 'A', 9, 53, 'https://image.aladin.co.kr/product/37000/35/coversum/m862932003_1.jpg', '2024-08-02'),
-(54, 'Photocard for book 54', 'A', 7, 54, 'https://image.aladin.co.kr/product/37100/16/coversum/893004238x_2.jpg', '2024-08-02'),
-(55, 'Photocard for book 55', 'E', 1, 55, 'https://image.aladin.co.kr/product/37200/47/coversum/m962932003_1.jpg', '2024-08-02'),
-(56, 'Photocard for book 56', 'A', 11, 56, 'https://image.aladin.co.kr/product/37300/25/coversum/n062932177_1.jpg', '2024-08-02'),
-(57, 'Photocard for book 57', 'A', 6, 57, 'https://image.aladin.co.kr/product/37400/47/coversum/n162931234_2.jpg', '2024-08-02'),
-(58, 'Photocard for book 58', 'E', 12, 58, 'https://image.aladin.co.kr/product/37500/94/coversum/8917240301_1.jpg', '2024-08-02'),
-(59, 'Photocard for book 59', 'A', 10, 59, 'https://image.aladin.co.kr/product/37600/35/coversum/n262932003_1.jpg', '2024-08-02'),
-(60, 'Photocard for book 60', 'A', 8, 60, 'https://image.aladin.co.kr/product/37700/16/coversum/893004248x_2.jpg', '2024-08-02'),
-(61, 'Photocard for book 61', 'E', 2, 61, 'https://image.aladin.co.kr/product/37800/47/coversum/n362932003_1.jpg', '2024-08-02'),
-(62, 'Photocard for book 62', 'A', 5, 62, 'https://image.aladin.co.kr/product/37900/25/coversum/n462932177_1.jpg', '2024-08-02');
+INSERT INTO `photocards` VALUES (1,'Photocard for book 1','A',1,1,'https://image.aladin.co.kr/product/34361/47/coversum/k462932903_1.jpg','2024-08-01 00:00:00'),(2,'Photocard for book 2','A',2,2,'https://image.aladin.co.kr/product/34292/25/coversum/k692932177_1.jpg','2024-08-01 00:00:00'),(3,'Photocard for book 3','E',3,3,'https://image.aladin.co.kr/product/34233/47/coversum/k212931234_2.jpg','2024-08-01 00:00:00'),(4,'Photocard for book 4','A',4,4,'https://image.aladin.co.kr/product/33010/94/coversum/8917239501_1.jpg','2024-08-01 00:00:00'),(5,'Photocard for book 5','E',5,5,'https://image.aladin.co.kr/product/34366/35/coversum/k952932003_1.jpg','2024-08-01 00:00:00'),(6,'Photocard for book 6','A',6,6,'https://image.aladin.co.kr/product/34053/16/coversum/893004168x_2.jpg','2024-08-01 00:00:00'),(7,'Photocard for book 7','A',7,7,'https://image.aladin.co.kr/product/34121/16/coversum/s812931190_1.jpg','2024-08-01 00:00:00'),(8,'Photocard for book 8','E',8,8,'https://image.aladin.co.kr/product/33010/92/coversum/8917239498_1.jpg','2024-08-01 00:00:00'),(9,'Photocard for book 9','A',9,9,'https://image.aladin.co.kr/product/34291/69/coversum/k482932175_1.jpg','2024-08-01 00:00:00'),(10,'Photocard for book 10','A',10,10,'https://image.aladin.co.kr/product/33258/31/coversum/8988474910_1.jpg','2024-08-01 00:00:00'),(11,'Photocard for book 11','E',11,11,'https://image.aladin.co.kr/product/33648/90/coversum/k172939414_1.jpg','2024-08-01 00:00:00'),(12,'Photocard for book 12','A',12,12,'https://image.aladin.co.kr/product/33799/80/coversum/k052930572_1.jpg','2024-08-01 00:00:00'),(13,'Photocard for book 1','A',1,1,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/201429657-%EC%83%9D%EC%84%B1ai%EB%A1%9C-%EB%A7%8C%EB%93%A4%EC%96%B4%EB%82%B8-%EC%8B%A0%EB%B9%84%EB%A1%9C%EC%9A%B4-%EB%8F%99%ED%99%94%EA%B0%99%EC%9D%80-%EB%B6%84%EC%9C%84%EA%B8%B0%EC%9D%98-%EB%82%98%EB%AC%B4%EC%99%80-%EB%8B%AC.jpg','2024-07-31 15:00:00'),(14,'Photocard for book 2','A',2,2,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/201581567-%EB%8F%99%ED%99%94%EA%B0%99%EC%9D%80-%EC%9E%90%EC%97%B0-%EB%85%B9%EC%83%89-%ED%99%98%EA%B2%BD-%EB%B0%B0%EA%B2%BD-%EC%9D%BC%EB%9F%AC%EC%8A%A4%ED%8A%B8-%EC%83%9D%EC%84%B1-ai.jpg','2024-07-31 15:00:00'),(15,'Photocard for book 3','E',3,3,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/2aee4e0b-57ef-4ca7-89b3-3fe87a70bf27.png','2024-07-31 15:00:00'),(16,'Photocard for book 4','A',4,4,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/31e8c877-bd65-4819-bfaa-b7d0f33ec5ca.png','2024-07-31 15:00:00'),(17,'Photocard for book 5','E',5,5,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/5c17c676-6865-4f9b-9253-d908134fe0de.png','2024-07-31 15:00:00'),(18,'Photocard for book 6','A',6,6,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/736a752a-9e03-412c-ad79-0fae1fe66cd2.png','2024-07-31 15:00:00'),(19,'Photocard for book 7','A',7,7,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/ai-generated-8650258_1280.png','2024-07-31 15:00:00'),(20,'Photocard for book 8','E',8,8,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/b5132d4d-9fc1-411f-b8b3-462ffe12d7d1.png','2024-07-31 15:00:00'),(21,'Photocard for book 9','A',9,9,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/f8ec975d-6570-49ad-9d22-eba3143deeed.png','2024-07-31 15:00:00'),(22,'Photocard for book 10','A',10,10,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/fairytale-castle-hilltop-generative-ai_918839-2978.jpg','2024-07-31 15:00:00'),(23,'Photocard for book 11','E',11,11,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/ff3ee37b-3bf1-4695-846a-daa8bfbab9c5.png','2024-07-31 15:00:00'),(24,'Photocard for book 12','A',12,12,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(1).jpg','2024-07-31 15:00:00'),(25,'Photocard for book 13','A',5,13,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(2).jpg','2024-08-01 15:00:00'),(26,'Photocard for book 14','E',3,14,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(3).jpg','2024-08-01 15:00:00'),(27,'Photocard for book 15','A',7,15,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(4).jpg','2024-08-01 15:00:00'),(28,'Photocard for book 16','E',2,16,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(5).jpg','2024-08-01 15:00:00'),(29,'Photocard for book 17','A',9,17,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(6).jpg','2024-08-01 15:00:00'),(30,'Photocard for book 18','A',4,18,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(7).jpg','2024-08-01 15:00:00'),(31,'Photocard for book 19','E',11,19,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(8).jpg','2024-08-01 15:00:00'),(32,'Photocard for book 20','A',1,20,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/jbuJO1706360331.jpg','2024-08-01 15:00:00'),(33,'Photocard for book 21','A',8,21,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images.jpg','2024-08-01 15:00:00'),(34,'Photocard for book 22','E',10,22,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/58s09342m1bppw6ieihi.jpg','2024-08-01 15:00:00'),(35,'Photocard for book 23','A',12,23,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C.jpg','2024-08-01 15:00:00'),(36,'Photocard for book 24','A',6,24,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(10).jpg','2024-08-01 15:00:00'),(37,'Photocard for book 25','E',5,25,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(9).jpg','2024-08-01 15:00:00'),(38,'Photocard for book 26','A',3,26,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/main_section_1_img2.jpg','2024-08-01 15:00:00'),(39,'Photocard for book 27','A',2,27,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C+(1).jpg','2024-08-01 15:00:00'),(40,'Photocard for book 28','E',1,28,'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/d1A_wD4kuLHmOOFqJdVlOXVt1TWA9NfNt_HA0','2024-08-01 15:00:00');
 /*!40000 ALTER TABLE `photocards` ENABLE KEYS */;
 UNLOCK TABLES;
-
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -97,4 +57,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-07-31 14:36:11
+-- Dump completed on 2024-08-08 15:49:48

@@ -16,6 +16,28 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `reviews`
+--
+
+DROP TABLE IF EXISTS `reviews`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `reviews` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `text` varchar(255) DEFAULT NULL,
+  `visibility` enum('A','E') DEFAULT NULL,
+  `member_id` int NOT NULL,
+  `book_id` int NOT NULL,
+  `created_date` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_members_TO_reviews_1` (`member_id`),
+  KEY `FK_books_TO_reviews_1` (`book_id`),
+  CONSTRAINT `FK_books_TO_reviews_1` FOREIGN KEY (`book_id`) REFERENCES `books` (`id`),
+  CONSTRAINT `FK_members_TO_reviews_1` FOREIGN KEY (`member_id`) REFERENCES `members` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `reviews`
 --
 
@@ -133,5 +155,4 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2024-08-04 14:00:00
+-- Dump completed on 2024-08-08 15:59:08
