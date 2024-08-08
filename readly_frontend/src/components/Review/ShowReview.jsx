@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { User } from "lucide-react";
 import "../../components/Review/like_btn.css";
 
 const ShowReview = ({ review, isModal = false }) => {
@@ -6,7 +8,7 @@ const ShowReview = ({ review, isModal = false }) => {
     bookImage,
     bookTitle,
     bookAuthor,
-    createdDate,
+    memberId,
     reviewText,
     likeCount: initialLikeCount,
     likeCheck,
@@ -14,6 +16,7 @@ const ShowReview = ({ review, isModal = false }) => {
 
   const [isLiked, setIsLiked] = useState(likeCheck === 1);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleLikeClick = (event) => {
     event.stopPropagation();
@@ -42,8 +45,8 @@ const ShowReview = ({ review, isModal = false }) => {
     : "text-[10px] text-gray-600 line-clamp-1";
 
   const reviewTextClasses = isModal
-    ? "text-base mb-4 max-h-[300px] overflow-y-auto"
-    : "text-[10px] mb-1 flex-grow overflow-hidden line-clamp-2";
+    ? "text-base mb-4 max-h-[300px] overflow-y-auto font-bold"
+    : "text-[10px] mb-1 flex-grow overflow-hidden line-clamp-2 font-bold";
 
   return (
     <div className={containerClasses}>
@@ -62,7 +65,24 @@ const ShowReview = ({ review, isModal = false }) => {
         </div>
         <p className={reviewTextClasses}>{reviewText}</p>
         <div className="flex justify-between items-center text-xs text-gray-600">
-          <span>{new Date(createdDate).toLocaleDateString()}</span>
+          <div className="relative">
+            <Link 
+              to={`/member/${memberId}`}
+              className="flex items-center group cursor-pointer"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
+              <User size={isModal ? 16 : 12} className="text-gray-600 mr-1 transition-transform duration-100 group-hover:scale-125" />
+              <span className={`font-bold text-gray-600 group-hover:text-blue-600 ${isModal ? 'text-sm' : 'text-[10px]'}`}>
+                {memberId}
+              </span>
+            </Link>
+            {isHovered && (
+              <span className="absolute left-0 bottom-full mb-2 bg-white px-2 py-1 rounded shadow-md text-xs whitespace-nowrap z-10 font-bold">
+                작성자 페이지로 이동
+              </span>
+            )}
+          </div>
           <div className="flex items-center space-x-1">
             <button
               className={`heart-container ${isModal ? '' : 'scale-75'}`}

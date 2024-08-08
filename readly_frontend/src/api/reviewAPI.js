@@ -1,10 +1,10 @@
 import axios from 'axios';
-import useUserStore from '../store/userStore';  // 경로는 실제 위치에 맞게 조정하세요
+import useUserStore from '../store/userStore';
 
 const BASE_URL = 'http://localhost:8080/api';
 
 export const getReviews = async (searchType, orderType, pageSize, pageNumber) => {
-  const token = useUserStore.getState().token;  // 토큰 가져오기
+  const token = useUserStore.getState().token;
 
   try {
     console.log("get review send:", {
@@ -29,7 +29,7 @@ export const getReviews = async (searchType, orderType, pageSize, pageNumber) =>
     );
     
     console.log('Received reviews:', response.data);
-    return response.data.reviews;
+    return response.data;  // 전체 응답을 반환
   } catch (error) {
     console.error('Error fetching reviews:', error);
     if (error.response) {

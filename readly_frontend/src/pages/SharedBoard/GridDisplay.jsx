@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "../../pages/Photocard/photocard_flip.css";
-import ShowCardModal from "../Photocard/ShowCardModal";
+import ShowCardModal from "../Photocard/ShowCardModal.jsx";
 import ShowReview from "../../components/Review/ShowReview.jsx";
 import ShowReviewModal from "../../components/Review/ShowReviewModal.jsx";
 
@@ -18,27 +18,27 @@ const GridDisplay = ({ items, type }) => {
   const gridCols = type === "photocard" 
     ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6"
     : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
-  const itemSize = type === "review" ? "w-full h-56" : "w-40 h-60";
-  const gap = "gap-6";
+  const itemSize = type === "review" ? "w-full h-48" : "w-24 h-40"; // 크기 조정
+  const gap = "gap-12"; // 간격 조정
 
   const renderItem = (item) => {
     if (type === "photocard") {
       return (
         <div
-          className="w-full h-[14rem] rounded-lg overflow-hidden cursor-pointer shadow-lg"
+          className="w-full h-full rounded-lg overflow-hidden cursor-pointer shadow-lg"
           onClick={() => handleItemClick(item)}
         >
           <img
             src={item.photoCardImage}
             alt={item.bookTitle}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-fill"
           />
         </div>
       );
     } else if (type === "review") {
       return (
-        <div onClick={() => handleItemClick(item)} className="cursor-pointer">
-          <ShowReview review={item} />
+        <div onClick={() => handleItemClick(item)} className="cursor-pointer h-full">
+          <ShowReview review={item} isModal={false} />
         </div>
       );
     }

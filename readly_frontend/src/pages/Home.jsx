@@ -1,23 +1,22 @@
 import { useState, useCallback, useEffect } from "react";
-import Photocard from "./Photocard/Photocard.jsx";
+import HomePhotocard from "./Photocard/HomePhotoCard.jsx"
 import Recommend from "./Recommend/Recommend.jsx";
 import BookModal from "../components/BookModal.jsx";
-import useBookStore from "../store/bookStore";
+import ShowCardModal from "./Photocard/ShowCardModal.jsx";
+import useBookStore from "../store/bookStore.js";
 
 export default function Home() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedPhotoCard, setSelectedPhotoCard] = useState(null);
+  const [showCardModalIsOpen, setShowCardModalIsOpen] = useState(false);
 
   const { books, searchResults, fetchBooks, searchBooks } = useBookStore();
 
   useEffect(() => {
     fetchBooks().catch((err) => console.error("Failed to fetch books:", err));
   }, []);
-
-  useEffect(() => {
-    console.log("Current books state:", books);
-  }, [books]);
 
   const openModal = (book) => {
     setSelectedBook(book);
@@ -53,8 +52,15 @@ export default function Home() {
     setSearchQuery("");
   }, []);
 
-  // if (loading) return <div>Loading...</div>;
-  // if (error) return <div>Error: {error.message || 'An unknown error occurred'}</div>;
+  const handlePhotoCardClick = (photocard) => {
+    setSelectedPhotoCard(photocard);
+    setShowCardModalIsOpen(true);
+  };
+
+  const closeShowCardModal = () => {
+    setShowCardModalIsOpen(false);
+    setSelectedPhotoCard(null);
+  };
 
   return (
     <>
@@ -78,8 +84,7 @@ export default function Home() {
           ))}
         </div>
       </div>
-      <Photocard photocards={[]} />{" "}
-      {/* Photocard 컴포넌트도 필요에 따라 수정 */}
+      <HomePhotocard onPhotoCardClick={handlePhotoCardClick} />
       <Recommend />
       <BookModal
         isOpen={modalIsOpen}
@@ -90,6 +95,11 @@ export default function Home() {
         handleSearch={handleSearch}
         suggestions={searchResults}
         handleSuggestionClick={handleSuggestionClick}
+      />
+      <ShowCardModal
+        item={selectedPhotoCard}
+        isOpen={showCardModalIsOpen}
+        onClose={closeShowCardModal}
       />
     </>
   );
