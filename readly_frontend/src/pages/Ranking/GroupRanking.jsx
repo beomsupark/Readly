@@ -1,3 +1,5 @@
+import React, { useState } from 'react';
+
 const ranking = [
   { id: 1, ranking: "🥇" },
   { id: 2, ranking: "🥈" },
@@ -5,6 +7,12 @@ const ranking = [
 ];
 
 const GroupRanking = ({ groupRanking, userGroupsRank, userName }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const handleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
     <ol className="space-y-4">
       {groupRanking.slice(0, 3).map((item, index) => (
@@ -27,8 +35,10 @@ const GroupRanking = ({ groupRanking, userGroupsRank, userName }) => {
       <li className="ml-2.5">..</li>
       {userGroupsRank && userGroupsRank.length > 0 ? (
         <>
-          <li className="text-sm font-bold p-2 text-[#878787] flex items-center justify-between">현재 {userName}님이 속해 있는 소모임의 랭킹</li>
-          {userGroupsRank.map((group) => (
+          <li className="text-sm font-bold p-2 text-[#878787] flex items-center justify-between">
+            현재 {userName}님이 속해 있는 소모임의 랭킹
+          </li>
+          {(isExpanded ? userGroupsRank : userGroupsRank.slice(0, 3)).map((group) => (
             <li key={group.groupId} className="text-sm font-bold ml-4 text-[#878787] flex items-center justify-between">
               <div>
                 {group.rank}등 {group.groupName}
@@ -38,9 +48,19 @@ const GroupRanking = ({ groupRanking, userGroupsRank, userName }) => {
               </span>
             </li>
           ))}
+          {userGroupsRank.length > 3 && (
+            <button
+              onClick={handleExpand}
+              className="text-[#acacac] text-[0.9rem] font-bold mt-2 ml-4"
+            >
+              {isExpanded ? "접기" : "[ 더보기 ]"}
+            </button>
+          )}
         </>
       ) : (
-        <li className="text-sm font-bold p-2 text-[#878787] flex items-center justify-between">현재 {userName}님은 참가하고 있는 소모임이 없습니다</li>
+        <li className="text-sm font-bold p-2 text-[#878787] flex items-center justify-between">
+          현재 {userName}님은 참가하고 있는 소모임이 없습니다
+        </li>
       )}
     </ol>
   );

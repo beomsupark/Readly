@@ -79,7 +79,7 @@ export default function Ranking() {
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center">
               <img src={CrownImg} alt="crown" className="w-[3rem] h-[3rem]" />
-              <h2 className="text-yellow-500 text-3xl font-bold ml-2 mt-3">
+              <h2 className="text-yellow-500 text-3xl font-bold ml-2">
                 개인랭킹
               </h2>
             </div>
@@ -91,7 +91,7 @@ export default function Ranking() {
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center">
               <img src={CrownImg} alt="crown" className="w-[3rem] h-[3rem]" />
-              <h2 className="text-yellow-500 text-3xl font-bold ml-2 mt-3">
+              <h2 className="text-yellow-500 text-3xl font-bold ml-2">
                 소모임랭킹
               </h2>
             </div>
