@@ -2,7 +2,6 @@ import { useState } from "react";
 import Modal from "react-modal";
 import GoButton from "../../components/GoButton/GoButton.jsx";
 import Review from "../../components/Review/Review.jsx";
-import TimecapsuleOpen from "./TimecapsuleOpen.jsx";
 import { createTimeCapsule } from "../../api/timecapsuleAPI.js";
 import useUserStore from "../../store/userStore";
 
@@ -46,7 +45,7 @@ export default function TimecapsuleSelect({
 }) {
   const [selectedPhotoCards, setSelectedPhotoCards] = useState([]);
   const [selectedReviews, setSelectedReviews] = useState([]);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const user = useUserStore((state) => state.user);
   const memberId = user ? user.id : null;
 
@@ -62,7 +61,8 @@ export default function TimecapsuleSelect({
     }
   };
 
-  const openModal = async () => {
+  const handleCreateTimeCapsule = async () => {
+    setIsLoading(true);
     try {
       const success = await createTimeCapsule(
         memberId,
@@ -72,27 +72,18 @@ export default function TimecapsuleSelect({
         selectedPhotoCards
       );
       if (success) {
-        setModalIsOpen(true);
+        alert("타임캡슐이 성공적으로 생성되었습니다!");
+        onRequestClose(); // Close the modal after successful creation
       } else {
-        alert("타임캡슐 생성에 실패했습니다.");
+        alert("타임캡슐 생성에 실패했습니다. 다시 시도해주세요.");
       }
     } catch (error) {
       console.error("Error creating time capsule:", error);
       alert(`타임캡슐 생성 중 오류가 발생했습니다: ${error.message}`);
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  const closeModal = () => {
-    setModalIsOpen(false);
-  };
-
-  const selectedPhotoCardsData = selectedPhotoCards.map((id) =>
-    photoCards.find((card) => card.photoCardId === id)
-  );
-
-  const selectedReviewsData = selectedReviews.map((id) =>
-    reviews.find((review) => review.reviewId === id)
-  );
 
   return (
     <Modal
@@ -120,14 +111,12 @@ export default function TimecapsuleSelect({
               <div
                 key={card.photoCardId}
                 className="flex items-center"
-                onDoubleClick={() =>
-                  toggleSelection(card.photoCardId, "photoCard")
-                }
+                onClick={() => toggleSelection(card.photoCardId, "photoCard")}
               >
                 <img
                   src={card.photoCardImage}
                   alt={card.bookTitle}
-                  className={`h-[7rem] rounded ${
+                  className={`h-[7rem] rounded cursor-pointer ${
                     selectedPhotoCards.includes(card.photoCardId)
                       ? "border-2 border-[red]"
                       : ""
@@ -148,21 +137,20 @@ export default function TimecapsuleSelect({
             reviews.map((review) => (
               <div
                 key={review.reviewId}
-                className={`flex items-center w-[10rem] h-[15rem] rounded ${
+                className={`flex items-center w-[10rem] h-[15rem] rounded cursor-pointer ${
                   selectedReviews.includes(review.reviewId)
-                    ? "border-3 border-[red]"
+                    ? "border-2 border-[red]"
                     : ""
                 }`}
-                onDoubleClick={() => toggleSelection(review.reviewId, "review")}
+                onClick={() => toggleSelection(review.reviewId, "review")}
               >
                 <Review
-                  
                   key={review.reviewId}
-                  bookImage={review.bookImage} // Ensure this field exists
+                  bookImage={review.bookImage}
                   title={review.bookTitle}
                   author={review.bookAuthor}
                   review={review.reviewText}
-                  likeCount={review.likeCount} // Ensure this field exists
+                  likeCount={review.likeCount}
                 />
               </div>
             ))
@@ -172,16 +160,13 @@ export default function TimecapsuleSelect({
         </div>
       </div>
 
-      <div className="flex justify-end">
-        <GoButton text="타임캡슐 생성" onClick={openModal} />
+      <div className="flex justify-end mt-4">
+        <GoButton 
+          text={isLoading ? "생성 중..." : "타임캡슐 생성"} 
+          onClick={handleCreateTimeCapsule}
+          disabled={isLoading}
+        />
       </div>
-
-      <TimecapsuleOpen
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        selectedPhotoCards={selectedPhotoCardsData}
-        selectedReviews={selectedReviewsData}
-      />
     </Modal>
   );
 }

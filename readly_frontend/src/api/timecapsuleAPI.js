@@ -90,8 +90,11 @@ export const getTimeCapsuleItems = async (memberId, startDate, endDate) => {
       endDate
     }, { headers: getHeaders(token) });
     
-    console.log('Retrieved time capsule items:', response.data);
-    return response.data;
+    console.log('Retrieved time capsule items:', JSON.stringify(response.data, null, 2));
+    return {
+      reviews: response.data.reviews || [],
+      photoCards: response.data.photoCards || []
+    };
   } catch (error) {
     console.error('Error fetching time capsule items:', error.response ? error.response.data : error.message);
     throw error;

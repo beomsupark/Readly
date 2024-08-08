@@ -19,7 +19,7 @@ const customModalStyles = {
   },
   content: {
     width: "22%",
-    height: "22%",
+    height: "30%",
     maxHeight: "80vh",
     zIndex: "150",
     position: "absolute",
@@ -43,8 +43,7 @@ export default function TimecapsulePeriod({ isOpen, onRequestClose }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [filteredReviews, setFilteredReviews] = useState([]);
-  const [filteredPhotocards, setFilteredPhotocards] = useState([]);
+  const [filteredItems, setFilteredItems] = useState({ reviews: [], photoCards: [] });
   const user = useUserStore(state => state.user);
 
   const openModal = async () => {
@@ -54,14 +53,10 @@ export default function TimecapsulePeriod({ isOpen, onRequestClose }) {
     }
 
     try {
-      const { reviews, photocards } = await getTimeCapsuleItems(user.id, startDate, endDate);
+      const items = await getTimeCapsuleItems(user.id, startDate, endDate);
+      console.log("Retrieved time capsule items:", items);
 
-      console.log("Filtered reviews:", reviews);
-      console.log("Filtered photocards:", photocards);
-
-      setFilteredReviews(reviews);
-      setFilteredPhotocards(photocards);
-
+      setFilteredItems(items);
       setModalIsOpen(true);
     } catch (error) {
       console.error("Error fetching time capsule items:", error);
@@ -111,8 +106,8 @@ export default function TimecapsulePeriod({ isOpen, onRequestClose }) {
       <TimecapsuleSelect
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        reviews={filteredReviews}
-        photoCards={filteredPhotocards}
+        reviews={filteredItems.reviews}
+        photoCards={filteredItems.photoCards}
         startDate={startDate}
         endDate={endDate}
       />
