@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import HomePhotocard from "./Photocard/HomePhotoCard.jsx"
+import HomePhotocard from "./Photocard/HomePhotoCard.jsx";
 import Recommend from "./Recommend/Recommend.jsx";
 import BookModal from "../components/BookModal.jsx";
 import ShowCardModal from "./Photocard/ShowCardModal.jsx";

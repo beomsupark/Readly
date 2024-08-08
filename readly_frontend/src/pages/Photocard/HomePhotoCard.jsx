@@ -38,9 +38,9 @@ export default function HomePhotocard({ onPhotoCardClick }) {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="w-full ml-3 bg-gray-100 mb-4">
+    <div className="w-full ml-3 bg-gray-100 mb-2">
       <div className="max-w-full mx-auto px-2 lg:px-2">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-2">
           <h2 className="font-bold text-2xl">사용자들이 좋아하는 <span className="text-custom-highlight">포토카드</span></h2>
           <button
             onClick={handleMorePhotocards}
@@ -56,11 +56,11 @@ export default function HomePhotocard({ onPhotoCardClick }) {
             className={`flex justify-between items-center transition-transform duration-500 ${isAnimating ? 'translate-x-full' : 'translate-x-0'}`}
             key={currentIndex}
           >
-            <div className="grid grid-cols-6 gap-2 flex-grow">
+            <div className="grid grid-cols-6 gap-2 p-2 flex-grow">
               {currentPhotocards.map((photocard, index) => (
                 <div 
                   key={`${currentIndex}-${index}`} 
-                  className="flex-none w-24 h-36 cursor-pointer"
+                  className="flex-none w-36 h-40 cursor-pointer"
                   onClick={() => onPhotoCardClick(photocard)}
                 >
                   {photocard.photoCardImage ? (

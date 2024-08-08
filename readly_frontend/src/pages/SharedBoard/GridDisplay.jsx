@@ -16,9 +16,9 @@ const GridDisplay = ({ items, type }) => {
   };
 
   const gridCols = type === "photocard" 
-    ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6"
+    ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
     : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
-  const itemSize = type === "review" ? "w-full h-48" : "w-24 h-40"; // 크기 조정
+  const itemSize = type === "review" ? "w-full h-48" : "w-36 h-48"; // 크기 조정
   const gap = "gap-12"; // 간격 조정
 
   const renderItem = (item) => {

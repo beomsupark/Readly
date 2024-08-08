@@ -57,7 +57,7 @@ export const getPhotoCard = async (
       searchType,
       orderType,
       pageSize,
-      pageNumber: pageNumber - 1, // 페이지 번호를 0-based로 변환
+      pageNumber
     });
     console.log("Received response:", response.data);
     return response.data;

@@ -11,7 +11,7 @@ const useReviewStore = create((set, get) => ({
   orderType: 'DESC',
   searchType: 'TimeStamp',
 
-  fetchReviews: async (page = 0) => {
+  fetchReviews: async (page = 1) => {
     set({ loading: true, error: null });
     try {
       const { searchType, orderType } = get();
