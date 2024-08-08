@@ -8,6 +8,7 @@ const usePhotocardStore = create((set, get) => ({
   error: null,
   currentPage: 1,
   totalPages: 1,
+  totalCount: 0,
   orderType: 'DESC',
   searchType: 'TimeStamp',
 
@@ -40,16 +41,40 @@ const usePhotocardStore = create((set, get) => ({
       const response = await getPhotoCard(
         searchType,
         orderType,
-        12, // 페이지 크기, 필요에 따라 조정
+        12, // 페이지 크기
         page
       );
       set({
-        photocards: response,
+        photocards: response.reviews,
         currentPage: page,
-        totalPages: Math.ceil(response.length / 10), // 총 페이지 수 계산 (API에서 제공하지 않는 경우)
+        totalCount: response.total_count,
+        totalPages: Math.ceil(response.total_count / 12),
         isLoading: false
       });
     } catch (error) {
+      set({ error: error.message, isLoading: false });
+    }
+  },
+
+  fetchHomePhotocards: async (page = 1) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await getPhotoCard(
+        'Like',
+        'DESC',
+        6,
+        page
+      );
+      console.log("Fetched home photocards:", response);
+      set({
+        photocards: response.reviews || [],
+        currentPage: page,
+        totalCount: response.total_count || 0,
+        totalPages: Math.ceil((response.total_count || 0) / 6),
+        isLoading: false
+      });
+    } catch (error) {
+      console.error("Error fetching home photocards:", error);
       set({ error: error.message, isLoading: false });
     }
   },
