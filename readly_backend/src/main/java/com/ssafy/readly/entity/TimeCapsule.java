@@ -39,6 +39,7 @@ public class TimeCapsule {
     public TimeCapsule(LocalDate startDate, LocalDate endDate, Member member) {
         this.startDate = startDate;
         this.endDate = endDate;
+        this.createdDate = LocalDate.now();
         createReleaseDate();
         addMember(member);
     }

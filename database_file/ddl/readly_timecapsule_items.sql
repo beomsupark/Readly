@@ -23,19 +23,18 @@ DROP TABLE IF EXISTS `timecapsule_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `timecapsule_items` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `timecapsule_id` int NOT NULL,
-  `photocard_id` int NOT NULL,
-  `reviews_id` int NOT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `timecapsule_id` int,
+  `photocard_id` int,
+  `review_id` int,
   `item_type` enum('P','R') DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_photocards_TO_timecapsule_items_1` (`photocard_id`),
-  KEY `FK_reviews_TO_timecapsule_items_1` (`reviews_id`),
+  KEY `FK_reviews_TO_timecapsule_items_1` (`review_id`),
   KEY `FK2m96ibb27drto4qh4xypy3k50` (`timecapsule_id`),
   CONSTRAINT `FK2m96ibb27drto4qh4xypy3k50` FOREIGN KEY (`timecapsule_id`) REFERENCES `timecapsules` (`id`),
   CONSTRAINT `FK_photocards_TO_timecapsule_items_1` FOREIGN KEY (`photocard_id`) REFERENCES `photocards` (`id`),
-  CONSTRAINT `FK_reviews_TO_timecapsule_items_1` FOREIGN KEY (`reviews_id`) REFERENCES `reviews` (`id`),
-  CONSTRAINT `FK_timecapsule_TO_timecapsule_items_1` FOREIGN KEY (`timecapsule_id`) REFERENCES `timecapsule` (`id`)
+  CONSTRAINT `FK_reviews_TO_timecapsule_items_1` FOREIGN KEY (`review_id`) REFERENCES `reviews` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

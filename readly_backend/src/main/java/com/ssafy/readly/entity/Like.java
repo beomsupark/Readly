@@ -16,13 +16,18 @@ public class Like {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private int id;
+    private Long id;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "timeCapsule_item_id")
+    @JoinColumn(name = "timecapsule_item_id")
     private TimeCapsuleItem timeCapsuleItem;
+
+    public Like(Member member, TimeCapsuleItem timeCapsuleItem) {
+        this.member = member;
+        this.timeCapsuleItem = timeCapsuleItem;
+    }
 }
