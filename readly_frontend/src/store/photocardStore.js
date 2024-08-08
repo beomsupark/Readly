@@ -40,7 +40,7 @@ const usePhotocardStore = create((set, get) => ({
       const response = await getPhotoCard(
         searchType,
         orderType,
-        10, // 페이지 크기, 필요에 따라 조정
+        12, // 페이지 크기, 필요에 따라 조정
         page
       );
       set({

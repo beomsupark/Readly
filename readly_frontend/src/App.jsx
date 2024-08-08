@@ -82,6 +82,7 @@ function App() {
               <Route path="/activity" element={<Activity />} />
               <Route path="/activity/:groupId" element={<Activity />} />
               {/* 다른 라우트들... */}
+              {/* <Route path="/member/:memberName" element={<Member/>}/> */}
             </Route>
           </Routes>
         </main>
