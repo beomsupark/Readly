@@ -23,6 +23,7 @@ public class Review {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private int id;
+
     private String text;
 
     @CreationTimestamp
@@ -42,12 +43,12 @@ public class Review {
     public Review(String text, Visibility visibility, Member member, Book book) {
         this.text = text;
         this.visibility = visibility;
-        setMember(member);
+        addMember(member);
         this.book = book;
     }
 
     /* 연관 관계 편의 메소드 */
-    public void setMember(Member member){
+    public void addMember(Member member){
         if (this.member != null) {
             this.member.getReviews().remove(this);
         }

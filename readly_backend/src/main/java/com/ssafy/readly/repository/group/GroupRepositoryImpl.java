@@ -2,7 +2,6 @@ package com.ssafy.readly.repository.group;
 
 import com.ssafy.readly.dto.group.GetGroupResponse;
 import com.ssafy.readly.dto.group.MakeGroupRequest;
-import com.ssafy.readly.dto.rank.GetRankGroupResponse;
 import com.ssafy.readly.entity.*;
 import com.ssafy.readly.enums.IsInviting;
 import com.ssafy.readly.enums.ReadType;
@@ -168,9 +167,9 @@ public class GroupRepositoryImpl implements GroupRepository{
         ReadBook readBook = readBookQuery.getResultStream().findFirst().orElse(null);
         if (readBook != null) {
             ReadBook newReadBook = new ReadBook();
-            newReadBook.setBook(readBook.getBook());
-            newReadBook.setGroup(group);
-            newReadBook.setMember(member);
+            newReadBook.addBook(readBook.getBook());
+            newReadBook.addGroup(group);
+            newReadBook.addMember(member);
             newReadBook.setCurrentPage(0); // Assuming the new member starts reading from page 0
             newReadBook.setReadType(ReadType.R);
             em.persist(newReadBook);

@@ -13,7 +13,7 @@ import static lombok.AccessLevel.*;
 
 @Entity
 @Getter
-@Table(name="books")
+@Table(name = "books")
 @NoArgsConstructor(access = PROTECTED)
 public class Book {
 
@@ -23,8 +23,8 @@ public class Book {
 
     private String title;
     private String author;
-    @Column(name = "isbn")
     private String isbn;
+
     @Column(name = "description")
     private String detail;
     private String purchaseLink;

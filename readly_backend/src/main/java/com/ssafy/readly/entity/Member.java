@@ -24,6 +24,7 @@ public class Member {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private int id;
+
     private String loginId;
     private String loginPwd;
     private String nickname;
@@ -33,23 +34,31 @@ public class Member {
     private int point;
     private LocalDate birthday;
     private LocalDateTime joinDate;
+
     @Enumerated(value = STRING)
     private Gender gender;
+
     @Enumerated(value = STRING)
     private Social social;
+
     private String introduction;
     private String token;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<ReadBook> readBooks = new ArrayList<>();
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<PhotoCard> photoCards = new ArrayList<>();
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<>();
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<TimeCapsule> timeCapsules = new ArrayList<>();
+
     @OneToMany(mappedBy = "following",cascade = CascadeType.ALL)
     private List<Follower> followers = new ArrayList<>();
+
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
     private List<GroupMember> groupMembers = new ArrayList<>();
 

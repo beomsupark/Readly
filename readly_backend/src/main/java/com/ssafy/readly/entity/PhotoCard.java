@@ -23,9 +23,12 @@ public class PhotoCard {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private int id;
+
     private String text;
+
     @Column(length = 1000, name = "photocard_image")
     private String photoCardImage;
+
     @Enumerated(value = STRING)
     private Visibility visibility;
 
@@ -47,11 +50,11 @@ public class PhotoCard {
         this.photoCardImage = photoCardImage;
         this.book = book;
         this.visibility = visibility;
-        setMember(member);
+        addMember(member);
     }
 
     /* 연관 관계 편의 메소드 */
-    public void setMember(Member member){
+    public void addMember(Member member){
         if (this.member != null) {
             this.member.getPhotoCards().remove(this);
         }

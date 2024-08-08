@@ -5,19 +5,18 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static jakarta.persistence.FetchType.*;
-import static jakarta.persistence.GenerationType.IDENTITY;
+import static jakarta.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
 
 
 @Entity
 @Getter
 @Table(name = "group_tags")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 public class GroupTag {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,10 +33,7 @@ public class GroupTag {
     }
 
     // 연관 관계 편의 메서드
-    public void setGroup(Group group) {
-        if (this.group != null) {
-            this.group.getGroupTags().remove(this);
-        }
+    public void addGroup(Group group) {
         this.group = group;
         if (group != null) {
             group.getGroupTags().add(this);

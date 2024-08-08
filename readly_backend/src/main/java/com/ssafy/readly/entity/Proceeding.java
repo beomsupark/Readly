@@ -3,6 +3,7 @@ package com.ssafy.readly.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -18,7 +19,10 @@ public class Proceeding {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private int id;
+
+    @CreationTimestamp
     private LocalDateTime createdDate;
+
     private String content;
     private String title;
 
@@ -27,7 +31,7 @@ public class Proceeding {
     private Group group;
 
     /* 연관 관계 편의 메소드 */
-    public void setGroup(Group group){
+    public void addGroup(Group group){
         if (this.group != null) {
             this.group.getProceedings().remove(this);
         }

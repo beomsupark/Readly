@@ -3,11 +3,9 @@ package com.ssafy.readly.entity;
 import com.ssafy.readly.enums.ReadType;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
-import static lombok.AccessLevel.*;
 
 @Entity
 @Getter
@@ -38,16 +36,12 @@ public class ReadBook {
     private Group group;
 
     /* 연관 관계 편의 메소드 */
-    public void setMember(Member member){
-        if (this.member != null) {
-            this.member.getReadBooks().remove(this);
-        }
-
+    public void addMember(Member member){
         this.member = member;
         member.getReadBooks().add(this);
     }
 
-    public void setBook(Book book) {
+    public void addBook(Book book) {
         if (this.book != null) {
             this.book.getReadBooks().remove(this);
         }
@@ -56,7 +50,7 @@ public class ReadBook {
         book.getReadBooks().add(this);
     }
 
-    public void setGroup(Group group) {
+    public void addGroup(Group group) {
         if (this.group != null) {
             this.group.getReadBooks().remove(this);
         }

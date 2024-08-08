@@ -18,6 +18,7 @@ public class GroupMember {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private int id;
+
     @Enumerated(value = STRING)
     private Role role;
 
@@ -30,16 +31,12 @@ public class GroupMember {
     private Group group;
 
     /* 연관 관계 편의 메소드 */
-    public void setMember(Member member) {
-        if (this.member != null) {
-            this.member.getGroupMembers().remove(this);
-        }
-
+    public void addMember(Member member) {
         this.member = member;
         member.getGroupMembers().add(this);
     }
 
-    public void setGroup(Group group) {
+    public void addGroup(Group group) {
         if (this.group != null) {
             this.group.getGroupMembers().remove(this);
         }

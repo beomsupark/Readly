@@ -8,7 +8,6 @@ import com.ssafy.readly.entity.GroupMember;
 import com.ssafy.readly.entity.Member;
 import com.ssafy.readly.entity.ReadBook;
 import com.ssafy.readly.enums.ReadType;
-import com.ssafy.readly.enums.Role;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
@@ -50,8 +49,8 @@ public class ReadBookRepositoryImpl implements ReadBookRepository{
 
         if (existingReadBooks.isEmpty()) {
             ReadBook readBook = new ReadBook();
-            readBook.setMember(member);
-            readBook.setBook(book);
+            readBook.addMember(member);
+            readBook.addBook(book);
             readBook.setCurrentPage(0);
             readBook.setReadType(ReadType.R); // 기본값으로 설정하지만 명시적으로 설정해 줍니다.
 
@@ -97,10 +96,10 @@ public class ReadBookRepositoryImpl implements ReadBookRepository{
 
             if (existingReadBooks.isEmpty()) {
                 ReadBook readBook = new ReadBook();
-                readBook.setMember(groupMember.getMember());
-                readBook.setBook(book);
+                readBook.addMember(groupMember.getMember());
+                readBook.addBook(book);
                 readBook.setCurrentPage(0);
-                readBook.setGroup(groupMember.getGroup());  // 그룹 설정 추가
+                readBook.addGroup(groupMember.getGroup());  // 그룹 설정 추가
                 readBook.setReadType(ReadType.R); // 기본값으로 설정하지만 명시적으로 설정해 줍니다.
                 em.persist(readBook);
             }

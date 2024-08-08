@@ -23,9 +23,11 @@ public class TimeCapsule {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private int id;
+
     private LocalDate releaseDate;
     private LocalDate startDate;
     private LocalDate endDate;
+
     @CreationTimestamp
     private LocalDate createdDate;
 
@@ -39,7 +41,6 @@ public class TimeCapsule {
     public TimeCapsule(LocalDate startDate, LocalDate endDate, Member member) {
         this.startDate = startDate;
         this.endDate = endDate;
-        this.createdDate = LocalDate.now();
         createReleaseDate();
         addMember(member);
     }
