@@ -24,6 +24,7 @@ public class LikeServiceImpl implements LikeService {
     private final PhotoCardRepository photoCardRepository;
     private final TimeCapsuleItemRepositoryImpl timeCapsuleItemRepository;
 
+    @Override
     public void like(LikeRequest likeRequest) {
         Member member = memberRepository.findById(likeRequest.getMemberId()).orElseThrow(
                 () -> new NoSuchElementException("멤버: " + likeRequest.getMemberId() + "이(가) 존재하지 않습니다."));
@@ -45,6 +46,7 @@ public class LikeServiceImpl implements LikeService {
         }
     }
 
+    @Override
     public void cancelLike(LikeRequest likeRequest) {
         Integer reviewId = likeRequest.getReviewId();
         Integer photoCardId = likeRequest.getPhotoCardId();
