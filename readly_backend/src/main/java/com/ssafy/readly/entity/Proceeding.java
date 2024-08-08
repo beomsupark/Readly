@@ -3,6 +3,7 @@ package com.ssafy.readly.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -12,8 +13,8 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "proceedings")
-@NoArgsConstructor(access = PROTECTED)
 public class Proceeding {
 
     @Id
@@ -39,4 +40,6 @@ public class Proceeding {
         this.group = group;
         group.getProceedings().add(this);
     }
+
+
 }

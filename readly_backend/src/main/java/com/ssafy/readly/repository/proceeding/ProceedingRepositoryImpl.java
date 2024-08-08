@@ -1,11 +1,15 @@
 package com.ssafy.readly.repository.proceeding;
 
+import com.ssafy.readly.dto.proceeding.ProceedingCreateRequestDTO;
+import com.ssafy.readly.dto.proceeding.ProceedingUpdateRequestDTO;
+import com.ssafy.readly.entity.Group;
 import com.ssafy.readly.entity.Proceeding;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -40,5 +44,43 @@ public class ProceedingRepositoryImpl implements ProceedingRepository {
         TypedQuery<Proceeding> query = entityManager.createQuery(jpql, Proceeding.class);
         query.setParameter("id", id);
         return query.getResultStream().findFirst().orElseThrow(() -> new Exception("Proceeding not found"));
+    }
+
+    @Override
+    public Proceeding createProceeding(ProceedingCreateRequestDTO requestDTO) throws Exception {
+        Proceeding proceeding = new Proceeding();
+        proceeding.setTitle(requestDTO.getTitle());
+        proceeding.setContent(requestDTO.getContent());
+        proceeding.setCreatedDate(LocalDateTime.now());
+
+        Group group = entityManager.find(Group.class, requestDTO.getGroupId());
+        if (group == null) {
+            throw new Exception("Group not found");
+        }
+        proceeding.setGroup(group);
+
+        entityManager.persist(proceeding);
+        return proceeding;
+    }
+
+    @Override
+    public Proceeding updateProceeding(int proceedingId, ProceedingUpdateRequestDTO requestDTO) throws Exception {
+        Proceeding proceeding = entityManager.find(Proceeding.class, proceedingId);
+        if (proceeding == null) {
+            throw new Exception("Proceeding not found");
+        }
+        proceeding.setTitle(requestDTO.getTitle());
+        proceeding.setContent(requestDTO.getContent());
+        return proceeding;
+    }
+
+
+    @Override
+    public void deleteProceeding(int id) throws Exception {
+        Proceeding proceeding = entityManager.find(Proceeding.class, id);
+        if (proceeding == null) {
+            throw new Exception("Proceeding not found");
+        }
+        entityManager.remove(proceeding);
     }
 }
