@@ -120,6 +120,7 @@ public class PhotoCardController {
 
     @PostMapping("/photocard/getPhotoCards")
     public ResponseEntity<Map<String, Object>> getReviews(@RequestBody PhotoCardSearchRequest request) throws Exception {
+        request.setPageNumber((request.getPageNumber()-1)*request.getPageSize());
         log.info(request.toString());
         HttpStatus status = HttpStatus.ACCEPTED;
         Map<String, Object> responseMap = new HashMap<String, Object>();
