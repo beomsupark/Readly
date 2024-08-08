@@ -25,4 +25,9 @@ public class ProceedingServiceImpl implements ProceedingService {
     public long countProceedingsByGroupId(int groupId) throws Exception {
         return proceedingRepository.countProceedingsByGroupId(groupId);
     }
+
+    @Override
+    public Proceeding getProceedingById(int id) throws Exception {
+        return  proceedingRepository.getProceedingById(id);
+    }
 }

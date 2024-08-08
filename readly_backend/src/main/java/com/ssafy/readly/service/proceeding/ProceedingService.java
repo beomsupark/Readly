@@ -9,4 +9,5 @@ public interface ProceedingService {
 
     long countProceedingsByGroupId(int groupId) throws Exception;
 
+    Proceeding getProceedingById(int id) throws Exception;
 }

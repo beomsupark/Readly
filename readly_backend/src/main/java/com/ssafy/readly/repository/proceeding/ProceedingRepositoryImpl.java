@@ -33,4 +33,12 @@ public class ProceedingRepositoryImpl implements ProceedingRepository {
         query.setParameter("groupId", groupId);
         return query.getSingleResult();
     }
+
+    @Override
+    public Proceeding getProceedingById(int id) throws Exception {
+        String jpql = "SELECT p FROM Proceeding p WHERE p.id = :id";
+        TypedQuery<Proceeding> query = entityManager.createQuery(jpql, Proceeding.class);
+        query.setParameter("id", id);
+        return query.getResultStream().findFirst().orElseThrow(() -> new Exception("Proceeding not found"));
+    }
 }

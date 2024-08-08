@@ -8,4 +8,6 @@ public interface ProceedingRepository {
    List<Proceeding> getProceedingsByGroupId(int groupId, int pageSize, int pageNumber) throws Exception;
 
     long countProceedingsByGroupId(int groupId) throws Exception;
+
+    Proceeding getProceedingById(int id)  throws Exception;
 }

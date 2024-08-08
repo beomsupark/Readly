@@ -1,6 +1,7 @@
 package com.ssafy.readly.controller;
 
 import com.ssafy.readly.dto.group.GetGroupResponse;
+import com.ssafy.readly.dto.proceeding.ProceedingDetailResponseDTO;
 import com.ssafy.readly.dto.proceeding.ProceedingRequestDTO;
 import com.ssafy.readly.dto.proceeding.ProceedingResponseDTO;
 import com.ssafy.readly.entity.Proceeding;
@@ -41,5 +42,13 @@ public class ProceedingController {
         response.put("totalProceedings", totalProceedings);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/proceeding/{proceedingId}")
+    public ResponseEntity<ProceedingDetailResponseDTO> getProceedingDetail(@PathVariable("proceedingId") int proceedingId) throws Exception {
+        Proceeding proceeding = proceedingService.getProceedingById(proceedingId);
+
+        ProceedingDetailResponseDTO proceedingDetailResponseDTO = ProceedingDetailResponseDTO.of(proceeding);
+        return new ResponseEntity<>(proceedingDetailResponseDTO, HttpStatus.OK);
     }
 }
