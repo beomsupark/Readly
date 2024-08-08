@@ -23,15 +23,12 @@ DROP TABLE IF EXISTS `likes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `likes` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `member_id` int NOT NULL,
-  `timecapsule_item_id` int NOT NULL,
-  `time_capsule_item_id` int DEFAULT NULL,
+  `timecapsule_item_id` bigint NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_members_TO_likes_1` (`member_id`),
   KEY `FK_timecapsule_items_TO_likes_1` (`timecapsule_item_id`),
-  KEY `FK5j93j3luaxnjd7uxcf8mbslca` (`time_capsule_item_id`),
-  CONSTRAINT `FK5j93j3luaxnjd7uxcf8mbslca` FOREIGN KEY (`time_capsule_item_id`) REFERENCES `timecapsule_items` (`id`),
   CONSTRAINT `FK_members_TO_likes_1` FOREIGN KEY (`member_id`) REFERENCES `members` (`id`),
   CONSTRAINT `FK_timecapsule_items_TO_likes_1` FOREIGN KEY (`timecapsule_item_id`) REFERENCES `timecapsule_items` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

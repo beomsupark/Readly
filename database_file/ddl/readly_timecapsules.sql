@@ -27,6 +27,7 @@ CREATE TABLE `timecapsules` (
   `end_date` date DEFAULT NULL,
   `release_date` date DEFAULT NULL,
   `start_date` date DEFAULT NULL,
+  `created_date` date DEFAULT NULL,
   `member_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FKjjsqsvl7690xnkhdh3ch2bdd5` (`member_id`),
