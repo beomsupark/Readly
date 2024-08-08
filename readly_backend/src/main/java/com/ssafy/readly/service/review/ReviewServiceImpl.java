@@ -60,4 +60,13 @@ public class ReviewServiceImpl implements ReviewService {
     public List<ReviewResponse> findReviewsSorted(ReviewSearchRequest searchRequest) {
         return reviewQueryDSLRepository.getReviews(searchRequest);
     }
+
+    /**
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public long getReviewsCount() throws Exception {
+        return reviewRepository.count();
+    }
 }

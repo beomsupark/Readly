@@ -46,6 +46,12 @@ public class PhotoCardServiceImpl implements PhotoCardService{
      */
     @Override
     public List<CreatePhotoCardResponse> findPhotoCardsSorted(PhotoCardSearchRequest request) throws Exception {
+
         return photoCardRepositoryImpl.findPhotoCardsSorted(request);
+    }
+
+    @Override
+    public long getPhotoCardsCount(){
+        return photoCardRepository.count();
     }
 }

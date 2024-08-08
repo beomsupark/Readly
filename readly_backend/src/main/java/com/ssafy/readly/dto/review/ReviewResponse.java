@@ -22,7 +22,6 @@ public class ReviewResponse {
     private long likeCount;
     private long likeCheck;
 
-
     public ReviewResponse(Review review) {
         this.reviewId = review.getId();
         this.bookImage = review.getBook().getImage();
@@ -52,5 +51,4 @@ public class ReviewResponse {
         this.createdDate = createdDate;
         this.reviewText = reviewText;
     }
-
 }

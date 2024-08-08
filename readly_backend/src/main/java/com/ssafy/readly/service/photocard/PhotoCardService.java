@@ -17,4 +17,6 @@ public interface PhotoCardService {
     public CreatePhotoCardResponse findPhotoCardById(int id) throws Exception;
 
     List<CreatePhotoCardResponse> findPhotoCardsSorted(PhotoCardSearchRequest request) throws Exception;
+
+    public long getPhotoCardsCount() throws Exception;
 }
