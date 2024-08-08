@@ -3,6 +3,7 @@ package com.ssafy.readly.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "proceedings")
 public class Proceeding {
 
@@ -39,16 +41,5 @@ public class Proceeding {
         group.getProceedings().add(this);
     }
 
-    // 추가된 setter 메서드
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
 }
