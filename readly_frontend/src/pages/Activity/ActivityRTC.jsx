@@ -3,13 +3,11 @@ import { OpenVidu } from 'openvidu-browser';
 import axios from 'axios';
 import useUserStore from "../../store/userStore";
 
-const dummyPhotoCards = [
-  // Dummy photo cards
-];
 
-const API_BASE_URL = 'https://i11c207.p.ssafy.io/api';
 
-const ActivityRTC = () => {
+const API_BASE_URL = 'http://i11c207.p.ssafy.io/api';
+
+const ActivityRTC = ({ groupId }) => {
   const [isVideoConferenceActive, setIsVideoConferenceActive] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -23,6 +21,7 @@ const ActivityRTC = () => {
   const [isMicOn, setIsMicOn] = useState(true); // Default to true
   const [isVideoOn, setIsVideoOn] = useState(true); // Default to true
   const [subMicStatus, setSubMicStatus] = useState({});
+  const [photoCards,setPhotoCards] = useState();
 
   const OV = useRef(null);
 
@@ -36,46 +35,55 @@ const ActivityRTC = () => {
   }, [isVideoConferenceActive]);
 
   useEffect(() => {
-    if (!session) return;
-  
-    const handleSignal = (event) => {
-      const { data, type } = event;
-      const { type: signalType, state } = JSON.parse(data);
-      const connectionId = event.from.connectionId;
-  
-      if (type === 'micStatus' || type === 'videoStatus') {
-        // Find the subscriber using the connection ID
-        const subscriber = session.remoteConnections.find(connection => connection.connectionId === connectionId);
-  
-        if (signalType === 'mic') {
-          setSubMicStatus(prevStatus => ({
-            ...prevStatus,
-            [connectionId]: state
-          }));
-          
-          if (subscriber) {
-            const mediaStream = subscriber.stream.getMediaStream();
-            mediaStream.getAudioTracks().forEach(track => track.enabled = state);
-          }
-        } else if (signalType === 'video') {
-          
-          if (subscriber) {
-            const mediaStream = subscriber.stream.getMediaStream();
-            mediaStream.getVideoTracks().forEach(track => track.enabled = state);
-          }
-        }
+    if(!session)
+    {
+        return;
+    }
+    // 세션 연결 및 신호 수신 핸들러 설정
+    session.on('signal:micStatus', (signal) => {
+      
+      console.log("secess litsen");
+      console.log(signal.from.connectionId);
+      const data = JSON.parse(signal.data);
+      if (data.type === 'mic') {
+        const micState = data.state;
+        const connectionId = signal.from;
+        setSubMicStatus(prevState => ({
+          ...prevState,
+          [connectionId]: micState // connectionId를 키로 사용하고 micState를 값으로 저장
+        }));
+        
       }
-    };
-  
-    session.on('signal:micStatus', handleSignal);
-    session.on('signal:videoStatus', handleSignal);
-  
-    return () => {
-      session.off('signal:micStatus', handleSignal);
-      session.off('signal:videoStatus', handleSignal);
-    };
+    });
+    session.on('signal:share', (signal) => {
+      
+      const data = JSON.parse(signal.data);
+      if (data.type === 'share') {
+        const items = data.items;
+        setSharedItems(prevItems => [...prevItems, ...items]);
+        
+      }
+    });
+    session.on('signal:stopshare', (signal) => {
+      
+      const data = JSON.parse(signal.data);
+      if (data.type === 'stopshare') {
+        const itemId = data.itemId;
+        setSharedItems(sharedItems.filter(item => item.id !== itemId));
+        
+      }
+    });
   }, [session]);
   
+           
+  const getMyPhotocards = async () => {
+    
+    const response = await axios.get(`${API_BASE_URL}/member/photocards/${user.id}`);
+    
+    return response.data['my-photocards'];
+    
+  }
+
   const checkSessionExists = async() => {
     try {
       const response = await axios.get(`${API_BASE_URL}/rtc/sessions/check`, {
@@ -172,6 +180,12 @@ const ActivityRTC = () => {
 
   const openShareModal = () => {
     setIsShareModalOpen(true);
+    
+
+    getMyPhotocards().then((photocard)=>{
+      console.log(photocard);
+      setPhotoCards(photocard);
+    })
   };
 
   const closeShareModal = () => {
@@ -179,17 +193,21 @@ const ActivityRTC = () => {
   };
 
   const handleShare = (selectedItems) => {
-    setSharedItems(selectedItems);
+    //setSharedItems(selectedItems);
     closeShareModal();
+    session.signal({
+      data: JSON.stringify({ type: 'share', items: selectedItems }),
+      to: [], // Broadcast to all participants
+      type: 'share'
+    }).catch(error => console.error('Error sending signal:', error));
   };
 
   const toggleMic = () => {
     setIsMicOn(prevState => {
       const newMicState = !prevState;
       if (publisher) {
-        const mediaStream = publisher.stream.getMediaStream();
-        mediaStream.getAudioTracks().forEach(track => track.enabled = newMicState);
-  
+        publisher.publishAudio(newMicState);
+
         session.signal({
           data: JSON.stringify({ type: 'mic', state: newMicState }),
           to: [], // Broadcast to all participants
@@ -204,20 +222,42 @@ const ActivityRTC = () => {
     setIsVideoOn(prevState => {
       const newVideoState = !prevState;
       if (publisher) {
-        const mediaStream = publisher.stream.getMediaStream();
-        mediaStream.getVideoTracks().forEach(track => track.enabled = newVideoState);
+        // const mediaStream = publisher.stream.getMediaStream();
+        // mediaStream.getVideoTracks().forEach(track => track.enabled = newVideoState);
+        publisher.publishVideo(newVideoState);  
   
-        session.signal({
-          data: JSON.stringify({ type: 'video', state: newVideoState }),
-          to: [], // Broadcast to all participants
-          type: 'videoStatus'
-        }).catch(error => console.error('Error sending signal:', error));
+        // session.signal({
+        //   data: JSON.stringify({ type: 'video', state: newVideoState }),
+        //   to: [], // Broadcast to all participants
+        //   type: 'videoStatus'
+        // }).catch(error => console.error('Error sending signal:', error));
       }
       return newVideoState;
     });
   };
 
-
+  const isIShared = (item) => {
+    // item.memberId와 user.id를 비교하여 버튼 렌더링 여부 결정
+    return item.memberId === user.id ? (
+      <span>
+        <button onClick={() => {
+          stopSharing(item.id)
+          
+        }}>
+          공유해제
+        </button>
+      </span>
+    ) : null;
+  };
+  const stopSharing = (itemId) => {
+    
+    //setSharedItems(sharedItems.filter(item => item.id !== itemId));
+    session.signal({
+      data: JSON.stringify({ type: 'stopshare', itemId: itemId }),
+      to: [], // Broadcast to all participants
+      type: 'stopshare'
+    }).catch(error => console.error('Error sending signal:', error));
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 p-4 pb-16 relative z-10">
@@ -238,7 +278,7 @@ const ActivityRTC = () => {
           </p>
           <button 
             onClick={toggleVideoConference}
-            className={`px-4 py-2 rounded-full shadow-lg text-lg ${isVideoConferenceActive ? 'bg-red-500' : 'bg-green-500'} text-white`}
+            className={`px-4 py-2 rounded-full shadow-lg text-lg ${isVideoConferenceActive ? 'bg-red-500' : 'bg-green-500'} text-black`}
           >
             {isVideoConferenceActive ? '화상회의 종료' : '화상회의 참여'}
           </button>
@@ -251,8 +291,9 @@ const ActivityRTC = () => {
             <div className={`grid gap-2 mb-4 ${sharedItems.length > 0 ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5' : 'grid-cols-2 h-full p-12'}`}>
               {sharedItems.map((item, index) => (
                 <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden relative">
-                  <img src={item.imageUrl} alt={item.text} className="w-full h-32 object-cover" />
-                  <p className="absolute bottom-1 left-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">{item.text}</p>
+                  <img src={item.photocardImage} alt={item.photocardText} className="w-full h-32 object-cover" />
+                  <p className="absolute bottom-1 left-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">{item.photocardText}</p>
+                  {isIShared(item)}
                 </div>
               ))}
               {publisher && (
@@ -266,7 +307,7 @@ const ActivityRTC = () => {
                 <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden relative">
                   <video autoPlay={true} ref={(video) => video && sub.addVideoElement(video)} />
                   <p className="absolute bottom-1 left-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">{JSON.parse(sub.stream.connection.data).clientData}</p>
-                  <p className="absolute bottom-1 right-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs"> {subMicStatus[sub.stream.connection.connectionId] ? 'Mic On' : 'Mic Off'}</p>
+                  <p className="absolute bottom-1 right-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs"> {sub.stream.audioActive ? 'Mic On' : 'Mic Off'}</p>
                 </div>
               ))}
             </div>
@@ -285,48 +326,48 @@ const ActivityRTC = () => {
           <>
             <button 
               onClick={toggleVideoConference}
-              className={`px-3 py-1 rounded-full shadow-lg text-sm ${isVideoConferenceActive ? 'bg-red-500' : 'bg-green-500'} text-white`}
+              className={`px-3 py-1 rounded-full shadow-lg text-sm ${isVideoConferenceActive ? 'bg-red-500' : 'bg-green-500'} text-black`}
             >
               {isVideoConferenceActive ? '화상회의 종료' : '화상회의 참여'}
             </button>
             <button 
               onClick={openShareModal}
-              className="bg-blue-500 text-white px-3 py-1 rounded-full shadow-lg text-sm"
-            >
+              className="bg-blue-500 text-black px-3 py-1 rounded-full shadow-lg text-sm"
+              >
               공유하기
             </button>
             <button 
               onClick={toggleChat}
-              className="bg-purple-500 text-white px-3 py-1 rounded-full shadow-lg text-sm"
+              className="bg-purple-500 text-black px-3 py-1 rounded-full shadow-lg text-sm"
             >
               채팅
             </button>
             <button 
               onClick={toggleMic}
-              className="bg-blue-500 text-white px-3 py-1 rounded-full shadow-lg text-sm"
+              className="bg-blue-500 text-black px-3 py-1 rounded-full shadow-lg text-sm"
             >
               {isMicOn ? '마이크 off' : '마이크 on'}
             </button>
             <button 
               onClick={toggleVideo}
-              className="bg-blue-500 text-white px-3 py-1 rounded-full shadow-lg text-sm"
+              className="bg-blue-500 text-black px-3 py-1 rounded-full shadow-lg text-sm"
             >
               {isVideoOn ? '카메라 off' : '카메라 on'}
-            </button>
+                                     </button>
           </>
         )}
       </div>
 
       {isShareModalOpen && (
-        <ShareModal onClose={closeShareModal} onShare={handleShare} photoCards={dummyPhotoCards} />
+        <ShareModal onClose={closeShareModal} onShare={handleShare} photoCards = {photoCards} />
       )}
     </div>
   );
 };
 
 const ShareModal = ({ onClose, onShare, photoCards }) => {
-  const [selectedItems, setSelectedItems] = useState([]);
 
+  const [selectedItems, setSelectedItems] = useState([]);
   const handleItemSelect = (item) => {
     setSelectedItems(prevSelectedItems =>
       prevSelectedItems.includes(item)
@@ -344,10 +385,10 @@ const ShareModal = ({ onClose, onShare, photoCards }) => {
       <div className="bg-white rounded-lg p-4 shadow-lg max-w-sm w-full">
         <h2 className="text-lg font-bold mb-2">공유하기</h2>
         <div className="grid gap-2 mb-4 grid-cols-2">
-          {photoCards.map(card => (
-            <div key={card.id} className="bg-white rounded-lg shadow-md overflow-hidden relative">
-              <img src={card.imageUrl} alt={card.text} className="w-full h-32 object-cover" />
-              <p className="absolute bottom-1 left-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">{card.text}</p>
+         {photoCards && photoCards.map(card => (
+            <div key={card.photocardId} className="bg-white rounded-lg shadow-md overflow-hidden relative">
+              <img src={card.photocardImage} alt={card.photocardText} className="w-full h-32 object-cover" />
+              <p className="absolute bottom-1 left-1 text-black bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">{card.text}</p>
               <input
                 type="checkbox"
                 className="absolute top-1 right-1"
@@ -355,17 +396,17 @@ const ShareModal = ({ onClose, onShare, photoCards }) => {
                 checked={selectedItems.includes(card)}
               />
             </div>
-          ))}
+          ))} 
         </div>
         <button 
           onClick={handleShareClick}
-          className="px-4 py-2 bg-blue-500 text-white rounded-full shadow-lg"
+          className="px-4 py-2 bg-blue-500 text-black rounded-full shadow-lg"
         >
           공유하기
         </button>
         <button 
           onClick={onClose}
-          className="px-4 py-2 bg-gray-500 text-white rounded-full shadow-lg ml-2"
+          className="px-4 py-2 bg-gray-500 text-black rounded-full shadow-lg ml-2"
         >
           닫기
         </button>

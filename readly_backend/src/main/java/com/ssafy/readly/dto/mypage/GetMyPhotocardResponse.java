@@ -11,6 +11,8 @@ public class GetMyPhotocardResponse {
     private String bookAuthor;
     private String photocardImage;
     private String photocardText;
+    private int memberId;
+    private String memberName;
 
     public GetMyPhotocardResponse(PhotoCard photoCard) {
 
@@ -19,6 +21,8 @@ public class GetMyPhotocardResponse {
         this.bookAuthor = photoCard.getBook().getAuthor();
         this.photocardImage= photoCard.getPhotoCardImage();
         this.photocardText = photoCard.getText();
+        this.memberId = photoCard.getMember().getId();
+        this.memberName = photoCard.getMember().getNickname();
     }
 
 }
