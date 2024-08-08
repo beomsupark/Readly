@@ -24,9 +24,9 @@ DROP TABLE IF EXISTS `timecapsule_items`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `timecapsule_items` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `timecapsule_id` int NOT NULL,
-  `photocard_id` int NOT NULL,
-  `review_id` int NOT NULL,
+  `timecapsule_id` int,
+  `photocard_id` int,
+  `review_id` int,
   `item_type` enum('P','R') DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_photocards_TO_timecapsule_items_1` (`photocard_id`),
