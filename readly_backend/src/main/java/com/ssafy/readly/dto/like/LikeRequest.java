@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class LikeRequest {
-    private int memberId;
-    private int reviewId;
-    private int photoCardId;
+    private Integer memberId;
+    private Integer reviewId;
+    private Integer photoCardId;
 }

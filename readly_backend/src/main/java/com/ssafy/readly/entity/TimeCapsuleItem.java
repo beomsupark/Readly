@@ -18,7 +18,7 @@ public class TimeCapsuleItem {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private int id;
+    private Long id;
 
     @Enumerated(value = STRING)
     private ItemType itemType;
@@ -32,7 +32,7 @@ public class TimeCapsuleItem {
     private PhotoCard photoCard;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name="reviews_id")
+    @JoinColumn(name="review_id")
     private Review review;
 
     public TimeCapsuleItem(ItemType itemType, Review review, TimeCapsule timeCapsule) {

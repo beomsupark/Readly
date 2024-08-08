@@ -25,7 +25,7 @@ public class TimeCapsule {
     private LocalDate releaseDate;
     private LocalDate startDate;
     private LocalDate endDate;
-    private LocalDate createdDate = LocalDate.now();
+    private LocalDate createdDate;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
@@ -37,6 +37,7 @@ public class TimeCapsule {
     public TimeCapsule(LocalDate startDate, LocalDate endDate, Member member) {
         this.startDate = startDate;
         this.endDate = endDate;
+        this.createdDate = LocalDate.now();
         createReleaseDate();
         addMember(member);
     }

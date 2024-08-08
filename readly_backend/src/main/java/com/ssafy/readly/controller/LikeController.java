@@ -5,10 +5,7 @@ import com.ssafy.readly.service.like.LikeServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,9 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class LikeController {
     private final LikeServiceImpl likeService;
 
-    @PostMapping("like")
+    @PostMapping("/like")
     public ResponseEntity<?> like(@RequestBody LikeRequest request) {
         likeService.like(request);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/like")
+    public ResponseEntity<?> unlike(@RequestBody LikeRequest request) {
+        likeService.cancelLike(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
