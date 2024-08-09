@@ -18,7 +18,7 @@ export const getReviews = async (searchType, orderType, pageSize, pageNumber) =>
         searchType,
         orderType,
         pageSize,
-        pageNumber
+        pageNumber: pageNumber
       },
       {
         headers: {

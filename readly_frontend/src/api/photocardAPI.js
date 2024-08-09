@@ -57,10 +57,10 @@ export const getPhotoCard = async (
       searchType,
       orderType,
       pageSize,
-      pageNumber,
+      pageNumber
     });
     console.log("Received response:", response.data);
-    return response.data; // 전체 response.data를 반환
+    return response.data;
   } catch (error) {
     console.error("Error get photo card:", error);
     if (error.response) {

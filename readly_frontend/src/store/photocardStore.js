@@ -41,14 +41,14 @@ const usePhotocardStore = create((set, get) => ({
       const response = await getPhotoCard(
         searchType,
         orderType,
-        12, // 페이지 크기
+        10, // 페이지 크기
         page
       );
       set({
         photocards: response.reviews,
         currentPage: page,
         totalCount: response.total_count,
-        totalPages: Math.ceil(response.total_count / 12),
+        totalPages: Math.ceil(response.total_count / 10),
         isLoading: false
       });
     } catch (error) {

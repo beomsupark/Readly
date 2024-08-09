@@ -1,9 +1,10 @@
 package com.ssafy.readly.controller;
 
-import com.ssafy.readly.dto.group.GetGroupResponse;
 import com.ssafy.readly.dto.proceeding.ProceedingDetailResponseDTO;
 import com.ssafy.readly.dto.proceeding.ProceedingRequestDTO;
 import com.ssafy.readly.dto.proceeding.ProceedingResponseDTO;
+import com.ssafy.readly.dto.proceeding.ProceedingCreateRequestDTO;
+import com.ssafy.readly.dto.proceeding.ProceedingUpdateRequestDTO;
 import com.ssafy.readly.entity.Proceeding;
 import com.ssafy.readly.service.proceeding.ProceedingService;
 import lombok.RequiredArgsConstructor;
@@ -51,4 +52,27 @@ public class ProceedingController {
         ProceedingDetailResponseDTO proceedingDetailResponseDTO = ProceedingDetailResponseDTO.of(proceeding);
         return new ResponseEntity<>(proceedingDetailResponseDTO, HttpStatus.OK);
     }
+
+
+    @PostMapping("/proceeding")
+    public ResponseEntity<ProceedingDetailResponseDTO> createProceeding(@RequestBody ProceedingCreateRequestDTO requestDTO) throws Exception {
+        Proceeding proceeding = proceedingService.createProceeding(requestDTO);
+        ProceedingDetailResponseDTO responseDTO = ProceedingDetailResponseDTO.of(proceeding);
+        return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/proceeding/{proceedingId}")
+    public ResponseEntity<ProceedingDetailResponseDTO> updateProceeding(@PathVariable("proceedingId") int proceedingId, @RequestBody ProceedingUpdateRequestDTO requestDTO) throws Exception {
+        Proceeding proceeding = proceedingService.updateProceeding(proceedingId, requestDTO);
+        ProceedingDetailResponseDTO responseDTO = ProceedingDetailResponseDTO.of(proceeding);
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+
+    @DeleteMapping("/proceeding/{proceedingId}")
+    public ResponseEntity<?> deleteProceeding(@PathVariable("proceedingId") int proceedingId) throws Exception {
+        proceedingService.deleteProceeding(proceedingId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }

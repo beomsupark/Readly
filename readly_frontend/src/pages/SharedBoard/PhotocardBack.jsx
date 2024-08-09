@@ -38,29 +38,47 @@ const PhotocardBack = ({ photoCardText, memberId, bookTitle, bookAuthor, likeCou
     ctx.lineTo(340, 45);
     ctx.stroke();
 
-    // 제목 추가
-    ctx.font = 'bold 18px sans-serif';
+    // 제목 추가 (길이에 따라 폰트 크기 조절)
+    let titleFontSize = 18;
+    if (bookTitle.length > 20) {
+      titleFontSize = 16;
+    }
+    if (bookTitle.length > 30) {
+      titleFontSize = 14;
+    }
+    ctx.font = `bold ${titleFontSize}px sans-serif`;
     ctx.textAlign = 'left';
     const titleLines = wrapText(ctx, bookTitle, 320);
     titleLines.forEach((line, index) => {
-      ctx.fillText(line, 20, 80 + index * 25);
+      ctx.fillText(line, 20, 80 + index * (titleFontSize + 5));
     });
 
     // 첫 번째 구분선 추가
-    const titleHeight = titleLines.length * 25;
+    const titleHeight = titleLines.length * (titleFontSize + 5);
     ctx.beginPath();
     ctx.moveTo(20, 90 + titleHeight);
     ctx.lineTo(340, 90 + titleHeight);
     ctx.stroke();
 
-    // 작가 추가
-    ctx.font = 'bold 16px sans-serif';
-    ctx.fillText(bookAuthor, 20, 120 + titleHeight);
+    // 작가 추가 (길이에 따라 폰트 크기 조절 및 줄바꿈)
+    let authorFontSize = 16;
+    if (bookAuthor.length > 20) {
+      authorFontSize = 14;
+    }
+    if (bookAuthor.length > 30) {
+      authorFontSize = 12;
+    }
+    ctx.font = `bold ${authorFontSize}px sans-serif`;
+    const authorLines = wrapText(ctx, bookAuthor, 320);
+    authorLines.forEach((line, index) => {
+      ctx.fillText(line, 20, 120 + titleHeight + index * (authorFontSize + 5));
+    });
 
     // 두 번째 구분선 추가
+    const authorHeight = authorLines.length * (authorFontSize + 5);
     ctx.beginPath();
-    ctx.moveTo(20, 135 + titleHeight);
-    ctx.lineTo(340, 135 + titleHeight);
+    ctx.moveTo(20, 135 + titleHeight + authorHeight);
+    ctx.lineTo(340, 135 + titleHeight + authorHeight);
     ctx.stroke();
 
     // 글귀 추가 (좌표 조정)
@@ -68,7 +86,7 @@ const PhotocardBack = ({ photoCardText, memberId, bookTitle, bookAuthor, likeCou
     const quoteLines = wrapText(ctx, photoCardText, 320, 7);
     ctx.textAlign = 'left';
     quoteLines.forEach((line, index) => {
-      ctx.fillText(line, 20, 190 + titleHeight + index * 25);
+      ctx.fillText(line, 20, 190 + titleHeight + authorHeight + index * 25);
     });
 
     // 저작권 정보 추가
