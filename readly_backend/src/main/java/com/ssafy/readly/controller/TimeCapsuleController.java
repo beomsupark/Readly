@@ -44,7 +44,7 @@ public class TimeCapsuleController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping("/timecapsule/{memberid}/available-count")
+    @GetMapping("/timecapsule/{memberid}/alarm/unread-count")
     public ResponseEntity<Long> getTimeCapsuleCount(@PathVariable("memberid") Integer memberId) throws Exception {
         return new ResponseEntity<Long>(timeCapsuleService.getTimeCapsuleCount(memberId), HttpStatus.OK);
     }
