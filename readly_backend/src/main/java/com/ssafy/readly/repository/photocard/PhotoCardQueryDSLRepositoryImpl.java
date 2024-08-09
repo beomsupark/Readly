@@ -4,13 +4,13 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardRequest;
 import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardResponse;
 import com.ssafy.readly.dto.PhotoCard.PhotoCardSearchRequest;
-import com.ssafy.readly.dto.review.ReviewResponse;
-import com.ssafy.readly.dto.review.ReviewSearchRequest;
+import com.ssafy.readly.dto.timecapsule.TimeCapsuleRequest;
 import com.ssafy.readly.entity.PhotoCard;
 import com.ssafy.readly.enums.OrderType;
 import com.ssafy.readly.enums.SearchType;
@@ -18,10 +18,10 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +31,6 @@ import static com.ssafy.readly.entity.QBook.book;
 import static com.ssafy.readly.entity.QLike.like;
 import static com.ssafy.readly.entity.QMember.member;
 import static com.ssafy.readly.entity.QPhotoCard.photoCard;
-import static com.ssafy.readly.entity.QReview.review;
 import static com.ssafy.readly.entity.QTimeCapsuleItem.timeCapsuleItem;
 
 @Repository
@@ -40,7 +39,7 @@ import static com.ssafy.readly.entity.QTimeCapsuleItem.timeCapsuleItem;
 public class PhotoCardQueryDSLRepositoryImpl implements PhotoCardQueryDSLRepository{
 
     private final EntityManager em;
-    private final JPAQueryFactory query;
+    private final JPAQueryFactory queryFactory;
 
     @Override
     public int addPhotoCard(PhotoCard photoCard) throws Exception {
@@ -51,7 +50,7 @@ public class PhotoCardQueryDSLRepositoryImpl implements PhotoCardQueryDSLReposit
     @Override
     public CreatePhotoCardResponse getPhotoCard(int id) {
         // 쿼리 dsl
-        List<CreatePhotoCardResponse> result = query.select(Projections.constructor(CreatePhotoCardResponse.class
+        List<CreatePhotoCardResponse> result = queryFactory.select(Projections.constructor(CreatePhotoCardResponse.class
                         ,photoCard.id
                         ,photoCard.text
                         ,photoCard.member.loginId
@@ -68,10 +67,9 @@ public class PhotoCardQueryDSLRepositoryImpl implements PhotoCardQueryDSLReposit
         return response;
     }
 
-
     @Override
     public long updatePhotoCard(CreatePhotoCardRequest request) {
-        return query
+        return queryFactory
                 .update(photoCard)
                 .set(photoCard.photoCardImage, request.getImageLink())
                 .where(photoCard.id.eq(request.getPhotoCardId()))
@@ -87,7 +85,7 @@ public class PhotoCardQueryDSLRepositoryImpl implements PhotoCardQueryDSLReposit
     public List<CreatePhotoCardResponse> findPhotoCardsSorted(PhotoCardSearchRequest request) throws Exception {
         OrderSpecifier[] orderSpecifiers = createOrderSpecifier(request);
 
-        List<CreatePhotoCardResponse> list = query.select(Projections.constructor(CreatePhotoCardResponse.class,
+        List<CreatePhotoCardResponse> list = queryFactory.select(Projections.constructor(CreatePhotoCardResponse.class,
                         photoCard.id,
                         photoCard.text,
                         member.loginId,
@@ -115,6 +113,58 @@ public class PhotoCardQueryDSLRepositoryImpl implements PhotoCardQueryDSLReposit
         return list;
     }
 
+    @Override
+    public List<CreatePhotoCardResponse> findByPhotoCardNoLike(TimeCapsuleRequest timeCapsuleRequest) {
+        return queryFactory
+                .select(Projections.constructor(CreatePhotoCardResponse.class,
+                        photoCard.id, photoCard.text, book.title, book.author, photoCard.photoCardImage, photoCard.createdDate))
+                .from(photoCard)
+                .join(photoCard.book, book)
+                .where(photoCard.member.id.eq(timeCapsuleRequest.getMemberId()),
+                        betweenDate(timeCapsuleRequest.getStartDate(), timeCapsuleRequest.getEndDate()))
+                .fetch();
+    }
+
+    @Override
+    public List<PhotoCard> findByPhotoCardIn(Integer[] photoCards) {
+        return queryFactory
+                .selectFrom(photoCard)
+                .where(photoCard.id.in(photoCards))
+                .fetch();
+    }
+
+    /**
+     * @param memberId
+     * @return
+     */
+    @Override
+    public List<CreatePhotoCardResponse> findPhotoCardsbyMemberId(int memberId) {
+
+        List<CreatePhotoCardResponse> list = queryFactory.select(Projections.constructor(CreatePhotoCardResponse.class,
+                                photoCard.id,
+                                photoCard.text,
+                                member.loginId,
+                                book.title,
+                                book.author,
+                                photoCard.photoCardImage,
+                                photoCard.createdDate,
+                                like.count(),
+                                ExpressionUtils.as(
+                                        JPAExpressions.select(like.count())
+                                                .from(like)
+                                                .join(like.member,member)
+                                                .where(member.id.eq(photoCard.member.id)), "check")
+                        )
+                ).from(like)
+                .join(like.timeCapsuleItem, timeCapsuleItem)
+                .rightJoin(timeCapsuleItem.photoCard, photoCard)
+                .join(photoCard.member,member)
+                .join(photoCard.book, book)
+                .where(member.id.eq(memberId))
+                .groupBy(photoCard.id,photoCard.member.id)
+                .fetch();
+        return list;
+    }
 
     private OrderSpecifier[] createOrderSpecifier(PhotoCardSearchRequest reviewRequest) {
 
@@ -133,5 +183,16 @@ public class PhotoCardQueryDSLRepositoryImpl implements PhotoCardQueryDSLReposit
             }
         }
         return orderSpecifiers.toArray(new OrderSpecifier[orderSpecifiers.size()]);
+    }
+
+    private BooleanExpression betweenDate(LocalDate startDate, LocalDate endDate) {
+        if(startDate != null && endDate != null) {
+            LocalDateTime startDateTime = startDate.atStartOfDay();
+            LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
+
+            return photoCard.createdDate.between(startDateTime, endDateTime);
+        }
+
+        return null;
     }
 }

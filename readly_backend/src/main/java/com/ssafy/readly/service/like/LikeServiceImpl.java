@@ -25,53 +25,63 @@ public class LikeServiceImpl implements LikeService {
     private final TimeCapsuleItemRepositoryImpl timeCapsuleItemRepository;
 
     @Override
-    public void like(LikeRequest likeRequest) {
+    public Long like(LikeRequest likeRequest) {
         Member member = memberRepository.findById(likeRequest.getMemberId()).orElseThrow(
                 () -> new NoSuchElementException("멤버: " + likeRequest.getMemberId() + "이(가) 존재하지 않습니다."));
         Integer reviewId = likeRequest.getReviewId();
         Integer photoCardId = likeRequest.getPhotoCardId();
+        TimeCapsuleItem timeCapsuleItem = null;
 
         if(reviewId != null) {
             Review review = reviewRepository.findById(reviewId).orElseThrow(
                     () -> new NoSuchElementException("리뷰: " + reviewId + "이(가) 존재하지 않습니다."));
-            TimeCapsuleItem timeCapsuleItem = new TimeCapsuleItem(ItemType.R, review);
+            timeCapsuleItem = timeCapsuleItemRepository.findTimeCapsuleItemByReviewId(reviewId).orElseGet(() -> {
+                TimeCapsuleItem item = new TimeCapsuleItem(ItemType.R, review);
+                timeCapsuleItemRepository.save(item);
+                return item;
+            });
+
             createLike(member, timeCapsuleItem);
         }
 
         if(photoCardId != null) {
             PhotoCard photoCard = photoCardRepository.findById(photoCardId).orElseThrow(
                     () -> new NoSuchElementException("포토카드: " + photoCardId + "이(가) 존재하지 않습니다."));
-            TimeCapsuleItem timeCapsuleItem = new TimeCapsuleItem(ItemType.P, photoCard);
+            timeCapsuleItem = timeCapsuleItemRepository.findTimeCapsuleItemByReviewId(photoCardId).orElseGet(() -> {
+                TimeCapsuleItem item = new TimeCapsuleItem(ItemType.P, photoCard);
+                timeCapsuleItemRepository.save(item);
+                return item;
+            });
+
             createLike(member, timeCapsuleItem);
         }
+
+        return likeRepository.CountByTimeCapsuleItemId(timeCapsuleItem.getId());
     }
 
     @Override
-    public void cancelLike(LikeRequest likeRequest) {
+    public Long cancelLike(LikeRequest likeRequest) {
         Integer reviewId = likeRequest.getReviewId();
         Integer photoCardId = likeRequest.getPhotoCardId();
+        TimeCapsuleItem timeCapsuleItem = null;
 
         if(reviewId != null) {
-            TimeCapsuleItem timeCapsuleItem = timeCapsuleItemRepository.findTimeCapsuleItemByReviewId(reviewId).orElseThrow(
+            timeCapsuleItem = timeCapsuleItemRepository.findTimeCapsuleItemByReviewId(reviewId).orElseThrow(
                     () -> new NoSuchElementException(reviewId + "에 해당하는 타임캡슐 아이템이 존재하지 않습니다."));
-            deleteLike(likeRequest.getMemberId(), timeCapsuleItem);
+            likeRepository.delete(likeRequest.getMemberId(), timeCapsuleItem.getId());
         }
 
         if(photoCardId != null) {
-            TimeCapsuleItem timeCapsuleItem = timeCapsuleItemRepository.findTimeCapsuleItemByPhotoCardId(photoCardId).orElseThrow(
+            timeCapsuleItem = timeCapsuleItemRepository.findTimeCapsuleItemByPhotoCardId(photoCardId).orElseThrow(
                     () -> new NoSuchElementException(photoCardId + "에 해당하는 타임캡슐 아이템이 존재하지 않습니다."));
-            deleteLike(likeRequest.getMemberId(), timeCapsuleItem);
+            likeRepository.delete(likeRequest.getMemberId(), timeCapsuleItem.getId());
         }
+
+        return likeRepository.CountByTimeCapsuleItemId(timeCapsuleItem.getId());
     }
 
     private void createLike(Member member, TimeCapsuleItem timeCapsuleItem) {
-        timeCapsuleItemRepository.save(timeCapsuleItem);
         Like like = new Like(member, timeCapsuleItem);
         likeRepository.save(like);
-    }
-
-    private void deleteLike(Integer memberId, TimeCapsuleItem timeCapsuleItem) {
-        likeRepository.delete(memberId, timeCapsuleItem.getId());
-        timeCapsuleItemRepository.delete(timeCapsuleItem);
     }
 }

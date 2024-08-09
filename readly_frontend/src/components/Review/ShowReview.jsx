@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { User } from "lucide-react";
 import "../../components/Review/like_btn.css";
+import useUserStore from '../../store/userStore.js';
+import useLikeStore from '../../store/likeStore.js';
 
-const ShowReview = ({ review, isModal = false }) => {
+const ShowReview = ({ review, isModal = false, onLike }) => {
   const {
+    id,
     bookImage,
     bookTitle,
     bookAuthor,
@@ -14,18 +17,27 @@ const ShowReview = ({ review, isModal = false }) => {
     likeCheck,
   } = review;
 
-  const [isLiked, setIsLiked] = useState(likeCheck === 1);
-  const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [isHovered, setIsHovered] = useState(false);
+  const { user } = useUserStore();
+  const { likes, toggleLike, setInitialLikeStatus } = useLikeStore();
+  
+  useEffect(() => {
+    setInitialLikeStatus(id, likeCheck === 1);
+  }, [id, likeCheck, setInitialLikeStatus]);
 
-  const handleLikeClick = (event) => {
+  const isLiked = likes[id] || false;
+  const likeCount = isLiked ? initialLikeCount + 1 : initialLikeCount;
+
+  const handleLikeClick = async (event) => {
     event.stopPropagation();
-    setIsLiked((prevIsLiked) => !prevIsLiked);
-    setLikeCount((prevCount) => (isLiked ? prevCount - 1 : prevCount + 1));
+    await toggleLike(user.id, id, 'review');
+    if (onLike) {
+      onLike(id, !isLiked);
+    }
   };
 
   const containerClasses = isModal
-    ? "w-full bg-white rounded-lg shadow-md overflow-hidden flex flex-col"
+    ? "w-full bg-[#F5F5F5] rounded-lg shadow-md overflow-hidden flex flex-col"
     : "w-full bg-[#F5F5F5] rounded-lg shadow-md overflow-hidden flex flex-col";
 
   const imageClasses = isModal

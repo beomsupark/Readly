@@ -12,6 +12,8 @@ public class GetMyReviewResponse {
     private String bookAuthor;
     private String bookDescription;
     private String bookImage;
+    private int memberId;
+    private String memberName;
 
     public GetMyReviewResponse(Review review) {
         this.reviewId = review.getId();
@@ -20,6 +22,8 @@ public class GetMyReviewResponse {
         this.bookAuthor = review.getBook().getAuthor();
         this.bookDescription = review.getBook().getDetail();
         this.bookImage = review.getBook().getImage();
+        this.memberId = review.getMember().getId();
+        this.memberName = review.getMember().getNickname();
 
     }
 

@@ -69,4 +69,16 @@ public class ReviewServiceImpl implements ReviewService {
     public long getReviewsCount() throws Exception {
         return reviewRepository.count();
     }
+
+    /**
+     * @param LoginId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<ReviewResponse> findReviewsByLoginId(int LoginId) throws Exception {
+        return reviewQueryDSLRepository.getReviewsByLoginId(LoginId);
+    }
+
+
 }

@@ -31,6 +31,9 @@ public class TimeCapsule {
     @CreationTimestamp
     private LocalDate createdDate;
 
+    @Column(nullable = false)
+    private boolean isRead;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
