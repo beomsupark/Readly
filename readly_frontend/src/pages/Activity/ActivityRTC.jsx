@@ -2,12 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import { OpenVidu } from "openvidu-browser";
 import axios from "axios";
 import useUserStore from "../../store/userStore";
-import GoButton from "../../components/GoButton/GoButton.jsx";
+import ShareModal from "./ShareModal";
+import VideoConferenceView from "./VideoConferenceView";
+
 const API_BASE_URL = "https://i11c207.p.ssafy.io/api";
 
 const ActivityRTC = ({ groupId }) => {
   const [isVideoConferenceActive, setIsVideoConferenceActive] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [sharedItems, setSharedItems] = useState([]);
   const [session, setSession] = useState(null);
@@ -21,6 +22,7 @@ const ActivityRTC = ({ groupId }) => {
   const [subMicStatus, setSubMicStatus] = useState({});
   const [photoCards, setPhotoCards] = useState();
   const [reviews, setReviews] = useState();
+  const [notification, setNotification] = useState(null);
 
   const OV = useRef(null);
 
@@ -53,14 +55,27 @@ const ActivityRTC = ({ groupId }) => {
       const data = JSON.parse(signal.data);
       if (data.type === "share") {
         const items = data.items;
-        setSharedItems((prevItems) => [...prevItems, ...items]);
+        setSharedItems((prevItems) => {
+          const newItems = items.filter(item => 
+            !prevItems.some(prevItem => 
+              (item.photocardId && prevItem.photocardId === item.photocardId) ||
+              (item.reviewId && prevItem.reviewId === item.reviewId)
+            )
+          );
+          return [...prevItems, ...newItems];
+        });
       }
     });
+
     session.on("signal:stopshare", (signal) => {
       const data = JSON.parse(signal.data);
       if (data.type === "stopshare") {
-        const itemId = data.itemId;
-        setSharedItems(sharedItems.filter((item) => item.id !== itemId));
+        const { itemId, itemType } = data;
+        setSharedItems(prevItems => 
+          prevItems.filter(item => 
+            itemType === 'photocard' ? item.photocardId !== itemId : item.reviewId !== itemId
+          )
+        );
       }
     });
   }, [session]);
@@ -69,7 +84,6 @@ const ActivityRTC = ({ groupId }) => {
     const response = await axios.get(
       `${API_BASE_URL}/member/photocards/${user.id}`
     );
-
     return response.data["my-photocards"];
   };
 
@@ -77,7 +91,6 @@ const ActivityRTC = ({ groupId }) => {
     const response = await axios.get(
       `${API_BASE_URL}/member/reviews/${user.id}`
     );
-
     return response.data["my-reviews"];
   };
 
@@ -175,10 +188,6 @@ const ActivityRTC = ({ groupId }) => {
     setIsVideoConferenceActive((prev) => !prev);
   };
 
-  const toggleChat = () => {
-    setIsChatOpen((prev) => !prev);
-  };
-
   const openShareModal = () => {
     setIsShareModalOpen(true);
 
@@ -201,13 +210,33 @@ const ActivityRTC = ({ groupId }) => {
     //setSharedItems(selectedItems);
     console.log(selectedItems);
     closeShareModal();
-    session
-      .signal({
-        data: JSON.stringify({ type: "share", items: selectedItems }),
-        to: [], // Broadcast to all participants
-        type: "share",
-      })
-      .catch((error) => console.error("Error sending signal:", error));
+
+    const newItems = selectedItems.filter((item) => {
+      const existingItem = sharedItems.find(
+        (sharedItem) =>
+          (item.photocardId && sharedItem.photocardId === item.photocardId) ||
+          (item.reviewId && sharedItem.reviewId === item.reviewId)
+      );
+      if (existingItem) {
+        setNotification("이미 공유된 아이템입니다.");
+        setTimeout(() => setNotification(null), 1000);
+        return false;
+      }
+      return true;
+    });
+
+    if (newItems.length > 0) {
+      session
+        .signal({
+          data: JSON.stringify({ type: "share", items: newItems }),
+          to: [],
+          type: "share",
+        })
+        .catch((error) => console.error("Error sending signal:", error));
+    } else {
+      setNotification("모든 선택된 아이템이 이미 공유되었습니다.");
+      setTimeout(() => setNotification(null), 1000);
+    }
   };
 
   const toggleMic = () => {
@@ -215,14 +244,6 @@ const ActivityRTC = ({ groupId }) => {
       const newMicState = !prevState;
       if (publisher) {
         publisher.publishAudio(newMicState);
-
-        session
-          .signal({
-            data: JSON.stringify({ type: "mic", state: newMicState }),
-            to: [], // Broadcast to all participants
-            type: "micStatus",
-          })
-          .catch((error) => console.error("Error sending signal:", error));
       }
       return newMicState;
     });
@@ -240,28 +261,35 @@ const ActivityRTC = ({ groupId }) => {
   };
 
   const isIShared = (item) => {
-    // item.memberId와 user.id를 비교하여 버튼 렌더링 여부 결정
+    const itemId = item.photocardId || item.reviewId;
     return item.memberId === user.id ? (
-      <span>
-        <button
-          onClick={() => {
-            stopSharing(item.id);
-          }}
-        >
-          공유해제
-        </button>
-      </span>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          stopSharing(itemId, item.photocardId ? 'photocard' : 'review');
+        }}
+        className="absolute top-1 right-1 bg-red-500 text-white px-2 py-1 rounded text-xs"
+      >
+        공유해제
+      </button>
     ) : null;
   };
-  const stopSharing = (itemId) => {
-    //setSharedItems(sharedItems.filter(item => item.id !== itemId));
+
+  const stopSharing = (itemId, itemType) => {
     session
       .signal({
-        data: JSON.stringify({ type: "stopshare", itemId: itemId }),
-        to: [], // Broadcast to all participants
+        data: JSON.stringify({ type: "stopshare", itemId: itemId, itemType: itemType }),
+        to: [],
         type: "stopshare",
       })
       .catch((error) => console.error("Error sending signal:", error));
+
+    // 로컬 상태도 업데이트
+    setSharedItems(prevItems => 
+      prevItems.filter(item => 
+        itemType === 'photocard' ? item.photocardId !== itemId : item.reviewId !== itemId
+      )
+    );
   };
 
   return (
@@ -423,125 +451,6 @@ const ActivityRTC = ({ groupId }) => {
           reviews={reviews}
         />
       )}
-    </div>
-  );
-};
-
-const ShareModal = ({ onClose, onShare, photoCards, reviews }) => {
-  const [selectedItems, setSelectedItems] = useState([]);
-
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, []);
-
-  const handleItemSelect = (item) => {
-    setSelectedItems((prevSelectedItems) =>
-      prevSelectedItems.includes(item)
-        ? prevSelectedItems.filter((i) => i !== item)
-        : [...prevSelectedItems, item]
-    );
-  };
-
-  const handleShareClick = (e) => {
-    e.stopPropagation();
-    onShare(selectedItems);
-  };
-
-  const handleModalClick = (e) => {
-    e.stopPropagation();
-  };
-
-  return (
-    <div
-      className="fixed inset-0 flex items-center justify-center z-50  bg-opacity-10 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <div
-        className="bg-opacity-20 rounded-lg shadow-lg p-6 w-[80%] max-w-4xl max-h-[80vh] overflow-y-auto"
-        onClick={handleModalClick}
-      >
-        {/* 포토카드 섹션 */}
-        <div className="mb-6">
-          <h3 className="text-xl font-semibold mb-3">
-            내가 만든 <span className="text-custom-highlight">포토카드</span>
-          </h3>
-          <div className="grid grid-cols-9 gap-2">
-            {photoCards &&
-              photoCards.map((card) => (
-                <div
-                  key={card.photocardId}
-                  className="bg-white bg-opacity-80 rounded-md shadow-sm overflow-hidden relative"
-                >
-                  <div className="aspect-w-3 aspect-h-4">
-                    <img
-                      src={card.photocardImage}
-                      alt={card.photocardText}
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
-                  <input
-                    type="checkbox"
-                    className="absolute top-0.5 right-0.5 w-3 h-3"
-                    onChange={(e) => {
-                      e.stopPropagation();
-                      handleItemSelect(card);
-                    }}
-                    checked={selectedItems.includes(card)}
-                  />
-                </div>
-              ))}
-          </div>
-        </div>
-
-        <hr className="my-6 border-gray-300" />
-
-        {/* 한줄평 섹션 */}
-        <div className="mb-6">
-          <h3 className="text-xl font-semibold mb-3">
-            내가 만든 <span className="text-custom-highlight">한줄평</span>
-          </h3>
-          <div className="grid grid-cols-7 gap-2">
-            {reviews &&
-              reviews.map((review) => (
-                <div
-                  key={review.reviewId}
-                  className="bg-white bg-opacity-80 rounded-md shadow-sm overflow-hidden relative"
-                >
-                  <div className="aspect-w-3 aspect-h-4">
-                    <img
-                      src={review.bookImage}
-                      alt={review.bookTitle}
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
-                  <input
-                    type="checkbox"
-                    className="absolute top-0.5 right-0.5 w-3 h-3"
-                    onChange={(e) => {
-                      e.stopPropagation();
-                      handleItemSelect(review);
-                    }}
-                    checked={selectedItems.includes(review)}
-                  />
-                </div>
-              ))}
-          </div>
-        </div>
-
-        {/* 버튼 섹션 */}
-        <div className="flex justify-end mt-6">
-          <GoButton text="공유하기" onClick={handleShareClick} />
-          <button
-            onClick={onClose}
-            className="px-6 py-2 bg-[#F878787] text-black rounded-full shadow-lg text-lg hover:bg-gray-600 transition duration-300 ml-4"
-          >
-            닫기
-          </button>
-        </div>
-      </div>
     </div>
   );
 };
