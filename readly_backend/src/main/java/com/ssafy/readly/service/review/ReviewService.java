@@ -20,4 +20,6 @@ public interface ReviewService {
     List<ReviewResponse> findReviewsSorted(ReviewSearchRequest searchRequest);
 
     long getReviewsCount() throws Exception;
+
+    List<ReviewResponse> findReviewsByLoginId(int LoginId) throws Exception;
 }

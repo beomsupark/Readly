@@ -1,5 +1,6 @@
 package com.ssafy.readly.repository.readbook;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.readly.dto.readbook.ReadBookGroupRequestDTO;
 import com.ssafy.readly.dto.readbook.ReadBookRequestDTO;
 import com.ssafy.readly.dto.readbook.UpdateReadBookPageRequestDTO;
@@ -24,6 +25,8 @@ import java.util.stream.Collectors;
 public class ReadBookRepositoryImpl implements ReadBookRepository{
 
     private final EntityManager em;
+    private final JPAQueryFactory queryFactory;
+
     @Override
     public void addUserReadBook(ReadBookRequestDTO readBookRequestDTO) {
         int memberId = readBookRequestDTO.getMemberId();

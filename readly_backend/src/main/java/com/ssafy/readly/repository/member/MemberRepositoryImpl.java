@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.readly.dto.member.LoginMemberRequest;
 import com.ssafy.readly.dto.member.LoginMemberResponse;
+import com.ssafy.readly.dto.member.MemberResponse;
 import com.ssafy.readly.entity.Member;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
@@ -63,4 +64,30 @@ public class MemberRepositoryImpl implements MemberRepository {
                 .where(member.loginId.eq(loginId))
                 .fetchOne();
     }
+
+    /**
+     * @param Loginid
+     * @return
+     */
+    @Override
+    public Optional<MemberResponse> findDataByLoginId(String Loginid) {
+        return Optional.ofNullable(queryFactory
+                .select(Projections.constructor(MemberResponse.class,
+                        member.id,
+                        member.loginId,
+                        member.nickname,
+                        member.memberName,
+                        member.phoneNumber,
+                        member.email,
+                        member.point,
+                        member.birthday,
+                        member.joinDate,
+                        member.gender,
+                        member.introduction))
+                .from(member)
+                .where(member.loginId.eq(Loginid))
+                .fetchOne());
+    }
+
+
 }
