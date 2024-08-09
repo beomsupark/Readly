@@ -2,14 +2,21 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../../components/Review/like_btn.css';
 import { User } from 'lucide-react';
-import { addLike, removeLike } from '../../api/likeAPI.js'; // 이 줄을 추가하세요
-import useUserStore from '../../store/userStore.js'; // 이 줄을 추가하세요
+import useUserStore from '../../store/userStore.js';
+import useLikeStore from '../../store/likeStore.js';
 
 const PhotocardBack = ({ photoCardText, memberId, bookTitle, bookAuthor, likeCount: initialLikeCount, likeCheck: initialLikeCheck, onLikeClick, photoCardCreatedDate, photoCardId }) => {
   const canvasRef = useRef(null);
-  const [isLiked, setIsLiked] = useState(initialLikeCheck === 1);
-  const [currentLikeCount, setCurrentLikeCount] = useState(initialLikeCount);
   const [isHovered, setIsHovered] = useState(false);
+  const { user } = useUserStore();
+  const { likes, toggleLike, setInitialLikeStatus } = useLikeStore();
+  
+  useEffect(() => {
+    setInitialLikeStatus(photoCardId, initialLikeCheck === 1);
+  }, [photoCardId, initialLikeCheck, setInitialLikeStatus]);
+
+  const isLiked = likes[photoCardId] || false;
+  const currentLikeCount = isLiked ? initialLikeCount + 1 : initialLikeCount;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -119,25 +126,13 @@ const PhotocardBack = ({ photoCardText, memberId, bookTitle, bookAuthor, likeCou
     return lines;
   }
 
-  const { user } = useUserStore(); // 이 줄을 추가하세요
-
   const handleLikeClick = async (event) => {
     event.stopPropagation();
-    try {
-      if (isLiked) {
-        await removeLike(user.id, null, photoCardId);  // photoCardId가 올바르게 전달되고 있는지 확인
-        setCurrentLikeCount(prevCount => prevCount - 1);
-      } else {
-        await addLike(user.id, null, photoCardId);  // photoCardId가 올바르게 전달되고 있는지 확인
-        setCurrentLikeCount(prevCount => prevCount + 1);
-      }
-      setIsLiked(prevIsLiked => !prevIsLiked);
+    await toggleLike(user.id, photoCardId, 'photoCard');
+    if (onLikeClick) {
       onLikeClick(event);
-    } catch (error) {
-      console.error('Error handling like:', error);
     }
   };
-  
 
   return (
     <div className="relative w-full h-full">
