@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { User } from "lucide-react";
 import "../../components/Review/like_btn.css";
-import { addLike, removeLike } from '../../api/likeAPI.js'
 import useUserStore from '../../store/userStore.js';
+import useLikeStore from '../../store/likeStore.js';
 
 const ShowReview = ({ review, isModal = false, onLike }) => {
   const {
-    id, // Add this line to extract the review id
+    id,
     bookImage,
     bookTitle,
     bookAuthor,
@@ -17,32 +17,22 @@ const ShowReview = ({ review, isModal = false, onLike }) => {
     likeCheck,
   } = review;
 
-  const [isLiked, setIsLiked] = useState(likeCheck === 1);
-  const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [isHovered, setIsHovered] = useState(false);
-
   const { user } = useUserStore();
+  const { likes, toggleLike, setInitialLikeStatus } = useLikeStore();
+  
+  useEffect(() => {
+    setInitialLikeStatus(id, likeCheck === 1);
+  }, [id, likeCheck, setInitialLikeStatus]);
+
+  const isLiked = likes[id] || false;
+  const likeCount = isLiked ? initialLikeCount + 1 : initialLikeCount;
 
   const handleLikeClick = async (event) => {
     event.stopPropagation();
-    const newLikeStatus = !isLiked;
-    setIsLiked(newLikeStatus);
-    setLikeCount((prevCount) => (newLikeStatus ? prevCount + 1 : prevCount - 1));
-  
-    try {
-      if (newLikeStatus) {
-        await addLike(user.id, id); // Use the extracted review id
-      } else {
-        await removeLike(user.id, id); // Use the extracted review id
-      }
-      if (onLike) {
-        onLike(id, newLikeStatus); // Call the onLike function if provided
-      }
-    } catch (error) {
-      console.error('Error updating like status:', error);
-      // Revert the UI state if there was an error
-      setIsLiked(isLiked);
-      setLikeCount((prevCount) => (newLikeStatus ? prevCount - 1 : prevCount + 1));
+    await toggleLike(user.id, id, 'review');
+    if (onLike) {
+      onLike(id, !isLiked);
     }
   };
 
