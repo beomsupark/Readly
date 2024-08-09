@@ -5,10 +5,14 @@ import levelIcon2 from "../../assets/level/lv2.png";
 import levelIcon3 from "../../assets/level/lv3.png";
 import levelIcon4 from "../../assets/level/lv4.png";
 import catCoin from "../../assets/level/cat_coin.png";
-import { getFollowers } from "../../api/mypageAPI";
+import { getFollowerInfo } from "../../api/memberAPI";
 import { addFollower, removeFollower } from "../../api/followAPI";
 import useUserStore from '../../store/userStore';
 import './follow_btn.css';
+import Review from "../../components/Review/Review.jsx"
+import BookshelfList from "../Mypage/BookshelfModal.jsx"
+import PhotocardList from "../Mypage/PhotocardListModal.jsx"
+import ReviewList from "../Mypage/ReviewListModal.jsx"
 
 const FollowButton = ({ onClick }) => {
   return (
@@ -31,27 +35,27 @@ const FollowButton = ({ onClick }) => {
 
 export default function Member() {
   const { memberId } = useParams();
-  const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
-  const currentUserId = useUserStore(state => state.userId);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [photocardModalIsOpen, setPhotocardModalIsOpen] = useState(false);
+  const [reviewModalIsOpen, setReviewModalIsOpen] = useState(false);
+  const [userId, setUserId] = useState(null);
+
+  
+  const currentUser = useUserStore(state => state.user); // user 객체에서 ID와 token을 가져옴
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUserData = async () => {
       try {
-        const followers = await getFollowers(memberId);
-        const userInfo = followers.find(follower => follower.followedId === parseInt(memberId));
-        if (userInfo) {
-          setUser({
-            ...userInfo,
-            level: calculateLevel(userInfo.followedPoint)
-          });
-          // 여기서 팔로우 상태를 확인하는 로직을 추가할 수 있습니다.
-          // 예: setIsFollowing(checkFollowStatus(currentUserId, memberId));
-        } else {
-          setError('User not found');
-        }
+        const data = await getFollowerInfo(memberId);
+        setUserData(data);
+        setUserId(data.memberResponse.id);  // 여기서 userId를 설정합니다.
+        console.log(data);
+        console.log(data.memberResponse.id);
+        // 팔로우 상태 확인 로직 추가 필요
       } catch (err) {
         console.error("Error fetching user data:", err);
         setError(err.message);
@@ -59,9 +63,9 @@ export default function Member() {
         setIsLoading(false);
       }
     };
-
-    fetchUser();
-  }, [memberId, currentUserId]);
+  
+    fetchUserData();
+  }, [memberId]);
 
   const calculateLevel = (point) => {
     if (point < 1000) return 1;
@@ -82,70 +86,123 @@ export default function Member() {
 
   const handleFollowClick = async () => {
     try {
+      if (!currentUser || !userId) {
+        console.error('User is not logged in or userId is not set.');
+        return;
+      }
+      
+      const { id: currentUserId } = currentUser;
+      
       if (isFollowing) {
-        await removeFollower(currentUserId, memberId);
+        await removeFollower(currentUserId, userId);
         setIsFollowing(false);
       } else {
-        await addFollower(currentUserId, memberId);
+        await addFollower(currentUserId, userId);
         setIsFollowing(true);
       }
     } catch (error) {
       console.error('팔로우 작업 중 오류 발생:', error);
-      // 여기에 사용자에게 오류를 표시하는 로직을 추가할 수 있습니다.
+      if (error.response && error.response.status === 500) {
+        // 사용자에게 오류 메시지를 표시
+        // alert('팔로우 작업 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      }
     }
   };
 
+  const openModal = () => {
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
+
+  const openPhotocardModal = () => {
+    setPhotocardModalIsOpen(true);
+  };
+
+  const closePhotocardModal = () => {
+    setPhotocardModalIsOpen(false);
+  };
+
+  const openReviewModal = () => {
+    setReviewModalIsOpen(true);
+  };
+
+  const closeReviewModal = () => {
+    setReviewModalIsOpen(false);
+  };
+
   const MemberHeader = ({ user }) => {
-    const levelIcon = getLevelIcon(user.level);
+    const levelIcon = getLevelIcon(calculateLevel(user.memberResponse.point));
 
     return (
-      <header className="flex items-center justify-between p-4 bg-white shadow-md">
-        <div className="flex items-center">
+      <header className="flex justify-between items-center py-1 px-3 bg-white">
+        <div className="flex-cols items-center mr-2">
           <img className="w-13 h-10 mr-2" src={levelIcon} alt="level" />
-          <p className="font-bold text-center text-xl">Lv{user.level}</p>
+          <p className="font-bold text-center text-xl">Lv{calculateLevel(user.memberResponse.point)}</p>
         </div>
 
         <div>
-          <div className="text-center">
-            <h2 className="text-2xl font-bold">{user.followedName}</h2>
+          <div className="flex text-center">
+            <h2 className="text-2xl font-bold mr-2">{user.memberResponse.nickname}</h2>
             <FollowButton onClick={handleFollowClick} />
           </div>
-          <p className="text-base">{user.followedText}</p>
+          <p className="text-base">{user.memberResponse.introduction}</p>
         </div>
 
-        <div className="flex items-center">
-          <span className="text-base font-bold">{user.followedPoint}</span>
+        <div className="flex-1 flex justify-end items-end mr-6">
+          <span className="text-base font-bold">{user.memberResponse.point}</span>
           <img className="w-6 h-6 ml-2" src={catCoin} alt="coin" />
         </div>
       </header>
     );
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!userData) return <div>User not found</div>;
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  const renderEmptyItems = (count) => {
+    return Array(count)
+      .fill()
+      .map((_, index) => (
+        <div key={`empty-${index}`} className="bg-gray-100 p-2 rounded w-[5rem] h-[6rem]"></div>
+      ));
+  };
 
-  if (!user) {
-    return <div>User not found</div>;
-  }
+  const renderItems = (items, renderFunction, emptyCount = 7) => {
+    const displayItems = items.slice(0, 7);
+    const emptySlots = Math.max(0, emptyCount - displayItems.length);
+    
+    return (
+      <>
+        {displayItems.map(renderFunction)}
+        {renderEmptyItems(emptySlots)}
+      </>
+    );
+  };
 
   return (
     <>
-      <MemberHeader user={user} />
+      <MemberHeader user={userData} />
       <div className="w-full p-4">
         <div className="flex space-x-6">
-          <p className="font-bold text-2xl text-black ">책장</p>
+          <p className="font-bold text-2xl text-black ">{userData.memberResponse.nickname}님의 책장</p>
         </div>
         <div className="bg-white rounded-lg shadow p-4 mb-4 relative">
           <div className="flex space-x-2 mb-2">
-            {/* 책 목록 렌더링 로직 */}
+            {renderItems(
+              userData.readBookResponse,
+              (book, index) => (
+                <div key={index} className="bg-gray-200 p-2 rounded">
+                  <img src={book.image} alt={book.title} className="w-auto h-[6rem]" />
+                </div>
+              )
+            )}
           </div>
           <div className="absolute top-4 right-4">
-            <button className="text-blue-500 hover:text-blue-700 text-lg font-bold">
+            <button onClick={openModal} className="text-blue-500 hover:text-blue-700 text-lg font-bold">
               <span className="text-custom-highlight">&gt;</span>{" "}
               <span className="text-[1rem] text-[#868686]">더보기</span>
             </button>
@@ -154,12 +211,19 @@ export default function Member() {
 
         <div className="mt-4">
           <div className="relative bg-white rounded-lg shadow p-4 mb-4">
-            <h3 className="font-bold mb-2">내가 만든 포토카드</h3>
+            <h3 className="font-bold mb-2">{userData.memberResponse.nickname}님이 만든 포토카드</h3>
             <div className="flex flex-wrap gap-1">
-              {/* 포토카드 목록 렌더링 로직 */}
+              {renderItems(
+                userData.photoCardResponse,
+                (card, index) => (
+                  <div key={index} className="bg-gray-200 p-2 rounded w-[5rem] h-[6rem] flex items-center justify-center">
+                    <img src={card.photoCardImage} alt={card.photoCardText} className="w-full h-full object-cover"/>
+                  </div>
+                )
+              )}
             </div>
             <div className="absolute top-4 right-4">
-              <button className="text-blue-500 hover:text-blue-700 text-lg font-bold mr-80">
+              <button onClick={openPhotocardModal} className="text-blue-500 hover:text-blue-700 text-lg font-bold mr-80">
                 <span className="text-custom-highlight">&gt;</span>{" "}
                 <span className="text-[1rem] text-[#868686]">더보기</span>
               </button>
@@ -167,12 +231,25 @@ export default function Member() {
           </div>
 
           <div className="relative bg-white rounded-lg shadow p-4">
-            <h3 className="font-bold mb-2">내가 남긴 한줄평</h3>
-            <div className="flex gap-3 w-[7rem] h-[6rem]">
-              {/* 리뷰 목록 렌더링 로직 */}
+            <h3 className="font-bold mb-2">{userData.memberResponse.nickname}님이 남긴 한줄평</h3>
+            <div className="flex flex-wrap gap-3">
+              {renderItems(
+                userData.reviewResponse,
+                (review, index) => (
+                  <div key={index} className="w-[7rem] h-[6rem]">
+                    <Review
+                      bookImage={review.bookImage}
+                      title={review.bookTitle}
+                      author={review.bookAuthor}
+                      review={review.reviewText}
+                      likeCount={review.likeCount}
+                    />
+                  </div>
+                )
+              )}
             </div>
             <div className="absolute top-4 right-4">
-              <button className="text-blue-500 hover:text-blue-700 text-lg font-bold mr-80">
+              <button onClick={openReviewModal} className="text-blue-500 hover:text-blue-700 text-lg font-bold mr-80">
                 <span className="text-custom-highlight">&gt;</span>{" "}
                 <span className="text-[1rem] text-[#868686]">더보기</span>
               </button>
@@ -180,6 +257,24 @@ export default function Member() {
           </div>
         </div>
       </div>
+
+      <BookshelfList
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        books={userData.readBookResponse}
+      />
+
+      <PhotocardList
+        isOpen={photocardModalIsOpen}
+        onRequestClose={closePhotocardModal}
+        photocards={userData.photoCardResponse}
+      />
+
+      <ReviewList 
+        isOpen={reviewModalIsOpen} 
+        onRequestClose={closeReviewModal} 
+        reviews={userData.reviewResponse}
+      />
     </>
   );
 }
