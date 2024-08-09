@@ -2,6 +2,7 @@ package com.ssafy.readly.repository.member;
 
 import com.ssafy.readly.dto.member.LoginMemberRequest;
 import com.ssafy.readly.dto.member.LoginMemberResponse;
+import com.ssafy.readly.dto.member.MemberResponse;
 import com.ssafy.readly.dto.member.UpdateMemberRequest;
 import com.ssafy.readly.entity.Member;
 
@@ -14,4 +15,5 @@ public interface MemberRepository {
     Optional<String> findByToken(int id);
     Optional<Member> findById(int id);
     Long findByLoginId(String loginId);
+    Optional<MemberResponse> findDataByLoginId(String Loginid);
 }
