@@ -1,22 +1,23 @@
 package com.ssafy.readly.repository.review;
 
 import com.querydsl.core.types.*;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.readly.dto.review.ReviewRequest;
 import com.ssafy.readly.dto.review.ReviewResponse;
 import com.ssafy.readly.dto.review.ReviewSearchRequest;
+import com.ssafy.readly.dto.timecapsule.TimeCapsuleRequest;
 import com.ssafy.readly.entity.Review;
 import com.ssafy.readly.enums.OrderType;
 import com.ssafy.readly.enums.SearchType;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static com.ssafy.readly.entity.QMember.member;
 import static com.ssafy.readly.entity.QReview.review;
@@ -29,7 +30,7 @@ import static com.ssafy.readly.entity.QLike.like;
 @Slf4j
 public class ReviewQueryDSLRepositoryImpl implements ReviewQueryDSLRepository {
 
-    private final JPAQueryFactory query;
+    private final JPAQueryFactory queryFactory;
 
     /**
      * @param reviewRequest
@@ -40,7 +41,7 @@ public class ReviewQueryDSLRepositoryImpl implements ReviewQueryDSLRepository {
 
         OrderSpecifier[] orderSpecifiers = createOrderSpecifier(reviewRequest);
 
-        List<ReviewResponse> list = query.select(Projections.constructor(ReviewResponse.class,
+        List<ReviewResponse> list = queryFactory.select(Projections.constructor(ReviewResponse.class,
                         review.id,
                         book.image,
                         member.loginId,
@@ -59,12 +60,33 @@ public class ReviewQueryDSLRepositoryImpl implements ReviewQueryDSLRepository {
                 .join(like.timeCapsuleItem, timeCapsuleItem)
                 .rightJoin(timeCapsuleItem.review, review)
                 .join(review.member, member)
-                .join(review.book, book).groupBy(review.id,review.member.id)
+                .join(review.book, book)
+                .groupBy(review.id,review.member.id)
                 .orderBy(orderSpecifiers)
                 .offset(reviewRequest.getPageNumber())
                 .limit(reviewRequest.getPageSize())
                 .fetch();
         return list;
+    }
+
+    @Override
+    public List<ReviewResponse> findByReviewNoLike(TimeCapsuleRequest timeCapsuleRequest) {
+        return queryFactory
+                .select(Projections.constructor(ReviewResponse.class,
+                        review.id, book.image, book.title, book.author, review.createdDate, review.text))
+                .from(review)
+                .join(review.book, book)
+                .where(review.member.id.eq(timeCapsuleRequest.getMemberId()),
+                        betweenDate(timeCapsuleRequest.getStartDate(), timeCapsuleRequest.getEndDate()))
+                .fetch();
+    }
+
+    @Override
+    public List<Review> findByReviewIn(Integer[] reviews) {
+        return queryFactory
+                .selectFrom(review)
+                .where(review.id.in(reviews))
+                .fetch();
     }
 
     private OrderSpecifier[] createOrderSpecifier(ReviewSearchRequest reviewRequest) {
@@ -84,5 +106,16 @@ public class ReviewQueryDSLRepositoryImpl implements ReviewQueryDSLRepository {
             }
         }
         return orderSpecifiers.toArray(new OrderSpecifier[orderSpecifiers.size()]);
+    }
+
+    private BooleanExpression betweenDate(LocalDate startDate, LocalDate endDate) {
+        if(startDate != null && endDate != null) {
+            LocalDateTime startDateTime = startDate.atStartOfDay();
+            LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
+
+            return review.createdDate.between(startDateTime, endDateTime);
+        }
+
+        return null;
     }
 }

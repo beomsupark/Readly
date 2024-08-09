@@ -3,7 +3,7 @@ import { OpenVidu } from "openvidu-browser";
 import axios from "axios";
 import useUserStore from "../../store/userStore";
 import GoButton from "../../components/GoButton/GoButton.jsx";
-const API_BASE_URL = "http://localhost:8080/api";
+const API_BASE_URL = "https://i11c207.p.ssafy.io/api";
 
 const ActivityRTC = ({ groupId }) => {
   const [isVideoConferenceActive, setIsVideoConferenceActive] = useState(false);

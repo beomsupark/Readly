@@ -1,16 +1,7 @@
-import { useEffect } from 'react';
 import ShowReview from './ShowReview';
 
-const ShowReviewModal = ({ review, isOpen, onClose }) => {
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-  }, [isOpen]);
-
-  if (!isOpen) return null;
+const ShowReviewModal = ({ review, isOpen, onClose, onLike }) => {
+  if (!isOpen || !review) return null;
 
   return (
     <div 
@@ -21,7 +12,11 @@ const ShowReviewModal = ({ review, isOpen, onClose }) => {
         className="w-[90%] max-w-[600px] max-h-[80%] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <ShowReview review={review} isModal={true} />
+        <ShowReview 
+          review={review} 
+          isModal={true} 
+          onLike={onLike}
+        />
       </div>
     </div>
   );

@@ -57,7 +57,7 @@ public class ProceedingRepositoryImpl implements ProceedingRepository {
         if (group == null) {
             throw new Exception("Group not found");
         }
-        proceeding.setGroup(group);
+        proceeding.addGroup(group);
 
         entityManager.persist(proceeding);
         return proceeding;
