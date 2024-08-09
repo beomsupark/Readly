@@ -2,9 +2,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { User } from "lucide-react";
 import "../../components/Review/like_btn.css";
+import { addLike, removeLike } from '../../api/likeAPI.js'
+import useUserStore from '../../store/userStore.js';
 
-const ShowReview = ({ review, isModal = false }) => {
+const ShowReview = ({ review, isModal = false, onLike }) => {
   const {
+    id, // Add this line to extract the review id
     bookImage,
     bookTitle,
     bookAuthor,
@@ -18,14 +21,33 @@ const ShowReview = ({ review, isModal = false }) => {
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleLikeClick = (event) => {
+  const { user } = useUserStore();
+
+  const handleLikeClick = async (event) => {
     event.stopPropagation();
-    setIsLiked((prevIsLiked) => !prevIsLiked);
-    setLikeCount((prevCount) => (isLiked ? prevCount - 1 : prevCount + 1));
+    const newLikeStatus = !isLiked;
+    setIsLiked(newLikeStatus);
+    setLikeCount((prevCount) => (newLikeStatus ? prevCount + 1 : prevCount - 1));
+  
+    try {
+      if (newLikeStatus) {
+        await addLike(user.id, id); // Use the extracted review id
+      } else {
+        await removeLike(user.id, id); // Use the extracted review id
+      }
+      if (onLike) {
+        onLike(id, newLikeStatus); // Call the onLike function if provided
+      }
+    } catch (error) {
+      console.error('Error updating like status:', error);
+      // Revert the UI state if there was an error
+      setIsLiked(isLiked);
+      setLikeCount((prevCount) => (newLikeStatus ? prevCount - 1 : prevCount + 1));
+    }
   };
 
   const containerClasses = isModal
-    ? "w-full bg-white rounded-lg shadow-md overflow-hidden flex flex-col"
+    ? "w-full bg-[#F5F5F5] rounded-lg shadow-md overflow-hidden flex flex-col"
     : "w-full bg-[#F5F5F5] rounded-lg shadow-md overflow-hidden flex flex-col";
 
   const imageClasses = isModal

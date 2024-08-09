@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../../components/Review/like_btn.css';
 import { User } from 'lucide-react';
+import { addLike, removeLike } from '../../api/likeAPI.js'; // 이 줄을 추가하세요
+import useUserStore from '../../store/userStore.js'; // 이 줄을 추가하세요
 
-const PhotocardBack = ({ photoCardText, memberId, bookTitle, bookAuthor, likeCount: initialLikeCount, likeCheck: initialLikeCheck, onLikeClick, photoCardCreatedDate }) => {
+const PhotocardBack = ({ photoCardText, memberId, bookTitle, bookAuthor, likeCount: initialLikeCount, likeCheck: initialLikeCheck, onLikeClick, photoCardCreatedDate, photoCardId }) => {
   const canvasRef = useRef(null);
   const [isLiked, setIsLiked] = useState(initialLikeCheck === 1);
   const [currentLikeCount, setCurrentLikeCount] = useState(initialLikeCount);
@@ -99,12 +101,25 @@ const PhotocardBack = ({ photoCardText, memberId, bookTitle, bookAuthor, likeCou
     return lines;
   }
 
-  const handleLikeClick = (event) => {
+  const { user } = useUserStore(); // 이 줄을 추가하세요
+
+  const handleLikeClick = async (event) => {
     event.stopPropagation();
-    setIsLiked(prevIsLiked => !prevIsLiked);
-    setCurrentLikeCount(prevCount => isLiked ? prevCount - 1 : prevCount + 1);
-    onLikeClick(event);
+    try {
+      if (isLiked) {
+        await removeLike(user.id, null, photoCardId);  // photoCardId가 올바르게 전달되고 있는지 확인
+        setCurrentLikeCount(prevCount => prevCount - 1);
+      } else {
+        await addLike(user.id, null, photoCardId);  // photoCardId가 올바르게 전달되고 있는지 확인
+        setCurrentLikeCount(prevCount => prevCount + 1);
+      }
+      setIsLiked(prevIsLiked => !prevIsLiked);
+      onLikeClick(event);
+    } catch (error) {
+      console.error('Error handling like:', error);
+    }
   };
+  
 
   return (
     <div className="relative w-full h-full">

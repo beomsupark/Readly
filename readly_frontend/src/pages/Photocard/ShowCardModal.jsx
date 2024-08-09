@@ -54,6 +54,7 @@ const ShowCardModal = ({ item, isOpen, onClose }) => {
               likeCheck={item.likeCheck}
               onLikeClick={handleLikeClick}
               photoCardCreatedDate={item.photoCardCreatedDate}
+              photoCardId={item.photoCardId}
             />
           </div>
         </div>
