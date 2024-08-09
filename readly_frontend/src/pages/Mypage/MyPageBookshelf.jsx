@@ -13,7 +13,7 @@ export default function MypageBookshelf({ userId }) {
       try {
         setIsLoading(true);
         const fetchedBooks = await readBooks(userId);
-        console.log("Fetched books:", fetchedBooks); // 데이터 구조 확인을 위한 로그
+        console.log("Fetched books:", fetchedBooks);
         setBooks(fetchedBooks);
         setIsLoading(false);
       } catch (error) {
@@ -34,6 +34,14 @@ export default function MypageBookshelf({ userId }) {
     setModalIsOpen(false);
   };
 
+  const renderEmptyItems = (count) => {
+    return Array(count)
+      .fill()
+      .map((_, index) => (
+        <div key={`empty-${index}`} className="bg-gray-100 p-2 rounded w-[5rem] h-[6rem]"></div>
+      ));
+  };
+
   if (isLoading) {
     return <div>책을 불러오는 중...</div>;
   }
@@ -42,25 +50,23 @@ export default function MypageBookshelf({ userId }) {
     return <div>{error}</div>;
   }
 
+  const displayBooks = books.slice(0, 7);
+  const emptySlots = Math.max(0, 7 - displayBooks.length);
+
   return (
     <>
       <div className="bg-white rounded-lg shadow p-4 mb-4 relative">
         <div className="flex space-x-2 mb-2">
-          {books.length > 0 ? (
-            books.map((book) => (
-              <div key={book.id} className="bg-gray-200 p-2 rounded">
-                <img
-                  src={book.image}
-                  alt={book.title}
-                  className="w-auto h-[6rem]"
-                />
-              </div>
-            ))
-          ) : (
-            <div className="bg-gray-200 p-2 rounded w-[5rem] h-[5rem] flex items-center justify-center">
-
+          {displayBooks.map((book) => (
+            <div key={book.id} className="bg-gray-200 p-2 rounded">
+              <img
+                src={book.image}
+                alt={book.title}
+                className="w-auto h-[6rem]"
+              />
             </div>
-          )}
+          ))}
+          {renderEmptyItems(emptySlots)}
         </div>
 
         <div className="absolute top-4 right-4">
