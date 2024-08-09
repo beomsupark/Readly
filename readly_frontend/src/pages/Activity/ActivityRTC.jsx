@@ -16,9 +16,10 @@ const ActivityRTC = ({ groupId }) => {
   const [subscribers, setSubscribers] = useState([]);
   const [sessionId, setSessionId] = useState(null);
   const [isRoomCreated, setIsRoomCreated] = useState(false);
-  const { user } = useUserStore();
-  const [isMicOn, setIsMicOn] = useState(true);
-  const [isVideoOn, setIsVideoOn] = useState(true);
+  const { user, token } = useUserStore();
+  const [isMicOn, setIsMicOn] = useState(false); // Default to true
+  const [isVideoOn, setIsVideoOn] = useState(false); // Default to true
+  const [subMicStatus, setSubMicStatus] = useState({});
   const [photoCards, setPhotoCards] = useState();
   const [reviews, setReviews] = useState();
   const [notification, setNotification] = useState(null);
@@ -35,8 +36,21 @@ const ActivityRTC = ({ groupId }) => {
   }, [isVideoConferenceActive]);
 
   useEffect(() => {
-    if (!session) return;
-
+    if (!session) {
+      return;
+    }
+    // 세션 연결 및 신호 수신 핸들러 설정
+    session.on("signal:micStatus", (signal) => {
+      const data = JSON.parse(signal.data);
+      if (data.type === "mic") {
+        const micState = data.state;
+        const connectionId = signal.from;
+        setSubMicStatus((prevState) => ({
+          ...prevState,
+          [connectionId]: micState, // connectionId를 키로 사용하고 micState를 값으로 저장
+        }));
+      }
+    });
     session.on("signal:share", (signal) => {
       const data = JSON.parse(signal.data);
       if (data.type === "share") {
@@ -83,7 +97,7 @@ const ActivityRTC = ({ groupId }) => {
   const checkSessionExists = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/rtc/sessions/check`, {
-        params: { sessionId: "1" },
+        params: { sessionId: groupId.toString() },
       });
       return response.data;
     } catch (error) {
@@ -94,7 +108,7 @@ const ActivityRTC = ({ groupId }) => {
   const initializeSession = async () => {
     try {
       const response = await axios.post(`${API_BASE_URL}/rtc/sessions`, {
-        customSessionId: "1",
+        customSessionId: groupId.toString(),
       });
       setIsRoomCreated(true);
       return response.data;
@@ -176,8 +190,16 @@ const ActivityRTC = ({ groupId }) => {
 
   const openShareModal = () => {
     setIsShareModalOpen(true);
-    getMyPhotocards().then(setPhotoCards);
-    getMyReviews().then(setReviews);
+
+    getMyPhotocards().then((photocard) => {
+      
+      setPhotoCards(photocard);
+    });
+
+    getMyReviews().then((reviewsData) => {
+      
+      setReviews(reviewsData);
+    });
   };
 
   const closeShareModal = () => {
@@ -185,6 +207,8 @@ const ActivityRTC = ({ groupId }) => {
   };
 
   const handleShare = (selectedItems) => {
+    //setSharedItems(selectedItems);
+    console.log(selectedItems);
     closeShareModal();
 
     const newItems = selectedItems.filter((item) => {
@@ -230,6 +254,7 @@ const ActivityRTC = ({ groupId }) => {
       const newVideoState = !prevState;
       if (publisher) {
         publisher.publishVideo(newVideoState);
+
       }
       return newVideoState;
     });
@@ -298,14 +323,91 @@ const ActivityRTC = ({ groupId }) => {
       )}
 
       {isVideoConferenceActive && (
-        <VideoConferenceView
-          publisher={publisher}
-          subscribers={subscribers}
-          sharedItems={sharedItems}
-          isMicOn={isMicOn}
-          isIShared={isIShared}
-          notification={notification}
-        />
+        <div className="flex-grow bg-[#F5F5F5] rounded-lg p-4 mb-4 flex">
+          <div className={`flex-grow ${isChatOpen ? "w-3/4" : "w-full"}`}>
+            <div
+              className={`grid gap-2 mb-4 ${
+                sharedItems.length > 0
+                  ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+                  : "grid-cols-2 h-full p-12"
+              }`}
+            >
+              {sharedItems.map((item, index) => (
+                item.photocardId ? 
+                (<div
+                  key={index}
+                  className="bg-white rounded-lg shadow-md overflow-hidden relative"
+                >
+                  <img
+                    src={item.photocardImage}
+                    alt={item.photocardText}
+                    className="w-full h-32 object-cover"
+                  />
+                  <p className="absolute bottom-1 left-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">
+                    {item.photocardText}
+                  </p>
+                  {isIShared(item)}
+                </div>)
+                : 
+                (<div
+                  key={index}
+                  className="bg-white rounded-lg shadow-md overflow-hidden relative"
+                >
+                  <p>{item.bookTitle}</p>
+                  <img
+                    src={item.bookImage}
+                    alt={item.bookTitle}
+                    className="w-full h-32 object-cover"
+                  />
+                  <p className="absolute bottom-1 left-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">
+                    {item.reviewText}
+                  </p>
+                  {isIShared(item)}
+                </div>)
+
+              ))}
+              {publisher && (
+                <div className="bg-white rounded-lg shadow-md overflow-hidden relative">
+                  <video
+                    autoPlay={true}
+                    ref={(video) => video && publisher.addVideoElement(video)}
+                  />
+                  <p className="absolute bottom-1 left-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">
+                    {JSON.parse(publisher.stream.connection.data).clientData}
+                  </p>
+                  <p className="absolute bottom-1 right-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">
+                    {" "}
+                    {isMicOn ? "Mic On" : "Mic Off"}
+                  </p>
+                </div>
+              )}
+              {subscribers.map((sub, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-lg shadow-md overflow-hidden relative"
+                >
+                  <video
+                    autoPlay={true}
+                    ref={(video) => video && sub.addVideoElement(video)}
+                  />
+                  <p className="absolute bottom-1 left-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">
+                    {JSON.parse(sub.stream.connection.data).clientData}
+                  </p>
+                  <p className="absolute bottom-1 right-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">
+                    {" "}
+                    {sub.stream.audioActive ? "Mic On" : "Mic Off"}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+          {isChatOpen && (
+            <div className="w-1/4 ml-4 bg-white rounded-lg shadow-md p-4">
+              <h2 className="text-lg font-bold mb-2">채팅</h2>
+              {/* 채팅 내용과 입력 필드를 여기에 추가 */}
+            </div>
+          )}
+        </div>
       )}
 
       <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">

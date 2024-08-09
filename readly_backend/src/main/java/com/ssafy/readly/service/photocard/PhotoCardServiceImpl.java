@@ -54,4 +54,14 @@ public class PhotoCardServiceImpl implements PhotoCardService{
     public long getPhotoCardsCount(){
         return photoCardRepository.count();
     }
+
+    /**
+     * @param loginId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<CreatePhotoCardResponse> findPhotoCardsByLoginId(int loginId) throws Exception {
+        return photoCardRepositoryImpl.findPhotoCardsbyMemberId(loginId);
+    }
 }

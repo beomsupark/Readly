@@ -12,4 +12,5 @@ public interface ReviewQueryDSLRepository
     List<ReviewResponse> getReviews(ReviewSearchRequest reviewRequest);
     List<ReviewResponse> findByReviewNoLike(TimeCapsuleRequest timeCapsuleRequest);
     List<Review> findByReviewIn(Integer[] reviews);
+    List<ReviewResponse> getReviewsByLoginId(int LoginId);
 }

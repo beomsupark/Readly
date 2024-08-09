@@ -133,6 +133,39 @@ public class PhotoCardQueryDSLRepositoryImpl implements PhotoCardQueryDSLReposit
                 .fetch();
     }
 
+    /**
+     * @param memberId
+     * @return
+     */
+    @Override
+    public List<CreatePhotoCardResponse> findPhotoCardsbyMemberId(int memberId) {
+
+        List<CreatePhotoCardResponse> list = queryFactory.select(Projections.constructor(CreatePhotoCardResponse.class,
+                                photoCard.id,
+                                photoCard.text,
+                                member.loginId,
+                                book.title,
+                                book.author,
+                                photoCard.photoCardImage,
+                                photoCard.createdDate,
+                                like.count(),
+                                ExpressionUtils.as(
+                                        JPAExpressions.select(like.count())
+                                                .from(like)
+                                                .join(like.member,member)
+                                                .where(member.id.eq(photoCard.member.id)), "check")
+                        )
+                ).from(like)
+                .join(like.timeCapsuleItem, timeCapsuleItem)
+                .rightJoin(timeCapsuleItem.photoCard, photoCard)
+                .join(photoCard.member,member)
+                .join(photoCard.book, book)
+                .where(member.id.eq(memberId))
+                .groupBy(photoCard.id,photoCard.member.id)
+                .fetch();
+        return list;
+    }
+
     private OrderSpecifier[] createOrderSpecifier(PhotoCardSearchRequest reviewRequest) {
 
         List<OrderSpecifier> orderSpecifiers = new ArrayList<>();
