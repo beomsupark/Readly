@@ -31,7 +31,7 @@ public class Member {
     private String memberName;
     private String phoneNumber;
     private String email;
-    private int point;
+    private Integer point = 0;
     private LocalDate birthday;
     private LocalDateTime joinDate;
 
@@ -108,5 +108,9 @@ public class Member {
     public void removeFollower(Follower follower) {
         followers.remove(follower);
         follower.setFollowing(null);
+    }
+
+    public void addPoint(Integer point) {
+        this.point += point;
     }
 }

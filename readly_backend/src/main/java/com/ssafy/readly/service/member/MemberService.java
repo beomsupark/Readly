@@ -16,4 +16,5 @@ public interface MemberService {
     void deleteRefreshToken(int id);
     MemberResponse getMember(int id);
     void updateMember(UpdateMemberRequest updateMember);
+    Integer addPoint(int memberId, Integer point);
 }

@@ -12,7 +12,6 @@ import com.ssafy.readly.service.review.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +25,8 @@ import java.util.Map;
 @RequestMapping("/api")
 public class ReviewController {
 
-
     private static final Logger log = LoggerFactory.getLogger(ReviewController.class);
+
     private final ReviewService reviewService;
 
     private final MemberService memberService;
@@ -49,8 +48,10 @@ public class ReviewController {
         String Message = "success";
         responseMap.put("message", Message);
         responseMap.put("reviewId", reviewId);
-        return new ResponseEntity<Map<String, Object>>(responseMap, status);
 
+        Integer point = memberService.addPoint(request.getMemberId(), 100);
+        responseMap.put("point", point);
+        return new ResponseEntity<Map<String, Object>>(responseMap, status);
     }
 
     @PostMapping("/review/getReviews")

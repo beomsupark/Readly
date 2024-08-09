@@ -7,11 +7,11 @@ import com.ssafy.readly.dto.timecapsule.TimeCapsuleDateResponse;
 import com.ssafy.readly.dto.timecapsule.TimeCapsuleRequest;
 import com.ssafy.readly.entity.*;
 import com.ssafy.readly.enums.ItemType;
-import com.ssafy.readly.repository.member.MemberRepositoryImpl;
-import com.ssafy.readly.repository.photocard.PhotoCardQueryDSLRepositoryImpl;
-import com.ssafy.readly.repository.review.ReviewQueryDSLRepositoryImpl;
-import com.ssafy.readly.repository.timecapsule.TimeCapsuleRepositoryImpl;
-import com.ssafy.readly.repository.timecapusuleitem.TimeCapsuleItemRepositoryImpl;
+import com.ssafy.readly.repository.member.MemberRepository;
+import com.ssafy.readly.repository.photocard.PhotoCardQueryDSLRepository;
+import com.ssafy.readly.repository.review.ReviewQueryDSLRepository;
+import com.ssafy.readly.repository.timecapsule.TimeCapsuleRepository;
+import com.ssafy.readly.repository.timecapusuleitem.TimeCapsuleItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,11 +26,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TimeCapsuleServiceImpl implements TimeCapsuleService {
 
-    private final TimeCapsuleRepositoryImpl timeCapsuleRepository;
-    private final TimeCapsuleItemRepositoryImpl timeCapsuleItemRepository;
-    private final MemberRepositoryImpl memberRepository;
-    private final ReviewQueryDSLRepositoryImpl reviewQueryDSLRepository;
-    private final PhotoCardQueryDSLRepositoryImpl photoCardQueryDSLRepository;
+    private final TimeCapsuleRepository timeCapsuleRepository;
+    private final TimeCapsuleItemRepository timeCapsuleItemRepository;
+    private final MemberRepository memberRepository;
+    private final ReviewQueryDSLRepository reviewQueryDSLRepository;
+    private final PhotoCardQueryDSLRepository photoCardQueryDSLRepository;
 
     @Override
     public List<ReviewResponse> getReviewsByPeriod(TimeCapsuleRequest timeCapsuleRequest) {

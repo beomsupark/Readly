@@ -1,7 +1,7 @@
 package com.ssafy.readly.controller;
 
 import com.ssafy.readly.dto.member.*;
-import com.ssafy.readly.service.member.MemberServiceImpl;
+import com.ssafy.readly.service.member.MemberService;
 import com.ssafy.readly.util.JWTUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -18,7 +18,7 @@ import java.util.Map;
 @RequestMapping("/api")
 public class MemberController {
 
-    private final MemberServiceImpl memberService;
+    private final MemberService memberService;
     private final JWTUtil jwtUtil;
 
     @PostMapping("/member/signup")

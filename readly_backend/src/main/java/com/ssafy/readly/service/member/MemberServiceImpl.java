@@ -2,21 +2,20 @@ package com.ssafy.readly.service.member;
 
 import com.ssafy.readly.dto.member.*;
 import com.ssafy.readly.entity.Member;
-import com.ssafy.readly.repository.member.MemberRepositoryImpl;
+import com.ssafy.readly.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.security.sasl.AuthenticationException;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
-    private final MemberRepositoryImpl memberRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public Member getMemberEntity(int id) {
@@ -104,5 +103,13 @@ public class MemberServiceImpl implements MemberService {
                 updateMember.getBirthDate(),
                 updateMember.getGender(),
                 updateMember.getIntroduction());
+    }
+
+    @Transactional
+    @Override
+    public Integer addPoint(int memberId, Integer point) {
+        Member member = getMemberEntity(memberId);
+        member.addPoint(point);
+        return member.getPoint();
     }
 }

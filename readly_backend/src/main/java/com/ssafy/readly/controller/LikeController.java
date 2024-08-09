@@ -1,7 +1,7 @@
 package com.ssafy.readly.controller;
 
 import com.ssafy.readly.dto.like.LikeRequest;
-import com.ssafy.readly.service.like.LikeServiceImpl;
+import com.ssafy.readly.service.like.LikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class LikeController {
-    private final LikeServiceImpl likeService;
+    private final LikeService likeService;
 
     @PostMapping("/like")
     public ResponseEntity<?> like(@RequestBody LikeRequest request) {

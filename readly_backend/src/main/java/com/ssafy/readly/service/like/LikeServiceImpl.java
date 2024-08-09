@@ -3,11 +3,11 @@ package com.ssafy.readly.service.like;
 import com.ssafy.readly.dto.like.LikeRequest;
 import com.ssafy.readly.entity.*;
 import com.ssafy.readly.enums.ItemType;
-import com.ssafy.readly.repository.like.LikeRepositoryImpl;
-import com.ssafy.readly.repository.member.MemberRepositoryImpl;
+import com.ssafy.readly.repository.like.LikeRepository;
+import com.ssafy.readly.repository.member.MemberRepository;
 import com.ssafy.readly.repository.photocard.PhotoCardRepository;
 import com.ssafy.readly.repository.review.ReviewRepositry;
-import com.ssafy.readly.repository.timecapusuleitem.TimeCapsuleItemRepositoryImpl;
+import com.ssafy.readly.repository.timecapusuleitem.TimeCapsuleItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +18,11 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @Transactional
 public class LikeServiceImpl implements LikeService {
-    private final LikeRepositoryImpl likeRepository;
-    private final MemberRepositoryImpl memberRepository;
+    private final LikeRepository likeRepository;
+    private final MemberRepository memberRepository;
     private final ReviewRepositry reviewRepository;
     private final PhotoCardRepository photoCardRepository;
-    private final TimeCapsuleItemRepositoryImpl timeCapsuleItemRepository;
+    private final TimeCapsuleItemRepository timeCapsuleItemRepository;
 
     @Override
     public Long like(LikeRequest likeRequest) {
