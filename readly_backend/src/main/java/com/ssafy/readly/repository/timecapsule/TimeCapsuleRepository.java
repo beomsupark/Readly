@@ -1,23 +1,18 @@
 package com.ssafy.readly.repository.timecapsule;
 
-import com.querydsl.core.Tuple;
-import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardResponse;
-import com.ssafy.readly.dto.review.ReviewResponse;
-import com.ssafy.readly.dto.timecapsule.TimeCapsuleRequest;
-import com.ssafy.readly.entity.PhotoCard;
-import com.ssafy.readly.entity.Review;
+import com.ssafy.readly.dto.timecapsule.TimeCapsuleAlarmResponse;
+import com.ssafy.readly.dto.timecapsule.TimeCapsuleDateResponse;
 import com.ssafy.readly.entity.TimeCapsule;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface TimeCapsuleRepository {
-    List<ReviewResponse> findByReviewNoLike(TimeCapsuleRequest timeCapsuleRequest);
-    List<CreatePhotoCardResponse> findByPhotoCardNoLike(TimeCapsuleRequest timeCapsuleRequest);
     void saveTimeCapsule(TimeCapsule timeCapsule);
-    List<Review> findByReviewIn(Integer[] reviews);
-    List<PhotoCard> findByPhotoCardIn(Integer[] photoCards);
-    List<Tuple> findTimeCapsuleByDate(LocalDate date);
-    List<ReviewResponse> findByTimeCapsuleReviews(int timeCapsuleId);
-    List<CreatePhotoCardResponse> findByTimeCapsulePhotoCards(int timeCapsuleId);
+    Optional<TimeCapsule> findById(Integer timeCapsuleId);
+    List<TimeCapsuleAlarmResponse> findTimeCapsuleByReleaseDate(Integer memberId, LocalDate date);
+    Long countByMemberId(Integer memberId);
+    TimeCapsuleDateResponse findDateByTimeCapsuleId(Integer timeCapsuleId);
+    void delete(TimeCapsule timeCapsule);
 }
