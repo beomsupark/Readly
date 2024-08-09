@@ -1,18 +1,46 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../../pages/Photocard/photocard_flip.css";
 import ShowCardModal from "../Photocard/ShowCardModal.jsx";
 import ShowReview from "../../components/Review/ShowReview.jsx";
 import ShowReviewModal from "../../components/Review/ShowReviewModal.jsx";
+import { addLike, removeLike } from "../../api/likeAPI";
+import useUserStore from "../../store/userStore";
 
 const GridDisplay = ({ items, type }) => {
   const [selectedItem, setSelectedItem] = useState(null);
+  const { user } = useUserStore();
 
   const handleItemClick = (item) => {
+    console.log('Item clicked:', item);
     setSelectedItem(item);
   };
 
   const handleCloseModal = () => {
     setSelectedItem(null);
+  };
+
+  useEffect(() => {
+    console.log('Selected item:', selectedItem);
+  }, [selectedItem]);
+
+  const handleLike = async (reviewId, isLiked) => {
+    if (!user) {
+      console.error('User not logged in');
+      return;
+    }
+
+    try {
+      if (isLiked) {
+        await addLike(user.id, reviewId);
+      } else {
+        await removeLike(user.id, reviewId);
+      }
+      console.log('Like action successful');
+      // You might want to update the state of the liked item here
+      // For example, update the items array with the new like status
+    } catch (error) {
+      console.error('Error in liking:', error);
+    }
   };
 
   const gridCols = type === "photocard" 
@@ -38,7 +66,20 @@ const GridDisplay = ({ items, type }) => {
     } else if (type === "review") {
       return (
         <div onClick={() => handleItemClick(item)} className="cursor-pointer h-full">
-          <ShowReview review={item} isModal={false} />
+          <ShowReview 
+            review={{
+              id: item.reviewId,
+              bookImage: item.bookImage,
+              bookTitle: item.bookTitle,
+              bookAuthor: item.bookAuthor,
+              memberId: item.memberId,
+              reviewText: item.reviewText,
+              likeCount: item.likeCount,
+              likeCheck: item.likeCheck
+            }} 
+            isModal={false}
+            onLike={handleLike}
+          />
         </div>
       );
     }
@@ -63,11 +104,15 @@ const GridDisplay = ({ items, type }) => {
           onClose={handleCloseModal}
         />
       ) : (
-        <ShowReviewModal
-          review={selectedItem}
-          isOpen={!!selectedItem}
-          onClose={handleCloseModal}
-        />
+<ShowReviewModal
+  review={{
+    ...selectedItem,
+    id: selectedItem?.reviewId  // 여기서 id를 명시적으로 추가
+  }}
+  isOpen={!!selectedItem}
+  onClose={handleCloseModal}
+  onLike={handleLike}
+/>
       )}
     </div>
   );
