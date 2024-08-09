@@ -9,7 +9,7 @@ const NotificationIcon = ({ initialNotifications = [] }) => {
 
   const fetchUnreadNotifications = async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/notifications/unread/${user.id}`);
+      const response = await axios.get(`https://i11c207.p.ssafy.io/api/notifications/unread/${user.id}`);
       const notificationsData = Array.isArray(response.data) ? response.data : [];
       setNotifications(notificationsData);
     } catch (error) {
@@ -20,7 +20,7 @@ const NotificationIcon = ({ initialNotifications = [] }) => {
 
   const markNotificationAsRead = async (notificationId) => {
     try {
-      await axios.post(`http://localhost:8080/api/notifications/mark-as-read/${user.id}/${notificationId}`);
+      await axios.post(`https://i11c207.p.ssafy.io/api/notifications/mark-as-read/${user.id}/${notificationId}`);
       // 상태에서 읽은 알림을 제거
       setNotifications((prevNotifications) =>
         prevNotifications.filter((notification) => notification.id !== notificationId)
@@ -43,7 +43,7 @@ const NotificationIcon = ({ initialNotifications = [] }) => {
 
   useEffect(() => {
     if (user && user.id) {
-      const eventSource = new EventSource(`http://localhost:8080/api/follower/subscribe/${user.id}`);
+      const eventSource = new EventSource(`https://i11c207.p.ssafy.io/api/follower/subscribe/${user.id}`);
 
       eventSource.addEventListener("follow-notification", function (event) {
         console.log("Notification received: ", event.data);
