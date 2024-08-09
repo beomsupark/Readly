@@ -14,9 +14,11 @@ export default function Home() {
 
   const { books, searchResults, fetchBooks, searchBooks } = useBookStore();
 
+
   useEffect(() => {
     fetchBooks().catch((err) => console.error("Failed to fetch books:", err));
   }, []);
+
 
   const openModal = (book) => {
     setSelectedBook(book);
