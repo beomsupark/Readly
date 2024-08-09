@@ -7,8 +7,7 @@ import java.time.LocalDate;
 
 @AllArgsConstructor
 @Getter
-public class TimeCapsuleAlarmResponse {
-    private Integer TimeCapsuleId;
-    private LocalDate createdDate;
-    private Boolean isRead;
+public class TimeCapsuleDateResponse {
+    private LocalDate startDate;
+    private LocalDate endDate;
 }

@@ -2,21 +2,17 @@ package com.ssafy.readly.repository.timecapsule;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardResponse;
-import com.ssafy.readly.dto.review.ReviewResponse;
 import com.ssafy.readly.dto.timecapsule.TimeCapsuleAlarmResponse;
+import com.ssafy.readly.dto.timecapsule.TimeCapsuleDateResponse;
 import com.ssafy.readly.entity.*;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
-import static com.ssafy.readly.entity.QBook.book;
-import static com.ssafy.readly.entity.QPhotoCard.photoCard;
-import static com.ssafy.readly.entity.QReview.review;
 import static com.ssafy.readly.entity.QTimeCapsule.timeCapsule;
-import static com.ssafy.readly.entity.QTimeCapsuleItem.timeCapsuleItem;
 
 @Repository
 public class TimeCapsuleRepositoryImpl implements TimeCapsuleRepository {
@@ -35,6 +31,11 @@ public class TimeCapsuleRepositoryImpl implements TimeCapsuleRepository {
     }
 
     @Override
+    public Optional<TimeCapsule> findById(Integer timeCapsuleId) {
+        return Optional.ofNullable(em.find(TimeCapsule.class, timeCapsuleId));
+    }
+
+    @Override
     public Long countByMemberId(Integer memberId) {
         return queryFactory
                 .select(timeCapsule.id.count())
@@ -49,32 +50,23 @@ public class TimeCapsuleRepositoryImpl implements TimeCapsuleRepository {
                 .select(Projections.constructor(TimeCapsuleAlarmResponse.class,
                         timeCapsule.id, timeCapsule.createdDate, timeCapsule.isRead))
                 .from(timeCapsule)
-                .where(timeCapsule.releaseDate.goe(date), timeCapsule.member.id.eq(memberId))
+                .where(timeCapsule.releaseDate.loe(date), timeCapsule.member.id.eq(memberId))
                 .orderBy(timeCapsule.isRead.asc(), timeCapsule.releaseDate.desc())
                 .fetch();
     }
 
     @Override
-    public List<ReviewResponse> findByTimeCapsuleReviews(int timeCapsuleId) {
+    public TimeCapsuleDateResponse findDateByTimeCapsuleId(Integer timeCapsuleId) {
         return queryFactory
-                .select(Projections.constructor(ReviewResponse.class,
-                        review.id, book.image, book.title, book.author, review.createdDate, review.text))
-                .from(timeCapsuleItem)
-                .join(timeCapsuleItem.review, review)
-                .join(review.book, book)
-                .where(timeCapsuleItem.timeCapsule.id.eq(timeCapsuleId))
-                .fetch();
+                .select(Projections.constructor(TimeCapsuleDateResponse.class,
+                        timeCapsule.startDate, timeCapsule.endDate))
+                .from(timeCapsule)
+                .where(timeCapsule.id.eq(timeCapsuleId))
+                .fetchOne();
     }
 
     @Override
-    public List<CreatePhotoCardResponse> findByTimeCapsulePhotoCards(int timeCapsuleId) {
-        return queryFactory
-                .select(Projections.constructor(CreatePhotoCardResponse.class,
-                        photoCard.id, photoCard.text, book.title, book.author, photoCard.photoCardImage, photoCard.createdDate))
-                .from(timeCapsuleItem)
-                .join(timeCapsuleItem.photoCard, photoCard)
-                .join(photoCard.book, book)
-                .where(timeCapsuleItem.timeCapsule.id.eq(timeCapsuleId))
-                .fetch();
+    public void delete(TimeCapsule timeCapsule) {
+        em.remove(timeCapsule);
     }
 }

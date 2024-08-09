@@ -3,6 +3,7 @@ package com.ssafy.readly.service.timecapsule;
 import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardResponse;
 import com.ssafy.readly.dto.review.ReviewResponse;
 import com.ssafy.readly.dto.timecapsule.TimeCapsuleAlarmResponse;
+import com.ssafy.readly.dto.timecapsule.TimeCapsuleDateResponse;
 import com.ssafy.readly.dto.timecapsule.TimeCapsuleRequest;
 import com.ssafy.readly.entity.*;
 import com.ssafy.readly.enums.ItemType;
@@ -10,12 +11,14 @@ import com.ssafy.readly.repository.member.MemberRepositoryImpl;
 import com.ssafy.readly.repository.photocard.PhotoCardQueryDSLRepositoryImpl;
 import com.ssafy.readly.repository.review.ReviewQueryDSLRepositoryImpl;
 import com.ssafy.readly.repository.timecapsule.TimeCapsuleRepositoryImpl;
+import com.ssafy.readly.repository.timecapusuleitem.TimeCapsuleItemRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -24,6 +27,7 @@ import java.util.Optional;
 public class TimeCapsuleServiceImpl implements TimeCapsuleService {
 
     private final TimeCapsuleRepositoryImpl timeCapsuleRepository;
+    private final TimeCapsuleItemRepositoryImpl timeCapsuleItemRepository;
     private final MemberRepositoryImpl memberRepository;
     private final ReviewQueryDSLRepositoryImpl reviewQueryDSLRepository;
     private final PhotoCardQueryDSLRepositoryImpl photoCardQueryDSLRepository;
@@ -79,11 +83,24 @@ public class TimeCapsuleServiceImpl implements TimeCapsuleService {
 
     @Override
     public List<ReviewResponse> getTimeCapsuleReviews(int timeCapsuleId) {
-        return timeCapsuleRepository.findByTimeCapsuleReviews(timeCapsuleId);
+        return timeCapsuleItemRepository.findCapsuleReviewsByCapsuleId(timeCapsuleId);
     }
 
     @Override
     public List<CreatePhotoCardResponse> getTimeCapsulePhotoCards(int timeCapsuleId) {
-        return timeCapsuleRepository.findByTimeCapsulePhotoCards(timeCapsuleId);
+        return timeCapsuleItemRepository.findCapsulePhotoByCapsuleId(timeCapsuleId);
+    }
+
+    @Override
+    public TimeCapsuleDateResponse getTimeCapsuleDate(Integer timeCapsuleId) {
+        return timeCapsuleRepository.findDateByTimeCapsuleId(timeCapsuleId);
+    }
+
+    @Transactional
+    @Override
+    public void deleteTimeCapsule(Integer timeCapsuleId) {
+        TimeCapsule timeCapsule = timeCapsuleRepository.findById(timeCapsuleId).orElseThrow(() ->
+                new NoSuchElementException("타임캡슐: " + timeCapsuleId + "이(가) 존재하지 않습니다."));
+        timeCapsuleRepository.delete(timeCapsule);
     }
 }

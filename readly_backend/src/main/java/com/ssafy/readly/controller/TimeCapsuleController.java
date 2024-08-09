@@ -3,6 +3,7 @@ package com.ssafy.readly.controller;
 import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardResponse;
 import com.ssafy.readly.dto.review.ReviewResponse;
 import com.ssafy.readly.dto.timecapsule.TimeCapsuleAlarmResponse;
+import com.ssafy.readly.dto.timecapsule.TimeCapsuleDateResponse;
 import com.ssafy.readly.dto.timecapsule.TimeCapsuleRequest;
 import com.ssafy.readly.service.timecapsule.TimeCapsuleServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,7 @@ public class TimeCapsuleController {
     }
 
     @GetMapping("/timecapsule/{memberid}/alarm")
-    public ResponseEntity<List<TimeCapsuleAlarmResponse>> getAlarm(@PathVariable("memberid") Integer memberId) throws Exception {
+    public ResponseEntity<List<TimeCapsuleAlarmResponse>> getAlarms(@PathVariable("memberid") Integer memberId) throws Exception {
         return new ResponseEntity<List<TimeCapsuleAlarmResponse>>(timeCapsuleService.getTimeCapsuleReleaseDate(memberId), HttpStatus.OK);
     }
 
@@ -58,8 +59,16 @@ public class TimeCapsuleController {
         Map<String, Object> responseMap = new HashMap<>();
         List<ReviewResponse> reviews = timeCapsuleService.getTimeCapsuleReviews(timeCapsuleId);
         List<CreatePhotoCardResponse> photoCards = timeCapsuleService.getTimeCapsulePhotoCards(timeCapsuleId);
+        TimeCapsuleDateResponse timeCapsuleDate = timeCapsuleService.getTimeCapsuleDate(timeCapsuleId);
         responseMap.put("reviews", reviews);
         responseMap.put("photoCards", photoCards);
+        responseMap.put("timeCapsuleDate", timeCapsuleDate);
         return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/timecapsule/{timecapsuleid}")
+    public ResponseEntity<Void> deleteTimeCapsule(@PathVariable("timecapsuleid") Integer timeCapsuleId) throws Exception {
+        timeCapsuleService.deleteTimeCapsule(timeCapsuleId);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
