@@ -16,8 +16,8 @@ const ActivityRTC = ({ groupId }) => {
   const [sessionId, setSessionId] = useState(null);
   const [isRoomCreated, setIsRoomCreated] = useState(false);
   const { user, token } = useUserStore();
-  const [isMicOn, setIsMicOn] = useState(true); // Default to true
-  const [isVideoOn, setIsVideoOn] = useState(true); // Default to true
+  const [isMicOn, setIsMicOn] = useState(false); // Default to true
+  const [isVideoOn, setIsVideoOn] = useState(false); // Default to true
   const [subMicStatus, setSubMicStatus] = useState({});
   const [photoCards, setPhotoCards] = useState();
   const [reviews, setReviews] = useState();
@@ -39,8 +39,6 @@ const ActivityRTC = ({ groupId }) => {
     }
     // 세션 연결 및 신호 수신 핸들러 설정
     session.on("signal:micStatus", (signal) => {
-      console.log("secess litsen");
-      console.log(signal.from.connectionId);
       const data = JSON.parse(signal.data);
       if (data.type === "mic") {
         const micState = data.state;
@@ -86,7 +84,7 @@ const ActivityRTC = ({ groupId }) => {
   const checkSessionExists = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/rtc/sessions/check`, {
-        params: { sessionId: "1" },
+        params: { sessionId: groupId.toString() },
       });
       return response.data;
     } catch (error) {
@@ -97,7 +95,7 @@ const ActivityRTC = ({ groupId }) => {
   const initializeSession = async () => {
     try {
       const response = await axios.post(`${API_BASE_URL}/rtc/sessions`, {
-        customSessionId: "1",
+        customSessionId: groupId.toString(),
       });
       setIsRoomCreated(true);
       return response.data;
@@ -185,12 +183,12 @@ const ActivityRTC = ({ groupId }) => {
     setIsShareModalOpen(true);
 
     getMyPhotocards().then((photocard) => {
-      console.log(photocard);
+      
       setPhotoCards(photocard);
     });
 
     getMyReviews().then((reviewsData) => {
-      console.log(reviewsData);
+      
       setReviews(reviewsData);
     });
   };
@@ -201,6 +199,7 @@ const ActivityRTC = ({ groupId }) => {
 
   const handleShare = (selectedItems) => {
     //setSharedItems(selectedItems);
+    console.log(selectedItems);
     closeShareModal();
     session
       .signal({
@@ -233,15 +232,8 @@ const ActivityRTC = ({ groupId }) => {
     setIsVideoOn((prevState) => {
       const newVideoState = !prevState;
       if (publisher) {
-        // const mediaStream = publisher.stream.getMediaStream();
-        // mediaStream.getVideoTracks().forEach(track => track.enabled = newVideoState);
         publisher.publishVideo(newVideoState);
 
-        // session.signal({
-        //   data: JSON.stringify({ type: 'video', state: newVideoState }),
-        //   to: [], // Broadcast to all participants
-        //   type: 'videoStatus'
-        // }).catch(error => console.error('Error sending signal:', error));
       }
       return newVideoState;
     });
@@ -313,7 +305,8 @@ const ActivityRTC = ({ groupId }) => {
               }`}
             >
               {sharedItems.map((item, index) => (
-                <div
+                item.photocardId ? 
+                (<div
                   key={index}
                   className="bg-white rounded-lg shadow-md overflow-hidden relative"
                 >
@@ -326,7 +319,24 @@ const ActivityRTC = ({ groupId }) => {
                     {item.photocardText}
                   </p>
                   {isIShared(item)}
-                </div>
+                </div>)
+                : 
+                (<div
+                  key={index}
+                  className="bg-white rounded-lg shadow-md overflow-hidden relative"
+                >
+                  <p>{item.bookTitle}</p>
+                  <img
+                    src={item.bookImage}
+                    alt={item.bookTitle}
+                    className="w-full h-32 object-cover"
+                  />
+                  <p className="absolute bottom-1 left-1 text-white bg-black bg-opacity-50 px-1 py-0.5 rounded text-xs">
+                    {item.reviewText}
+                  </p>
+                  {isIShared(item)}
+                </div>)
+
               ))}
               {publisher && (
                 <div className="bg-white rounded-lg shadow-md overflow-hidden relative">
