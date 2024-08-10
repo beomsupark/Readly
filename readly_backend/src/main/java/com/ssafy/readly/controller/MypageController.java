@@ -1,17 +1,15 @@
 package com.ssafy.readly.controller;
 
 import com.ssafy.readly.dto.mypage.CompleteBookRequest;
-import com.ssafy.readly.dto.mypage.GetReadBookResponse;
 import com.ssafy.readly.dto.mypage.UpdateCurrentPageRequest;
+import com.ssafy.readly.service.member.MemberService;
 import com.ssafy.readly.service.mypage.MypageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -19,6 +17,7 @@ import java.util.Map;
 @RequestMapping("/api")
 public class MypageController {
     private final MypageService mypageService;
+    private final MemberService memberService;
 
     @GetMapping("/member/read-books/{userId}")
     public ResponseEntity<Map<String,Object>> getReadBooks(@PathVariable int userId) throws Exception {
@@ -64,18 +63,20 @@ public class MypageController {
         return new ResponseEntity<Map<String,Object>>(responseMap, status);
     }
     @PutMapping("/member/proceeding-books/update")
-    public ResponseEntity<?> updateCurrentPage(@RequestBody UpdateCurrentPageRequest request) throws Exception {
+    public ResponseEntity<Integer> updateCurrentPage(@RequestBody UpdateCurrentPageRequest request) throws Exception {
         int result = mypageService.updateCurrentPage(request);
         if(result != 1){
             throw new Exception();
         }
-        return ResponseEntity.ok("Successfully updated current page");
+        Integer point = memberService.addPoint(request.getMemberId(), 50);
+        return new ResponseEntity<Integer>(point, HttpStatus.OK);
     }
 
 
     @PatchMapping("/member/read-books/complete")
-    public ResponseEntity<?> completeBook(@RequestBody CompleteBookRequest request) throws Exception {
+    public ResponseEntity<Integer> completeBook(@RequestBody CompleteBookRequest request) throws Exception {
         mypageService.completeBook(request);
-        return ResponseEntity.ok("Successfully marked book as completed");
+        Integer point = memberService.addPoint(request.getMemberId(), 500);
+        return new ResponseEntity<Integer>(point, HttpStatus.OK);
     }
 }

@@ -8,6 +8,6 @@ import lombok.Getter;
 public class LoginMemberResponse {
     private int id;
     private String nickname;
-    private int point;
+    private Integer point;
     private String introduction;
 }

@@ -11,8 +11,8 @@ import java.util.Optional;
 public interface TimeCapsuleRepository {
     void saveTimeCapsule(TimeCapsule timeCapsule);
     Optional<TimeCapsule> findById(Integer timeCapsuleId);
-    List<TimeCapsuleAlarmResponse> findTimeCapsuleByReleaseDate(Integer memberId, LocalDate date);
-    Long countByMemberId(Integer memberId);
-    TimeCapsuleDateResponse findDateByTimeCapsuleId(Integer timeCapsuleId);
+    List<TimeCapsuleAlarmResponse> findTimeCapsuleAlarms(Integer memberId, LocalDate date);
+    Long findTimeCapsuleAlarmsCount(Integer memberId, LocalDate date);
+    TimeCapsuleDateResponse findSelectedDateById(Integer timeCapsuleId);
     void delete(TimeCapsule timeCapsule);
 }

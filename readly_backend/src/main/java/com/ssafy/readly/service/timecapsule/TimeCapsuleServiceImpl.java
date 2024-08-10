@@ -7,11 +7,11 @@ import com.ssafy.readly.dto.timecapsule.TimeCapsuleDateResponse;
 import com.ssafy.readly.dto.timecapsule.TimeCapsuleRequest;
 import com.ssafy.readly.entity.*;
 import com.ssafy.readly.enums.ItemType;
-import com.ssafy.readly.repository.member.MemberRepositoryImpl;
-import com.ssafy.readly.repository.photocard.PhotoCardQueryDSLRepositoryImpl;
-import com.ssafy.readly.repository.review.ReviewQueryDSLRepositoryImpl;
-import com.ssafy.readly.repository.timecapsule.TimeCapsuleRepositoryImpl;
-import com.ssafy.readly.repository.timecapusuleitem.TimeCapsuleItemRepositoryImpl;
+import com.ssafy.readly.repository.member.MemberRepository;
+import com.ssafy.readly.repository.photocard.PhotoCardQueryDSLRepository;
+import com.ssafy.readly.repository.review.ReviewQueryDSLRepository;
+import com.ssafy.readly.repository.timecapsule.TimeCapsuleRepository;
+import com.ssafy.readly.repository.timecapusuleitem.TimeCapsuleItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,11 +26,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TimeCapsuleServiceImpl implements TimeCapsuleService {
 
-    private final TimeCapsuleRepositoryImpl timeCapsuleRepository;
-    private final TimeCapsuleItemRepositoryImpl timeCapsuleItemRepository;
-    private final MemberRepositoryImpl memberRepository;
-    private final ReviewQueryDSLRepositoryImpl reviewQueryDSLRepository;
-    private final PhotoCardQueryDSLRepositoryImpl photoCardQueryDSLRepository;
+    private final TimeCapsuleRepository timeCapsuleRepository;
+    private final TimeCapsuleItemRepository timeCapsuleItemRepository;
+    private final MemberRepository memberRepository;
+    private final ReviewQueryDSLRepository reviewQueryDSLRepository;
+    private final PhotoCardQueryDSLRepository photoCardQueryDSLRepository;
 
     @Override
     public List<ReviewResponse> getReviewsByPeriod(TimeCapsuleRequest timeCapsuleRequest) {
@@ -72,13 +72,13 @@ public class TimeCapsuleServiceImpl implements TimeCapsuleService {
     }
 
     @Override
-    public Long getTimeCapsuleCount(Integer memberId) {
-        return timeCapsuleRepository.countByMemberId(memberId);
+    public Long getTimeCapsuleAlarmCount(Integer memberId) {
+        return timeCapsuleRepository.findTimeCapsuleAlarmsCount(memberId, LocalDate.now());
     }
 
     @Override
-    public List<TimeCapsuleAlarmResponse> getTimeCapsuleReleaseDate(Integer memberId) {
-        return timeCapsuleRepository.findTimeCapsuleByReleaseDate(memberId, LocalDate.now());
+    public List<TimeCapsuleAlarmResponse> getTimeCapsuleAlarms(Integer memberId) {
+        return timeCapsuleRepository.findTimeCapsuleAlarms(memberId, LocalDate.now());
     }
 
     @Override
@@ -92,8 +92,16 @@ public class TimeCapsuleServiceImpl implements TimeCapsuleService {
     }
 
     @Override
-    public TimeCapsuleDateResponse getTimeCapsuleDate(Integer timeCapsuleId) {
-        return timeCapsuleRepository.findDateByTimeCapsuleId(timeCapsuleId);
+    public TimeCapsuleDateResponse getTimeCapsuleSelectedDate(Integer timeCapsuleId) {
+        return timeCapsuleRepository.findSelectedDateById(timeCapsuleId);
+    }
+
+    @Transactional
+    @Override
+    public void readAlarm(Integer timeCapsuleId) {
+        TimeCapsule timeCapsule = timeCapsuleRepository.findById(timeCapsuleId).orElseThrow(() ->
+                new NoSuchElementException("타임캡슐: " + timeCapsuleId + "이(가) 존재하지 않습니다."));
+        timeCapsule.readAlarm();
     }
 
     @Transactional

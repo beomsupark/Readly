@@ -56,7 +56,11 @@ public class TimeCapsule {
 
     public void createReleaseDate() {
         Random random = new Random();
-        int addMonth = random.nextInt(12) + 1;
-        this.releaseDate = LocalDate.now().plusMonths(addMonth);
+        int addDay = random.nextInt(336) + 30;
+        this.releaseDate = LocalDate.now().plusDays(addDay);
+    }
+
+    public void readAlarm() {
+        this.isRead = true;
     }
 }
