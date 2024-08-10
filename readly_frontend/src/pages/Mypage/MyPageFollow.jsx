@@ -58,6 +58,14 @@ export default function MypageFollow({ userId }) {
     4: LevelIcon4,
   };
 
+  const renderEmptyItems = (count) => {
+    return Array(count)
+      .fill()
+      .map((_, index) => (
+        <div key={`empty-${index}`} className="bg-gray-200 p-2 rounded-xl flex items-center w-36 h-[5rem]"></div>
+      ));
+  };
+
   if (isLoading) {
     return <div>팔로워 목록을 불러오는 중...</div>;
   }
@@ -66,32 +74,31 @@ export default function MypageFollow({ userId }) {
     return <div>{error}</div>;
   }
 
+  const displayFollows = follows.slice(0, 7);
+  const emptySlots = Math.max(0, 7 - displayFollows.length);
+
   return (
     <>
       <div className="bg-white rounded-lg shadow p-4 mb-4 relative">
-        <div className="flex space-x-2 mb-2 gap-4">
-        {follows.length > 0 ? (
-  follows.map((user) => (
-    <div
-      key={user.followedId}
-      onClick={() => navigateToMemberPage(user.followedName)}
-      className="bg-gray-200 p-2 rounded-xl flex items-center bg-[#F5F5F5] cursor-pointer w-36 h-[5rem]"
-    >
-      <img
-        src={levelIcons[user.level]}
-        alt={`Level ${user.level}`}
-        className="w-7 h-7 mr-2 mb-9"
-      />
-      <div className="ml-4">
-        <img src={InfoIcon} alt="info" className="w-12 h-10" />
-        <p className="font-semibold">{user.followedName}</p>
-      </div>
-    </div>
-  ))
-) : (
-  <div className="bg-gray-200 p-2 rounded-xl flex-cols items-center bg-white w-full h-[5rem] flex justify-center items-center">
-  </div>
-)}
+        <div className="flex space-x-2 mb-2 gap-4 flex-wrap">
+          {displayFollows.map((user) => (
+            <div
+              key={user.followedId}
+              onClick={() => navigateToMemberPage(user.followedName)}
+              className="bg-gray-200 p-2 rounded-xl flex items-center bg-[#F5F5F5] cursor-pointer w-36 h-[5rem]"
+            >
+              <img
+                src={levelIcons[user.level]}
+                alt={`Level ${user.level}`}
+                className="w-7 h-7 mr-2 mb-9"
+              />
+              <div className="ml-4">
+                <img src={InfoIcon} alt="info" className="w-12 h-10" />
+                <p className="font-semibold">{user.followedName}</p>
+              </div>
+            </div>
+          ))}
+          {renderEmptyItems(emptySlots)}
         </div>
         <div className="absolute top-4 right-4">
           <button

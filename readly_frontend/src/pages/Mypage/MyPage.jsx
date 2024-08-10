@@ -11,7 +11,7 @@ import ReviewList from "./ReviewListModal";
 import useUserStore from "../../store/userStore";
 import Myheader from "./MypageHeader";
 import { getMyReviews, getMyPhotocards } from "../../api/mypageAPI";
-import Review from '../../components/Review/Review';  // Import the Review component
+import Review from '../../components/Review/Review';
 
 export default function MyPage() {
   const user = useUserStore((state) => state.user);
@@ -31,7 +31,7 @@ export default function MyPage() {
         const reviews = await getMyReviews(userId || user.id);
         setMyPhotocards(photocards);
         setMyReviews(reviews);
-        console.log("Fetched reviews in MyPage:", reviews); // Log fetched reviews
+        console.log("Fetched reviews in MyPage:", reviews);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -74,6 +74,18 @@ export default function MyPage() {
       .map((_, index) => (
         <div key={`empty-${index}`} className="bg-gray-100 p-2 rounded w-[5rem] h-[6rem]"></div>
       ));
+  };
+
+  const renderItems = (items, renderFunction, emptyCount = 7) => {
+    const displayItems = items.slice(0, 7);
+    const emptySlots = Math.max(0, emptyCount - displayItems.length);
+    
+    return (
+      <>
+        {displayItems.map(renderFunction)}
+        {renderEmptyItems(emptySlots)}
+      </>
+    );
   };
 
   return (
@@ -136,8 +148,9 @@ export default function MyPage() {
             <div className="relative bg-white rounded-lg shadow p-4 mb-4">
               <h3 className="font-bold mb-2">내가 만든 포토카드</h3>
               <div className="flex flex-wrap gap-1">
-                {myPhotocards.length > 0 ? (
-                  myPhotocards.map((card) => (
+                {renderItems(
+                  myPhotocards,
+                  (card) => (
                     <div
                       key={card.photocardId}
                       className="bg-gray-200 p-2 rounded w-[5rem] h-[6rem] flex items-center justify-center"
@@ -148,9 +161,7 @@ export default function MyPage() {
                         className="w-full h-full object-cover"
                       />
                     </div>
-                  ))
-                ) : (
-                  renderEmptyItems(1)
+                  )
                 )}
               </div>
               <div className="absolute top-4 right-4">
@@ -167,20 +178,19 @@ export default function MyPage() {
             <div className="relative bg-white rounded-lg shadow p-4">
               <h3 className="font-bold mb-2">내가 남긴 한줄평</h3>
               <div className="flex flex-wrap gap-3">
-                {myReviews.length > 0 ? (
-                  myReviews.map((review) => (
+                {renderItems(
+                  myReviews,
+                  (review) => (
                     <div key={review.reviewId} className="w-[7rem] h-[6rem]">
                       <Review
-                        bookImage={review.bookImage} // Ensure this field exists
+                        bookImage={review.bookImage}
                         title={review.bookTitle}
                         author={review.bookAuthor}
                         review={review.reviewText}
-                        likeCount={review.likeCount} // Ensure this field exists
+                        likeCount={review.likeCount}
                       />
                     </div>
-                  ))
-                ) : (
-                  renderEmptyItems(1)
+                  )
                 )}
               </div>
               <div className="absolute top-4 right-4">

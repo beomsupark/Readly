@@ -112,4 +112,9 @@ public class MemberServiceImpl implements MemberService {
         member.addPoint(point);
         return member.getPoint();
     }
+
+    @Override
+    public MemberResponse getMemberbyLoginId(String loginId) {
+        return memberRepository.findDataByLoginId(loginId).orElseThrow(() -> new NoSuchElementException("해당 유저가 존재하지 않습니다."));
+    }
 }

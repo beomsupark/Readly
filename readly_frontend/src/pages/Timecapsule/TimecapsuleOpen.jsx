@@ -1,4 +1,6 @@
+import { useState, useEffect } from "react";
 import Modal from "react-modal";
+import { openTimeCapsule } from '../../api/timecapsuleAPI'; // API 함수 import
 
 Modal.setAppElement("#root");
 
@@ -30,12 +32,34 @@ const customModalStyles = {
   },
 };
 
+
 export default function TimecapsuleOpen({
   isOpen,
   onRequestClose,
-  selectedPhotoCards,
-  selectedReviews
+  timeCapsuleId // 타임캡슐 ID를 prop으로 받습니다
 }) {
+  const [timeCapsuleData, setTimeCapsuleData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (isOpen && timeCapsuleId) {
+      setIsLoading(true);
+      openTimeCapsule(timeCapsuleId)
+        .then(data => {
+          setTimeCapsuleData(data);
+          setIsLoading(false);
+        })
+        .catch(err => {
+          console.error("타임캡슐 데이터 로딩 중 오류 발생:", err);
+          setError("타임캡슐을 불러오는 데 실패했습니다.");
+          setIsLoading(false);
+        });
+    }
+  }, [isOpen, timeCapsuleId]);
+
+  if (!isOpen) return null;
+
   return (
     <Modal
       isOpen={isOpen}
@@ -53,38 +77,55 @@ export default function TimecapsuleOpen({
       </button>
       <h2 className="text-2xl font-bold mb-4">타임캡슐 내용</h2>
       
-      <div className="flex-col gap-4">
-        <h3 className="font-bold mb-2">포토카드</h3>
-        <div className="flex flex-wrap gap-2">
-          {selectedPhotoCards.map((photocard) => (
-            <div key={photocard.photoCardId} className="flex items-center">
-              <img
-                src={photocard.photoCardImage}
-                alt={photocard.bookTitle}
-                className="h-[7rem] rounded"
-              />
-              <p className="ml-2">{photocard.bookTitle}</p>
-            </div>
-          ))}
-        </div>
+      {isLoading && <p>로딩 중...</p>}
+      {error && <p className="text-red-500">{error}</p>}
+      
+      {timeCapsuleData && (
+        <div className="flex-col gap-4">
+          <p>시작일: {timeCapsuleData.timeCapsuleDate.startDate.toLocaleDateString()}</p>
+          <p>종료일: {timeCapsuleData.timeCapsuleDate.endDate.toLocaleDateString()}</p>
 
-        <h3 className="font-bold mb-2 mt-4">리뷰</h3>
-        <div className="flex flex-wrap gap-2">
-          {selectedReviews.map((review) => (
-            <div key={review.reviewId} className="flex items-center">
-              <img
-                src={review.bookImage}
-                alt={review.bookTitle}
-                className="h-[7rem] rounded"
-              />
-              <div className="ml-2">
-                <p className="font-semibold">{review.bookTitle}</p>
-                <p>{review.reviewText}</p>
+          <h3 className="font-bold mb-2 mt-4">포토카드</h3>
+          <div className="flex flex-wrap gap-2">
+            {timeCapsuleData.photoCards.map((photocard) => (
+              <div key={photocard.photoCardId} className="flex items-center">
+                <img
+                  src={photocard.photoCardImage}
+                  alt={photocard.bookTitle}
+                  className="h-[7rem] rounded"
+                />
+                <div className="ml-2">
+                  <p className="font-semibold">{photocard.bookTitle}</p>
+                  <p>{photocard.photoCardText}</p>
+                  <p className="text-sm text-gray-500">
+                    {new Date(photocard.photoCardCreatedDate).toLocaleDateString()}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          <h3 className="font-bold mb-2 mt-4">리뷰</h3>
+          <div className="flex flex-wrap gap-2">
+            {timeCapsuleData.reviews.map((review) => (
+              <div key={review.reviewId} className="flex items-center">
+                <img
+                  src={review.bookImage}
+                  alt={review.bookTitle}
+                  className="h-[7rem] rounded"
+                />
+                <div className="ml-2">
+                  <p className="font-semibold">{review.bookTitle}</p>
+                  <p>{review.reviewText}</p>
+                  <p className="text-sm text-gray-500">
+                    {new Date(review.createdDate).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </Modal>
   );
 }

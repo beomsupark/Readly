@@ -17,4 +17,5 @@ public interface MemberService {
     MemberResponse getMember(int id);
     void updateMember(UpdateMemberRequest updateMember);
     Integer addPoint(int memberId, Integer point);
+    MemberResponse getMemberbyLoginId(String Loginid);
 }

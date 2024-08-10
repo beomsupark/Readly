@@ -7,6 +7,7 @@ import cloudImg from "../assets/header/cloudImg.png";
 import useBookStore from "../store/bookStore";
 import LogoutButton from "../pages/Login/Logout";
 import useUserStore from "../store/userStore.js";
+import NotificationIcon from "./NotificationIcon"; // 알림 아이콘 컴포넌트 추가
 
 const customModalStyles = {
   overlay: {
@@ -40,7 +41,7 @@ export default function CustomHeader() {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  const { books, searchResults, loading, error, fetchBooks, searchBooks } = useBookStore();
+  const { searchResults, fetchBooks, searchBooks } = useBookStore();
 
   useEffect(() => {
     fetchBooks().catch((err) => console.error("Failed to fetch books:", err));
@@ -163,7 +164,9 @@ export default function CustomHeader() {
         </div>
       </div>
       <div className="flex-1 flex justify-end items-center mr-6 relative" ref={dropdownRef}>
+      <NotificationIcon />
         <div className="flex" onClick={handleDropdownToggle}>
+       
           <img
             src={infoIcon}
             alt="프로필"

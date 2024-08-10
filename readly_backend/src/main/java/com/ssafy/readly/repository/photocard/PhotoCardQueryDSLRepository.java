@@ -21,4 +21,6 @@ public interface PhotoCardQueryDSLRepository {
     List<CreatePhotoCardResponse> findByPhotoCardNoLike(TimeCapsuleRequest timeCapsuleRequest);
 
     List<PhotoCard> findByPhotoCardIn(Integer[] photoCards);
+
+    List<CreatePhotoCardResponse> findPhotoCardsbyMemberId(int memberId);
 }
