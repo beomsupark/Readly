@@ -41,3 +41,4 @@ config.properties
 
 ### yml ###
 application.yml
+application-secrets.yml
