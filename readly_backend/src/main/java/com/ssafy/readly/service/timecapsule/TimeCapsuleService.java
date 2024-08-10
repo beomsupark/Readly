@@ -12,10 +12,11 @@ public interface TimeCapsuleService {
     List<ReviewResponse> getReviewsByPeriod(TimeCapsuleRequest timeCapsuleRequest);
     List<CreatePhotoCardResponse> getPhotoCardsByPeriod(TimeCapsuleRequest timeCapsuleRequest);
     void saveTimeCapsule(TimeCapsuleRequest timeCapsuleRequest);
-    Long getTimeCapsuleCount(Integer memberId);
-    List<TimeCapsuleAlarmResponse> getTimeCapsuleReleaseDate(Integer memberId);
+    Long getTimeCapsuleAlarmCount(Integer memberId);
+    List<TimeCapsuleAlarmResponse> getTimeCapsuleAlarms(Integer memberId);
     List<ReviewResponse> getTimeCapsuleReviews(int timeCapsuleId);
     List<CreatePhotoCardResponse> getTimeCapsulePhotoCards(int timeCapsuleId);
-    TimeCapsuleDateResponse getTimeCapsuleDate(Integer timeCapsuleId);
+    TimeCapsuleDateResponse getTimeCapsuleSelectedDate(Integer timeCapsuleId);
+    void readAlarm(Integer timeCapsuleId);
     void deleteTimeCapsule(Integer timeCapsuleId);
 }

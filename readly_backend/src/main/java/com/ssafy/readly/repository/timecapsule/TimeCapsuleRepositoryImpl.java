@@ -36,16 +36,17 @@ public class TimeCapsuleRepositoryImpl implements TimeCapsuleRepository {
     }
 
     @Override
-    public Long countByMemberId(Integer memberId) {
+    public Long findTimeCapsuleAlarmsCount(Integer memberId, LocalDate date) {
         return queryFactory
                 .select(timeCapsule.id.count())
                 .from(timeCapsule)
-                .where(timeCapsule.member.id.eq(memberId), timeCapsule.isRead.isFalse())
+                .where(timeCapsule.member.id.eq(memberId),timeCapsule.releaseDate.loe(date),
+                        timeCapsule.isRead.isFalse())
                 .fetchOne();
     }
 
     @Override
-    public List<TimeCapsuleAlarmResponse> findTimeCapsuleByReleaseDate(Integer memberId, LocalDate date) {
+    public List<TimeCapsuleAlarmResponse> findTimeCapsuleAlarms(Integer memberId, LocalDate date) {
         return queryFactory
                 .select(Projections.constructor(TimeCapsuleAlarmResponse.class,
                         timeCapsule.id, timeCapsule.createdDate, timeCapsule.isRead))
@@ -56,7 +57,7 @@ public class TimeCapsuleRepositoryImpl implements TimeCapsuleRepository {
     }
 
     @Override
-    public TimeCapsuleDateResponse findDateByTimeCapsuleId(Integer timeCapsuleId) {
+    public TimeCapsuleDateResponse findSelectedDateById(Integer timeCapsuleId) {
         return queryFactory
                 .select(Projections.constructor(TimeCapsuleDateResponse.class,
                         timeCapsule.startDate, timeCapsule.endDate))

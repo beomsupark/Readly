@@ -72,13 +72,13 @@ public class TimeCapsuleServiceImpl implements TimeCapsuleService {
     }
 
     @Override
-    public Long getTimeCapsuleCount(Integer memberId) {
-        return timeCapsuleRepository.countByMemberId(memberId);
+    public Long getTimeCapsuleAlarmCount(Integer memberId) {
+        return timeCapsuleRepository.findTimeCapsuleAlarmsCount(memberId, LocalDate.now());
     }
 
     @Override
-    public List<TimeCapsuleAlarmResponse> getTimeCapsuleReleaseDate(Integer memberId) {
-        return timeCapsuleRepository.findTimeCapsuleByReleaseDate(memberId, LocalDate.now());
+    public List<TimeCapsuleAlarmResponse> getTimeCapsuleAlarms(Integer memberId) {
+        return timeCapsuleRepository.findTimeCapsuleAlarms(memberId, LocalDate.now());
     }
 
     @Override
@@ -92,8 +92,16 @@ public class TimeCapsuleServiceImpl implements TimeCapsuleService {
     }
 
     @Override
-    public TimeCapsuleDateResponse getTimeCapsuleDate(Integer timeCapsuleId) {
-        return timeCapsuleRepository.findDateByTimeCapsuleId(timeCapsuleId);
+    public TimeCapsuleDateResponse getTimeCapsuleSelectedDate(Integer timeCapsuleId) {
+        return timeCapsuleRepository.findSelectedDateById(timeCapsuleId);
+    }
+
+    @Transactional
+    @Override
+    public void readAlarm(Integer timeCapsuleId) {
+        TimeCapsule timeCapsule = timeCapsuleRepository.findById(timeCapsuleId).orElseThrow(() ->
+                new NoSuchElementException("타임캡슐: " + timeCapsuleId + "이(가) 존재하지 않습니다."));
+        timeCapsule.readAlarm();
     }
 
     @Transactional

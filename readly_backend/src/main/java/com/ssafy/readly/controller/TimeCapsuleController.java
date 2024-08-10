@@ -47,13 +47,13 @@ public class TimeCapsuleController {
     }
 
     @GetMapping("/timecapsule/{memberid}/alarm/unread-count")
-    public ResponseEntity<Long> getTimeCapsuleCount(@PathVariable("memberid") Integer memberId) throws Exception {
-        return new ResponseEntity<Long>(timeCapsuleService.getTimeCapsuleCount(memberId), HttpStatus.OK);
+    public ResponseEntity<Long> getTimeCapsuleAlarmCount(@PathVariable("memberid") Integer memberId) throws Exception {
+        return new ResponseEntity<Long>(timeCapsuleService.getTimeCapsuleAlarmCount(memberId), HttpStatus.OK);
     }
 
     @GetMapping("/timecapsule/{memberid}/alarm")
-    public ResponseEntity<List<TimeCapsuleAlarmResponse>> getAlarms(@PathVariable("memberid") Integer memberId) throws Exception {
-        return new ResponseEntity<List<TimeCapsuleAlarmResponse>>(timeCapsuleService.getTimeCapsuleReleaseDate(memberId), HttpStatus.OK);
+    public ResponseEntity<List<TimeCapsuleAlarmResponse>> getTimeCapsuleAlarms(@PathVariable("memberid") Integer memberId) throws Exception {
+        return new ResponseEntity<List<TimeCapsuleAlarmResponse>>(timeCapsuleService.getTimeCapsuleAlarms(memberId), HttpStatus.OK);
     }
 
     @GetMapping("/timecapsule/{timecapsuleid}")
@@ -61,10 +61,11 @@ public class TimeCapsuleController {
         Map<String, Object> responseMap = new HashMap<>();
         List<ReviewResponse> reviews = timeCapsuleService.getTimeCapsuleReviews(timeCapsuleId);
         List<CreatePhotoCardResponse> photoCards = timeCapsuleService.getTimeCapsulePhotoCards(timeCapsuleId);
-        TimeCapsuleDateResponse timeCapsuleDate = timeCapsuleService.getTimeCapsuleDate(timeCapsuleId);
+        TimeCapsuleDateResponse timeCapsuleDate = timeCapsuleService.getTimeCapsuleSelectedDate(timeCapsuleId);
         responseMap.put("reviews", reviews);
         responseMap.put("photoCards", photoCards);
         responseMap.put("timeCapsuleDate", timeCapsuleDate);
+        timeCapsuleService.readAlarm(timeCapsuleId);
         return new ResponseEntity<Map<String, Object>>(responseMap, HttpStatus.OK);
     }
 
