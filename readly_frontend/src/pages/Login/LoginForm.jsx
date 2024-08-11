@@ -2,14 +2,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../api/authAPI";
-import useUserStore from "../../store/userStore";
+// import useUserStore from "../../store/userStore";
 
 export default function LoginForm() {
     const [values, setValues] = useState({
         loginId: "",
         loginPwd: "",
     });
-    const setUser = useUserStore(state => state.setUser);
+    // const setUser = useUserStore(state => state.setUser);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -23,9 +23,7 @@ export default function LoginForm() {
         e.preventDefault();
         try {
             const response = await login(values);
-            localStorage.setItem('accessToken', response.accessToken);
-            localStorage.setItem('refreshToken', response.refreshToken);
-            setUser(response.loginInfo);
+            // setUser(response.loginInfo);
             navigate('/home');
             console.log(response)
         } catch (error) {

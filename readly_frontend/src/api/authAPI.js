@@ -1,7 +1,7 @@
 import axios from "axios";
 import useUserStore from "../store/userStore"; // userStore의 실제 경로로 수정해주세요
 
-const API_BASE_URL = "https://i11c207.p.ssafy.io/api";
+const API_BASE_URL = "http://localhost:8080/api";
 
 // axios 인스턴스 생성
 const api = axios.create({
@@ -24,10 +24,28 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
+    const originalRequest = error.config; // 원래 요청 정보 저장
     if (error.response && error.response.status === 401) {
-      // 토큰이 만료되었거나 유효하지 않은 경우
-      useUserStore.getState().clearUser();
-      throw new Error("인증에 실패했습니다. 다시 로그인해주세요.");
+      const id = useUserStore.getState().user.id;
+      try {
+        const response = await axios({
+          url: `${API_BASE_URL}/member/${id}/token`,
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true, // 쿠키를 보내기 위한 설정
+        });
+
+        useUserStore.getState().setToken(response.data.accessToken);
+        originalRequest.headers["Authorization"] = `${response.data.accessToken}`;
+
+        // 원래 요청을 다시 시도
+        return axios(originalRequest);
+      } catch (refreshError) {
+        useUserStore.getState().clearUser();
+        throw new Error("인증에 실패했습니다. 다시 로그인해주세요.");
+      }
     }
     return Promise.reject(error);
   }
