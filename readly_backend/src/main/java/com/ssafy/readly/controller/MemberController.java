@@ -2,10 +2,13 @@ package com.ssafy.readly.controller;
 
 import com.ssafy.readly.dto.member.*;
 import com.ssafy.readly.service.member.MemberService;
+import com.ssafy.readly.util.CookieUtil;
 import com.ssafy.readly.util.JWTUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -34,7 +38,7 @@ public class MemberController {
     }
 
     @PostMapping("/member/login")
-    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginMemberRequest loginMember) throws Exception {
+    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginMemberRequest loginMember, HttpServletResponse response) throws Exception {
         Map<String, Object> responseMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
 
@@ -44,8 +48,9 @@ public class MemberController {
         String refreshToken = jwtUtil.createRefreshToken(loginMemberResponse.getId());
         memberService.saveRefreshToken(loginMemberResponse.getId(), refreshToken);
 
+        CookieUtil.addCookie(response, "refreshToken", refreshToken, 604800, true);
+
         responseMap.put("accessToken", accessToken);
-        responseMap.put("refreshToken", refreshToken);
         responseMap.put("loginInfo", loginMemberResponse);
 
         status = HttpStatus.CREATED;
@@ -56,6 +61,7 @@ public class MemberController {
     @GetMapping("/member/{id}")
     public ResponseEntity<Map<String, Object>> getMemberInfo(
             @PathVariable("id") int id, HttpServletRequest request) throws Exception {
+        log.info("토큰요청");
         Map<String, Object> responseMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         String accessToken = request.getHeader("Authorization");
@@ -77,12 +83,14 @@ public class MemberController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/member/{id}/refresh")
-    public ResponseEntity<Map<String, Object>> refreshToken(
+    @GetMapping("/member/{id}/token")
+    public ResponseEntity<Map<String, Object>> createAccessToken(
             @PathVariable("id") int id, HttpServletRequest request) {
+        log.info("토큰 재발급 요청");
         Map<String, Object> responseMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
-        String refreshToken = request.getHeader("refreshToken");
+        String refreshToken = CookieUtil.getCookie("refreshToken", request);
+        log.info(refreshToken);
         if(jwtUtil.checkToken(refreshToken)) {
             if (refreshToken.equals(memberService.getRefreshToken(id))) {
                 String accessToken = jwtUtil.createAccessToken(id);
