@@ -60,6 +60,14 @@ public class BookController {
         return new ResponseEntity<Map<String, Object>>(responseMap, status);
     }
     // 책 추천
+    @GetMapping("/book/firstRecommand")
+    public ResponseEntity<Map<String,Object>> getBookRecommand() throws Exception {
+        Map<String,Object> responseMap = new HashMap();
+        HttpStatus status = HttpStatus.ACCEPTED;
+        responseMap.put("book",bookServiceImpl.getBookById(178));
 
+        status=HttpStatus.OK;
+        return new ResponseEntity<Map<String, Object>>(responseMap, status);
+    }
     // 책 추천 AI
 }
