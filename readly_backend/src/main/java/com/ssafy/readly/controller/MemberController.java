@@ -58,17 +58,16 @@ public class MemberController {
     @GetMapping("/member/{id}")
     public ResponseEntity<Map<String, Object>> getMemberInfo(
             @PathVariable("id") int id, HttpServletRequest request) throws Exception {
-        log.info("토큰요청");
         Map<String, Object> responseMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
-        String accessToken = request.getHeader("Authorization");
-        if(jwtUtil.getMemberId(accessToken) == id &&  jwtUtil.checkToken(accessToken)) {
+
+        if (id == (int) request.getAttribute("memberId")) {
             MemberResponse memberResponse = memberService.getMember(id);
             responseMap.put("memberInfo", memberResponse);
             status = HttpStatus.OK;
         } else {
-            responseMap.put("errorMessage", "토큰이 유효하지 않습니다.");
-            status = HttpStatus.UNAUTHORIZED;
+            responseMap.put("errorMessage", "권한이 없습니다.");
+            status = HttpStatus.FORBIDDEN;
         }
 
         return new ResponseEntity<Map<String, Object>>(responseMap, status);
@@ -83,11 +82,9 @@ public class MemberController {
     @GetMapping("/member/{id}/token")
     public ResponseEntity<Map<String, Object>> createAccessToken(
             @PathVariable("id") int id, HttpServletRequest request) {
-        log.info("토큰 재발급 요청");
         Map<String, Object> responseMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         String refreshToken = CookieUtil.getCookie("refreshToken", request);
-        log.info(refreshToken);
         if(jwtUtil.checkToken(refreshToken)) {
             if (refreshToken.equals(memberService.getRefreshToken(id))) {
                 String accessToken = jwtUtil.createAccessToken(id);
