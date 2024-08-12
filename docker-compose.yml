@@ -48,7 +48,15 @@ services:
       - backendnet
     volumes:
       - /home/ubuntu/nginx/frontconf:/etc/nginx/conf.d
-
+  
+  ai:
+    image: readly_ai
+    container_name: ai
+    ports:
+      - "8082:8082"
+    networks:
+      - backendnet
+      
 volumes:
   mysql-data:
 
