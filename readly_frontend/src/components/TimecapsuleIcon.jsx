@@ -19,7 +19,7 @@ const Timecapsule = () => {
     // 로그인 후 알람 개수 불러오기
     const fetchUnreadCount = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/timecapsule/${memberId}/alarm/unread-count`);
+        const response = await axios.get(`https://i11c207.p.ssafy.io/api/timecapsule/${memberId}/alarm/unread-count`);
         setAlarmCount(response.data.alarmCount);
       } catch (error) {
         console.error("Failed to fetch unread alarm count:", error);
@@ -34,7 +34,7 @@ const Timecapsule = () => {
 
     if (!isDropdownOpen) {
       try {
-        const response = await axios.get(`http://localhost:8080/api/timecapsule/${memberId}/alarm`);
+        const response = await axios.get(`https://i11c207.p.ssafy.io/api/timecapsule/${memberId}/alarm`);
         setAlarms(response.data);
       } catch (error) {
         console.error("Failed to fetch alarms:", error);
@@ -44,7 +44,7 @@ const Timecapsule = () => {
 
   const handleAlarmClick = async (timeCapsuleId) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/timecapsule/${timeCapsuleId}`);
+      const response = await axios.get(`https://i11c207.p.ssafy.io/api/timecapsule/${timeCapsuleId}`);
       setSelectedCapsule(response.data);
       setIsModalOpen(true);
     } catch (error) {
