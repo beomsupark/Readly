@@ -58,7 +58,7 @@ export default function Activity() {
       if (!selectedGroupId) return;
 
       try {
-        const response = await axios.get(`https://i11c207.p.ssafy.io/api/group/read-books/${selectedGroupId}`, {
+        const response = await axios.get(`https://localhost:8080/api/group/read-books/${selectedGroupId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const userInfo = response.data.readBooks.find(book => book.member_id === user.id);
@@ -74,7 +74,7 @@ export default function Activity() {
   }, [selectedGroupId, user.id, token]);
 
   const getTabs = useMemo(() => {
-    const baseTabs = ['진행도', '소통', '화상', '회의록'];
+    const baseTabs = ['진행도', '소통', '화상', '게시판'];
     if (userRole === 'L') {
       return [...baseTabs, '그룹 삭제'];
     } else if (userRole === 'M') {
@@ -134,7 +134,7 @@ export default function Activity() {
         {activeTab === "진행도" && <ActivityProgress groupId={selectedGroupId} />}
         {activeTab === "소통" && <ActivityChat groupId={selectedGroupId} />}
         {activeTab === "화상" && <ActivityRTC groupId={selectedGroupId} isActiveTab={activeTab === "화상"} />}
-        {activeTab === "회의록" && <ActivityBoard groupId={selectedGroupId} />}
+        {activeTab === "게시판" && <ActivityBoard groupId={selectedGroupId} />}
         {activeTab === "그룹 삭제" && userRole === 'L' && (
           <GroupDelete 
             groupId={selectedGroupId} 
