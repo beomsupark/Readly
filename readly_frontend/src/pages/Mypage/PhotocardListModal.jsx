@@ -13,8 +13,8 @@ const customModalStyles = {
     left: "0",
   },
   content: {
-    width: "60%",
-    maxWidth: "100%",
+    width: "80%",
+    maxWidth: "800px",
     height: "80%",
     maxHeight: "80vh",
     zIndex: "150",
@@ -47,18 +47,23 @@ export default function PhotocardList({ isOpen, onRequestClose, photocards }) {
         X
       </button>
       <h2 className="text-2xl font-bold mb-4">만든 포토카드입니다!</h2>
-      <div className="flex-col gap-4">
+      <div className="space-y-6">
         {photocards &&
           photocards.map((card) => (
-            <div key={card.photocardId} className="flex items-center">
+            <div key={card.photocardId} className="flex bg-[#fdf9f9] p-4 rounded-lg shadow">
               <img
                 src={card.photocardImage}
                 alt={card.bookTitle}
-                className="w-[10rem] h-auto object-cover mb-2"
+                className="w-32 h-48 object-cover mr-4"
               />
-              <div>
-                <p className="text-center">{card.bookTitle}</p>
-                <p className="text-center">{card.bookDescription}</p>
+              <div className="flex-1">
+                <div className="border-b border-gray-300 pb-2 mb-2">
+                  <p className="font-bold text-xl">{card.bookTitle}</p>
+                  <p className="text-sm text-gray-600">{card.bookAuthor}</p>
+                </div>
+                <p className="mt-8 text-xl text-center bg-purple-100 p-2 rounded">
+                  {card.photocardText}
+                </p>
               </div>
             </div>
           ))}

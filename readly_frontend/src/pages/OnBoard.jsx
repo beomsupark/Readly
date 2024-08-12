@@ -66,7 +66,6 @@ export default function OnBoard() {
                     />
                   </div>
                 </div>
-
                 {/* 오른쪽 카드 섹션 */}
                 <div
                   className="w-full lg:w-1/2 flex justify-end"
@@ -76,12 +75,12 @@ export default function OnBoard() {
                     <img
                       src={CardImg1_back}
                       alt="Right Card Back"
-                      className="w-64 h-96 rounded-lg shadow-lg transform rotate-[25deg] absolute top-0 right-12 z-10"
+                      className="w-64 h-96 absolute top-0 right-12 z-10 transform rotate-[30deg] object-cover"
                     />
                     <img
                       src={CardImg1}
                       alt="Right Card Front"
-                      className="w-64 h-96 rounded-lg shadow-lg transform rotate-[15deg] absolute top-4 left-16 z-20"
+                      className="w-64 h-96 absolute top-4 left-16 z-20 transform rotate-[-5deg] object-cover"
                     />
                   </div>
                 </div>
@@ -192,7 +191,9 @@ export default function OnBoard() {
               alt=""
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-[#878787] font-bold text-4xl">Readly에서 시작하세요</span>
+              <span className="text-[#878787] font-bold text-4xl">
+                Readly에서 시작하세요
+              </span>
             </div>
           </div>
 

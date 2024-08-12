@@ -1,6 +1,4 @@
 import Modal from "react-modal";
-import { useEffect } from "react";
-import Review from '../../components/Review/Review';  // Make sure to adjust the import path as needed
 
 Modal.setAppElement("#root");
 
@@ -15,8 +13,8 @@ const customModalStyles = {
     left: "0",
   },
   content: {
-    width: "60%",
-    maxWidth: "100%",
+    width: "80%",
+    maxWidth: "800px",
     height: "80%",
     maxHeight: "80vh",
     zIndex: "150",
@@ -33,10 +31,6 @@ const customModalStyles = {
 };
 
 export default function ReviewList({ isOpen, onRequestClose, reviews }) {
-  useEffect(() => {
-    console.log("ReviewList received reviews:", reviews); // Log received reviews
-  }, [reviews]);
-
   return (
     <Modal
       isOpen={isOpen}
@@ -53,20 +47,28 @@ export default function ReviewList({ isOpen, onRequestClose, reviews }) {
         X
       </button>
       <h2 className="text-2xl font-bold mb-4">만든 한줄평입니다!</h2>
-      <div className="flex gap-3 w-[30rem] h-[15rem]">
+      <div className="space-y-6">
         {reviews && reviews.length > 0 ? (
           reviews.map((review) => (
-            <Review
-              key={review.reviewId}
-              bookImage={review.bookImage}
-              title={review.bookTitle}
-              author={review.bookAuthor}
-              review={review.reviewText}
-              likeCount={review.likeCount} // Make sure this exists in your review data
-            />
+            <div key={review.reviewId} className="flex bg-[#fdf9f9] p-4 rounded-lg shadow">
+              <img
+                src={review.bookImage}
+                alt={review.bookTitle}
+                className="w-32 h-48 object-cover mr-4"
+              />
+              <div className="flex-1">
+                <div className="border-b border-gray-300 pb-2 mb-2">
+                  <p className="font-bold text-xl">{review.bookTitle}</p>
+                  <p className="text-sm text-gray-600">{review.bookAuthor}</p>
+                </div>
+                <p className="mt-8 text-xl text-center bg-purple-100 p-2 rounded">
+                  {review.reviewText}
+                </p>
+              </div>
+            </div>
           ))
         ) : (
-          <p>No reviews available.</p>
+          <p>남긴 한줄평이 없습니다</p>
         )}
       </div>
     </Modal>
