@@ -46,6 +46,8 @@ services:
       - "3000:80"
     networks:
       - backendnet
+    volumes:
+      - /home/ubuntu/nginx/frontconf:/etc/nginx/conf.d
 
 volumes:
   mysql-data:
