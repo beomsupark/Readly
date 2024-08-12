@@ -37,7 +37,6 @@ export default function LoginForm() {
     return (
         <div className="login-content login-content-signin">
             <div>
-                <h2>로그인</h2>
                 <form className="wrapper-box" onSubmit={handleLogin}>
                     <input type="text" className="form-control" id="loginId" placeholder="아이디" onChange={handleChange} value={values.loginId} required />
                     <input type="password" className="form-control" id="loginPwd" placeholder="비밀번호" onChange={handleChange} value={values.loginPwd} required />

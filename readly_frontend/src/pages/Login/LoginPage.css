@@ -1,7 +1,7 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
+  font-weight: bold;
 }
 
 .background {
@@ -12,7 +12,7 @@ body {
   left: 0;
   background: url('../../assets/background/background_img.png') no-repeat center center fixed;
   background-size: cover;
-  opacity: 1;
+  opacity: 0.8;
   z-index: -1;
 }
 
@@ -37,13 +37,12 @@ body {
   background: #FFF;
   box-shadow: 0 0px 70px rgba(0, 0, 0, 0.1);
   border-top: 5px solid #87CEEB;
-  transition: all 0.2s ease-out;
-  transition-delay: 0.2s;
+  transition: all 0.5s ease; 
 }
 
 .login-content-signin.ng-hide:not(.ng-hide-animate) {
   transition-delay: 0s;
-  display: block !important;
+  display: block;
   opacity: 0;
   z-index: -1;
   transform: translate(-45%, -50%);
@@ -51,7 +50,7 @@ body {
 
 .login-content-signup.ng-hide:not(.ng-hide-animate) {
   transition-delay: 0s;
-  display: block !important;
+  display: block;
   opacity: 0;
   z-index: -1;
   transform: translate(-55%, -50%);
@@ -151,7 +150,7 @@ body {
   bottom: 0;
   left: 0;
   margin: auto;
-  width: 660px;
+  width: 1000px;
   height: 400px;
   box-shadow: 0 0px 20px rgba(0, 0, 0, 0.03);
 }
@@ -172,7 +171,8 @@ body {
 .login-switcher h3 {
   color: rgba(0, 0, 0, 0.4);
   text-align: center;
-  font-size: 14px;
+  font-size: 28px;
+  font-weight: bold;
 }
 
 .login-switcher button {
@@ -184,13 +184,13 @@ body {
   border-radius: 20px;
   color: rgba(0, 0, 0, 0.3);
   font-weight: bold;
-  font-size: 14px;
+  font-size: 20px;
   padding: 4px 12px 5px 12px;
   transition: all 0.1s ease-out;
 }
 
 .login-switcher button:hover {
-  border: 2px solid #87CEEB !important;
+  border: 2px solid #87CEEB;
   color: rgba(0, 0, 0, 0.8);
 }
 
@@ -201,7 +201,7 @@ body {
 
 .login-switcher-signin.ng-hide:not(.ng-hide-animate),
 .login-switcher-signup.ng-hide:not(.ng-hide-animate) {
-  display: block !important;
+  display: block;
   opacity: 0;
   transform: translateY(10px);
 }

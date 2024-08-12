@@ -183,7 +183,7 @@ export default function CustomHeader() {
           </span>
         </div>
         {isDropdownOpen && (
-          <div className="absolute right-0 top-10 mt-2 w-[8rem] bg-[#F2F2F2] rounded-lg shadow-lg z-20 w-[10rem] h-[6rem] flex flex-col justify-center">
+          <div className="absolute right-0 top-10 mt-2 w-[9rem] bg-[#F2F2F2] rounded-lg shadow-lg z-20 w-[9rem] h-[6rem] flex flex-col justify-center">
             <div className="flex items-center px-4 py-2 hover:bg-gray-300 cursor-pointer">
               <button
                 onClick={handleMyPageClick}
