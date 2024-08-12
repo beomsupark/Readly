@@ -73,7 +73,7 @@ export default function GroupBookSearch({ isOpen, onRequestClose, groupId, curre
   const handleBookRegister = useCallback(
     async (book) => {
       try {
-        await axios.post('http://localhost:8080/api/group/add', {
+        await axios.post('https://i11c207.p.ssafy.io/api/group/add', {
           oldBookId: currentBookId || null,
           groupId: groupId,
           bookId: book.id

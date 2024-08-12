@@ -73,7 +73,7 @@ export default function Activity() {
   useEffect(() => {
     const fetchGroupData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/group/read-books/${selectedGroupId}`, {
+        const response = await axios.get(`https://i11c207.p.ssafy.io/api/group/read-books/${selectedGroupId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const userInfo = response.data.readBooks.find(book => book.member_id === user.id);

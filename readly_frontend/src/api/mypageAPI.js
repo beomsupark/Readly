@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:8080/api'; // Spring Boot 서버 주소
+const BASE_URL = 'https://i11c207.p.ssafy.io/api'; // Spring Boot 서버 주소
 
 export const proceedingBooks = async (userId) => {
   try {

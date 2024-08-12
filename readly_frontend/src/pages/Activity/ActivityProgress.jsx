@@ -62,7 +62,7 @@ export default function ActivityProgress({ groupId }) {
     try {
       console.log(`Fetching data for groupId: ${groupId}`);
       const response = await axios.get(
-        `http://localhost:8080/api/group/read-books/${groupId}`,
+        `https://i11c207.p.ssafy.io/api/group/read-books/${groupId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -93,7 +93,7 @@ export default function ActivityProgress({ groupId }) {
   const updateCurrentPage = async (memberId, newPage) => {
     try {
       await axios.patch(
-        `http://localhost:8080/api/user/update-page`,
+        `https://i11c207.p.ssafy.io/api/user/update-page`,
         {
           bookId: bookInfo.book_id,
           memberId,
@@ -220,7 +220,7 @@ export default function ActivityProgress({ groupId }) {
       };
       console.log("Request data:", requestData);
 
-      await axios.post("http://localhost:8080/api/group/add", requestData, {
+      await axios.post("https://i11c207.p.ssafy.io/api/group/add", requestData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

@@ -12,7 +12,7 @@ export function GroupDelete({ groupId, token, onDeleteSuccess }) {
 
   const confirmDeleteGroup = async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/group/read-books/${groupId}`, {
+      const response = await axios.get(`https://i11c207.p.ssafy.io/api/group/read-books/${groupId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.data.readBooks.length > 1) {
@@ -21,7 +21,7 @@ export function GroupDelete({ groupId, token, onDeleteSuccess }) {
         return;
       }
       
-      await axios.delete(`http://localhost:8080/api/group/${groupId}`, {
+      await axios.delete(`https://i11c207.p.ssafy.io/api/group/${groupId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -91,7 +91,7 @@ export function GroupLeave({ groupId, userId, token, onLeaveSuccess }) {
 
   const confirmLeaveGroup = async () => {
     try {
-      await axios.delete(`http://localhost:8080/api/group/${groupId}/member/${userId}`, {
+      await axios.delete(`https://i11c207.p.ssafy.io/api/group/${groupId}/member/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       

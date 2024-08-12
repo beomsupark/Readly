@@ -2,7 +2,7 @@
 import axios from 'axios';
 import useUserStore from "../store/userStore";
 
-const BASE_URL = 'http://localhost:8080/api';
+const BASE_URL = 'https://i11c207.p.ssafy.io/api';
 
 export const joinGroup = async (groupId, memberId, token) => {
   console.log(`Attempting to join group. GroupID: ${groupId}, MemberID: ${memberId}`);

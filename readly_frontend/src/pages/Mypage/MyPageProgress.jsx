@@ -36,7 +36,7 @@ export default function MyPageProgress({ userId }) {
     try {
       console.log(`Fetching data for userId: ${userId}`);
       const response = await axios.get(
-        `http://localhost:8080/api/member/proceeding-books/${userId}`,
+        `https://i11c207.p.ssafy.io/api/member/proceeding-books/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -70,7 +70,7 @@ export default function MyPageProgress({ userId }) {
       console.log("Update request data:", requestData);
 
       const response = await axios.put(
-        `http://localhost:8080/api/member/proceeding-books/update`,
+        `https://i11c207.p.ssafy.io/api/member/proceeding-books/update`,
         requestData,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -147,7 +147,7 @@ export default function MyPageProgress({ userId }) {
       console.log("Add book request data:", requestData);
 
       const response = await axios.post(
-        "http://localhost:8080/api/user/add",
+        "https://i11c207.p.ssafy.io/api/user/add",
         requestData,
         {
           headers: { Authorization: `Bearer ${token}` },
