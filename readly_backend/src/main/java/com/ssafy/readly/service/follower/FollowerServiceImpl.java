@@ -22,6 +22,7 @@ public class FollowerServiceImpl implements FollowerService {
 
         // 팔로우된 사용자에게 알림 전송
         String message = requestFollowerDto.getMemberId() + "님이 당신을 팔로우했습니다.";
+
         notificationService.sendNotification(requestFollowerDto.getFollowerMemberId(), message);
     }
 

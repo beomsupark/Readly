@@ -6,8 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @RestController
@@ -16,7 +19,15 @@ import java.util.List;
 public class NotificationController {
 
     private final NotificationService notificationService;
+    public static Map<Long, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
 
+    // 메시지 알림
+    @GetMapping("/subscribe/{userId}")
+    public SseEmitter subscribe(@PathVariable Long userId) throws Exception {
+        SseEmitter sseEmitter = notificationService.subscribe(userId);
+
+        return sseEmitter;
+    }
     @GetMapping("/unread/{memberId}")
     public ResponseEntity<List<Notification>> getUnreadNotifications(@PathVariable int memberId) {
         try {
