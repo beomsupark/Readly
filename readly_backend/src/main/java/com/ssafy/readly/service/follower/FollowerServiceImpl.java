@@ -2,7 +2,6 @@ package com.ssafy.readly.service.follower;
 
 import com.ssafy.readly.dto.follower.RequestFollowerDto;
 import com.ssafy.readly.repository.follower.FollowerRepository;
-import com.ssafy.readly.repository.notification.NotificationRepository;
 import com.ssafy.readly.service.notification.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

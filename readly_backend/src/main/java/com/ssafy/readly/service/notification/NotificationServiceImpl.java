@@ -26,10 +26,6 @@ public class NotificationServiceImpl implements NotificationService {
         Notification notification = new Notification(memberId, message);
         notificationRepository.save(notification);
 
-
-        // 2. SSE를 통해 실시간 알림 전송
-        //sseEmitterService.sendNotification(String.valueOf(memberId), message);
-
         // 2. SSE를 통해 실시간 알림 전송
         notifyMessage(String.valueOf(memberId), message);
 
@@ -54,7 +50,7 @@ public class NotificationServiceImpl implements NotificationService {
     // 메시지 알림
     public SseEmitter subscribe(Long userId) {
 
-        SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
+        SseEmitter sseEmitter = new SseEmitter(5 * 60 * 1000L);
 
         try {
             sseEmitter.send(SseEmitter.event().name("connect"));

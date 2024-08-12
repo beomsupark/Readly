@@ -27,7 +27,6 @@ import java.util.Map;
 public class FollowerController {
 
     private final FollowerService followerService;
-    private final SseEmitterService sseEmitterService;
     private final MemberService memberService;
     private final PhotoCardService photoCardService;
     private final ReviewService reviewService;
@@ -45,12 +44,6 @@ public class FollowerController {
         followerService.deleteFollower(requestFollowerDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    @GetMapping("/subscribe/{userId}")
-    public SseEmitter subscribeToNotifications(@PathVariable String userId) {
-        return sseEmitterService.subscribe(userId);
-    }
-
 
 
     @GetMapping()
