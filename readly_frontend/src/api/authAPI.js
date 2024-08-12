@@ -25,7 +25,8 @@ axios.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config; // 원래 요청 정보 저장
-    if (error.response && error.response.status === 401) {
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
       const id = useUserStore.getState().user.id;
       try {
         const response = await axios({
