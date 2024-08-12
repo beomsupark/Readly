@@ -70,6 +70,7 @@ const NotificationIcon = ({ initialNotifications = [] }) => {
   useEffect(() => {
     if (user && user.id) {
       initializeSSE();
+      fetchUnreadNotifications(); // 로그인 시 알림을 확인합니다.
 
       return () => {
         if (eventSource) {
@@ -84,9 +85,7 @@ const NotificationIcon = ({ initialNotifications = [] }) => {
       <div className="notification-icon cursor-pointer" onClick={toggleNotifications}>
         🔔 {/* 아이콘 */}
         {notifications.length > 0 && (
-          <span className="notification-count bg-red-500 text-white rounded-full px-2 text-xs">
-            {notifications.length}
-          </span>
+          <span className="notification-dot"></span>
         )}
       </div>
       {showNotifications && (

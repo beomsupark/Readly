@@ -50,7 +50,7 @@ public class NotificationServiceImpl implements NotificationService {
     // 메시지 알림
     public SseEmitter subscribe(Long userId) {
 
-        SseEmitter sseEmitter = new SseEmitter(30 * 60 * 1000L);
+        SseEmitter sseEmitter = new SseEmitter(5 * 60 * 1000L);
 
         try {
             sseEmitter.send(SseEmitter.event().name("connect"));
