@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -27,7 +25,7 @@ public class MemberController {
 
     @PostMapping("/member/signup")
     public ResponseEntity<?> singUp(@Valid @RequestBody SignUpMemberRequest signUpMember) throws Exception {
-        memberService.singnUp(signUpMember);
+        memberService.singUp(signUpMember);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -47,8 +45,7 @@ public class MemberController {
         String accessToken = jwtUtil.createAccessToken(loginMemberResponse.getId());
         String refreshToken = jwtUtil.createRefreshToken(loginMemberResponse.getId());
         memberService.saveRefreshToken(loginMemberResponse.getId(), refreshToken);
-
-        CookieUtil.addCookie(response, "refreshToken", refreshToken, 604800, true);
+        CookieUtil.createCookie(response, "refreshToken", refreshToken, 604800, true);
 
         responseMap.put("accessToken", accessToken);
         responseMap.put("loginInfo", loginMemberResponse);
