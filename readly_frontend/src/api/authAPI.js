@@ -1,14 +1,14 @@
 import axios from "axios";
 import useUserStore from "../store/userStore"; // userStore의 실제 경로로 수정해주세요
 
-const API_BASE_URL = "https://i11c207.p.ssafy.io/";
+const API_BASE_URL = 'http://localhost:8080/api';
 
 // axios 인스턴스 생성
 const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
-api.interceptors.request.use(
+axios.interceptors.request.use(
   (config) => {
     const token = useUserStore.getState().token;
     console.log("Current token:", token); // 추가된 부분
@@ -21,7 +21,7 @@ api.interceptors.request.use(
 );
 
 // 응답 인터셉터 추가
-api.interceptors.response.use(
+axios.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config; // 원래 요청 정보 저장
@@ -83,7 +83,7 @@ export const logout = async () => {
 
 export const getUserInfo = async () => {
   try {
-    const response = await api.get("/member/info");
+    const response = await axios.get(`${API_BASE_URL}/member/info`);
     return response.data.memberInfo || response.data;
   } catch (error) {
     console.error("Error in getUserInfo:", error);
@@ -98,7 +98,7 @@ export const getUserInfo = async () => {
 
 export const updateUserInfo = async (updateData) => {
   try {
-    const response = await api.patch("/member", updateData);
+    const response = await axios.patch(`${API_BASE_URL}/member`, updateData);
 
     if (response.status === 200) {
       return response.data;
@@ -113,7 +113,7 @@ export const updateUserInfo = async (updateData) => {
 
 export const getMemberInfo = async (id) => {
   try {
-    const response = await api.get(`/member/${id}`);
+    const response = await axios.get(`${API_BASE_URL}/member/${id}`);
     return response.data.memberInfo;
   } catch (error) {
     console.error("Error fetching member info:", error);

@@ -45,8 +45,8 @@ public class MemberController {
         String accessToken = jwtUtil.createAccessToken(loginMemberResponse.getId());
         String refreshToken = jwtUtil.createRefreshToken(loginMemberResponse.getId());
         memberService.saveRefreshToken(loginMemberResponse.getId(), refreshToken);
-        CookieUtil.createCookie(response, "refreshToken", refreshToken, 604800, true);
 
+        CookieUtil.createCookie(response, "refreshToken", refreshToken, 604800, true);
         responseMap.put("accessToken", accessToken);
         responseMap.put("loginInfo", loginMemberResponse);
 
@@ -60,7 +60,6 @@ public class MemberController {
             @PathVariable("id") int id, HttpServletRequest request) throws Exception {
         Map<String, Object> responseMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
-
         if (id == (int) request.getAttribute("memberId")) {
             MemberResponse memberResponse = memberService.getMember(id);
             responseMap.put("memberInfo", memberResponse);

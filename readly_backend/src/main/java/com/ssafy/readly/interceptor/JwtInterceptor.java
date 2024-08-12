@@ -15,8 +15,12 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        if(request.getMethod().equals("OPTIONS")) {
+            return true;
+        }
+
         String accessToken = request.getHeader("Authorization");
-        if(accessToken != null & jwtUtil.checkToken(accessToken)) {
+        if(accessToken != null && jwtUtil.checkToken(accessToken)) {
             int memberId = jwtUtil.getMemberId(accessToken);
             request.setAttribute("memberId", memberId);
             return true;
