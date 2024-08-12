@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import searchIcon from "../assets/header/search.png";
 import infoIcon from "../assets/header/info_img.png";
@@ -8,6 +8,7 @@ import useBookStore from "../store/bookStore";
 import LogoutButton from "../pages/Login/Logout";
 import useUserStore from "../store/userStore.js";
 import NotificationIcon from "./NotificationIcon"; // 알림 아이콘 컴포넌트 추가
+import TimecapsuleIcon from "./TimecapsuleIcon.jsx";
 
 const customModalStyles = {
   overlay: {
@@ -28,7 +29,7 @@ const customModalStyles = {
 };
 
 export default function CustomHeader() {
-  const user = useUserStore(state => state.user);
+  const user = useUserStore((state) => state.user);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
@@ -164,16 +165,21 @@ export default function CustomHeader() {
         </div>
       </div>
       <div className="flex-1 flex justify-end items-center mr-6 relative" ref={dropdownRef}>
-      <NotificationIcon />
+        <div className="flex items-center space-x-8"> {/* 간격을 8로 설정하여 더 넓게 조정 */}
+          
+          <TimecapsuleIcon /> 
+          <NotificationIcon />
+          
+          
+        </div>
         <div className="flex" onClick={handleDropdownToggle}>
-       
           <img
             src={infoIcon}
             alt="프로필"
             className="w-[3rem] h-6 rounded-lg mr-2 cursor-pointer"
           />
           <span className="text-base font-bold cursor-pointer">
-            {user?.nickname || '닉네임'}
+            {user?.nickname || "닉네임"}
           </span>
         </div>
         {isDropdownOpen && (

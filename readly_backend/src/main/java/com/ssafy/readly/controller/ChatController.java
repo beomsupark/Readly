@@ -28,7 +28,7 @@ public class ChatController {
 
     @MessageMapping("/chat")
     public void send(ChatMessage message) throws Exception {
-        Thread.sleep(1000); // simulated delay
+        Thread.sleep(100); // simulated delay
         String roomId = HtmlUtils.htmlEscape(message.getRoomId());
         String from = HtmlUtils.htmlEscape(message.getFrom());
         String content = HtmlUtils.htmlEscape(message.getContent());
