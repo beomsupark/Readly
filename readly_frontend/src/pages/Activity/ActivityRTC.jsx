@@ -1,4 +1,3 @@
-// ActivityRTC.jsx
 import { useState, useEffect, useRef } from "react";
 import { OpenVidu } from "openvidu-browser";
 import axios from "axios";
@@ -9,7 +8,7 @@ import ConferenceControls from "./ConferenceControls";
 
 const API_BASE_URL = "https://i11c207.p.ssafy.io/api";
 
-const ActivityRTC = ({ groupId }) => {
+const ActivityRTC = ({ groupId, isActiveTab }) => {
   const [isVideoConferenceActive, setIsVideoConferenceActive] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [sharedItems, setSharedItems] = useState([]);
@@ -28,13 +27,24 @@ const ActivityRTC = ({ groupId }) => {
   const OV = useRef(null);
 
   useEffect(() => {
-    setIsRoomCreated(checkSessionExists());
-    if (isVideoConferenceActive) {
-      joinSession();
+    if (isActiveTab) {
+      setIsRoomCreated(checkSessionExists());
     } else {
       leaveSession();
     }
-  }, [isVideoConferenceActive]);
+  }, [isActiveTab]);
+
+  useEffect(() => {
+    if (isVideoConferenceActive && isActiveTab) {
+      joinSession();
+    }
+
+    return () => {
+      if (session) {
+        leaveSession();
+      }
+    };
+  }, [isVideoConferenceActive, isActiveTab]);
 
   useEffect(() => {
     if (!session) return;
@@ -170,6 +180,7 @@ const ActivityRTC = ({ groupId }) => {
     setSubscribers([]);
     setSessionId(null);
     OV.current = null;
+    setIsVideoConferenceActive(false);
   };
 
   const toggleVideoConference = () => {
