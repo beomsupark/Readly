@@ -25,7 +25,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public void singUp(SignUpMemberRequest signUpMember) {
+    public void signUp(SignUpMemberRequest signUpMember) {
         checkDuplicateId(signUpMember.getLoginId());
 
         Member member = new Member(

@@ -25,7 +25,7 @@ public class MemberController {
 
     @PostMapping("/member/signup")
     public ResponseEntity<?> singUp(@Valid @RequestBody SignUpMemberRequest signUpMember) throws Exception {
-        memberService.singUp(signUpMember);
+        memberService.signUp(signUpMember);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

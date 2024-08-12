@@ -8,7 +8,7 @@ import javax.security.sasl.AuthenticationException;
 public interface MemberService {
 
     Member getMemberEntity(int id);
-    void singUp(SignUpMemberRequest signUpMember);
+    void signUp(SignUpMemberRequest signUpMember);
     void checkDuplicateId(String loginId);
     LoginMemberResponse login(LoginMemberRequest longinMember) throws AuthenticationException;
     void saveRefreshToken(int id, String refreshToken);
