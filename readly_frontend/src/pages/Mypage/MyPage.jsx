@@ -176,33 +176,31 @@ export default function MyPage() {
             </div>
 
             <div className="relative bg-white rounded-lg shadow p-4">
-              <h3 className="font-bold mb-2">내가 남긴 한줄평</h3>
-              <div className="flex flex-wrap gap-3">
-                {renderItems(
-                  myReviews,
-                  (review) => (
-                    <div key={review.reviewId} className="w-[7rem] h-[6rem]">
-                      <Review
-                        bookImage={review.bookImage}
-                        title={review.bookTitle}
-                        author={review.bookAuthor}
-                        review={review.reviewText}
-                        likeCount={review.likeCount}
-                      />
-                    </div>
-                  )
-                )}
-              </div>
-              <div className="absolute top-4 right-4">
-                <button
-                  onClick={openReviewModal}
-                  className="text-blue-500 hover:text-blue-700 text-lg font-bold mr-80"
-                >
-                  <span className="text-custom-highlight">&gt;</span>{" "}
-                  <span className="text-[1rem] text-[#868686]">더보기</span>
-                </button>
-              </div>
-            </div>
+  <h3 className="font-bold mb-2">내가 남긴 한줄평</h3>
+  <div className="flex flex-wrap gap-3">
+    {renderItems(
+      myReviews,
+      (review) => (
+        <div key={review.reviewId} className="w-[6rem] h-[7rem]">
+          <img
+            src={review.bookImage}
+            alt={review.bookTitle}
+            className="w-full h-full object-fill rounded"
+          />
+        </div>
+      )
+    )}
+  </div>
+  <div className="absolute top-4 right-4">
+    <button
+      onClick={openReviewModal}
+      className="text-blue-500 hover:text-blue-700 text-lg font-bold mr-80"
+    >
+      <span className="text-custom-highlight">&gt;</span>{" "}
+      <span className="text-[1rem] text-[#868686]">더보기</span>
+    </button>
+  </div>
+</div>
           </>
         )}
       </div>
