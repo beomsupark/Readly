@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { User } from "lucide-react";
-import "../../components/Review/like_btn.css";
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { User } from 'lucide-react';
+import '../../components/Review/like_btn.css';
 import useUserStore from '../../store/userStore.js';
 import useLikeStore from '../../store/likeStore.js';
 
-const ShowReview = ({ review, isModal = false, onLike }) => {
+const ShowReview = ({ review, isModal = false, onLikeClick, externalLikeState }) => {
   const {
     id,
     bookImage,
@@ -21,18 +21,37 @@ const ShowReview = ({ review, isModal = false, onLike }) => {
   const { user } = useUserStore();
   const { likes, toggleLike, setInitialLikeStatus } = useLikeStore();
   
-  useEffect(() => {
-    setInitialLikeStatus(id, likeCheck === 1);
-  }, [id, likeCheck, setInitialLikeStatus]);
+  const [isLiked, setIsLiked] = useState(() => {
+    // localStorage에서 좋아요 상태를 확인
+    const storedLikes = JSON.parse(localStorage.getItem('likes') || '{}');
+    return storedLikes[id] !== undefined ? storedLikes[id] : likeCheck === 1;
+  });
+  const [currentLikeCount, setCurrentLikeCount] = useState(initialLikeCount);
 
-  const isLiked = likes[id] || false;
-  const likeCount = isLiked ? initialLikeCount + 1 : initialLikeCount;
+  useEffect(() => {
+    setInitialLikeStatus(id, isLiked);
+  }, [id, isLiked, setInitialLikeStatus]);
+
+  useEffect(() => {
+    if (externalLikeState !== undefined) {
+      setIsLiked(externalLikeState);
+      setCurrentLikeCount(initialLikeCount);
+    }
+  }, [externalLikeState, initialLikeCount]);
 
   const handleLikeClick = async (event) => {
     event.stopPropagation();
-    await toggleLike(user.id, id, 'review');
-    if (onLike) {
-      onLike(id, !isLiked);
+    const newLikeStatus = await toggleLike(user.id, id, true);  // true indicates it's a review
+    setIsLiked(newLikeStatus);
+    setCurrentLikeCount(prev => newLikeStatus ? prev + 1 : prev - 1);
+    
+    // localStorage에 좋아요 상태 저장
+    const storedLikes = JSON.parse(localStorage.getItem('likes') || '{}');
+    storedLikes[id] = newLikeStatus;
+    localStorage.setItem('likes', JSON.stringify(storedLikes));
+    
+    if (onLikeClick) {
+      onLikeClick(id, newLikeStatus);
     }
   };
 
@@ -60,6 +79,8 @@ const ShowReview = ({ review, isModal = false, onLike }) => {
     ? "text-base mb-4 max-h-[300px] overflow-y-auto font-bold"
     : "text-[10px] mb-1 flex-grow overflow-hidden line-clamp-2 font-bold";
 
+  const isCurrentUser = user.id === memberId;
+    
   return (
     <div className={containerClasses}>
       <div className={imageClasses}>
@@ -78,21 +99,39 @@ const ShowReview = ({ review, isModal = false, onLike }) => {
         <p className={reviewTextClasses}>{reviewText}</p>
         <div className="flex justify-between items-center text-xs text-gray-600">
           <div className="relative">
-            <Link 
-              to={`/member/${memberId}`}
-              className="flex items-center group cursor-pointer"
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-            >
-              <User size={isModal ? 16 : 12} className="text-gray-600 mr-1 transition-transform duration-100 group-hover:scale-125" />
-              <span className={`font-bold text-gray-600 group-hover:text-blue-600 ${isModal ? 'text-sm' : 'text-[10px]'}`}>
-                {memberId}
-              </span>
-            </Link>
-            {isHovered && (
-              <span className="absolute left-0 bottom-full mb-2 bg-white px-2 py-1 rounded shadow-md text-xs whitespace-nowrap z-10 font-bold">
-                작성자 페이지로 이동
-              </span>
+            {isCurrentUser ? (
+              <div 
+                className="flex items-center group cursor-default"
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+              >
+                <User size={isModal ? 16 : 12} className="text-gray-600 mr-1" />
+                <span className={`font-bold text-gray-600 ${isModal ? 'text-sm' : 'text-[10px]'}`}>
+                  {memberId}
+                </span>
+                {isHovered && (
+                  <span className="absolute left-0 bottom-full mb-2 bg-white px-2 py-1 rounded shadow-md text-xs whitespace-nowrap z-10 font-bold">
+                    내가 작성한 리뷰입니다
+                  </span>
+                )}
+              </div>
+            ) : (
+              <Link 
+                to={`/member/${memberId}`}
+                className="flex items-center group cursor-pointer"
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+              >
+                <User size={isModal ? 16 : 12} className="text-gray-600 mr-1 transition-transform duration-100 group-hover:scale-125" />
+                <span className={`font-bold text-gray-600 group-hover:text-blue-600 ${isModal ? 'text-sm' : 'text-[10px]'}`}>
+                  {memberId}
+                </span>
+                {isHovered && (
+                  <span className="absolute left-0 bottom-full mb-2 bg-white px-2 py-1 rounded shadow-md text-xs whitespace-nowrap z-10 font-bold">
+                    작성자 페이지로 이동
+                  </span>
+                )}
+              </Link>
             )}
           </div>
           <div className="flex items-center space-x-1">
@@ -118,7 +157,7 @@ const ShowReview = ({ review, isModal = false, onLike }) => {
                 </svg>
               </div>
             </button>
-            <span>{likeCount}</span>
+            <span>{currentLikeCount}</span>
           </div>
         </div>
       </div>

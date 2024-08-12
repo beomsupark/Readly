@@ -11,12 +11,14 @@ const PhotocardBack = ({ photoCardText, memberId, bookTitle, bookAuthor, likeCou
   const { user } = useUserStore();
   const { likes, toggleLike, setInitialLikeStatus } = useLikeStore();
   
-  useEffect(() => {
-    setInitialLikeStatus(photoCardId, initialLikeCheck === 1);
-  }, [photoCardId, initialLikeCheck, setInitialLikeStatus]);
-
-  const isLiked = likes[photoCardId] || false;
+  // 기존에 저장된 좋아요 상태를 로컬 스토리지에서 불러오기
+  const isLiked = likes[photoCardId] !== undefined ? likes[photoCardId] : initialLikeCheck === 1;
   const currentLikeCount = isLiked ? initialLikeCount + 1 : initialLikeCount;
+
+  useEffect(() => {
+    // 컴포넌트가 로드될 때 로컬 스토리지에 저장된 상태로 설정
+    setInitialLikeStatus(photoCardId, isLiked);
+  }, [photoCardId, isLiked, setInitialLikeStatus]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -128,31 +130,53 @@ const PhotocardBack = ({ photoCardText, memberId, bookTitle, bookAuthor, likeCou
 
   const handleLikeClick = async (event) => {
     event.stopPropagation();
-    await toggleLike(user.id, photoCardId, 'photoCard');
+    await toggleLike(user.id, photoCardId);
     if (onLikeClick) {
       onLikeClick(event);
     }
   };
 
+  const isCurrentUser = user.id === memberId;
+
   return (
     <div className="relative w-full h-full">
       <canvas ref={canvasRef} className="w-full h-full" />
-      <Link 
-        to={`/member/${memberId}`}
-        className="absolute bottom-9 left-5 flex items-center group cursor-pointer"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <User size={16} className="text-gray-600 mr-1 transition-transform duration-100 group-hover:scale-125" />
-        <span className="text-sm font-bold text-gray-600 group-hover:text-blue-600">
-          작성자: {memberId}
-        </span>
-        {isHovered && (
-          <span className="absolute left-full ml-2 bg-white px-2 py-1 rounded shadow-md text-xs whitespace-nowrap z-10 font-bold">
-            작성자 페이지로 이동
-          </span>
-        )}
-      </Link>
+      {isCurrentUser ? (
+  <div 
+    className="absolute bottom-9 left-5 flex items-center group cursor-default"
+    onMouseEnter={() => setIsHovered(true)}
+    onMouseLeave={() => setIsHovered(false)}
+  >
+    <User size={16} className="text-gray-600 mr-1" />
+    <span className="text-sm font-bold text-gray-600">
+      작성자: {memberId}
+    </span>
+    {isHovered && (
+      <span className="absolute left-full ml-2 bg-white px-2 py-1 rounded shadow-md text-xs whitespace-nowrap z-10 font-bold">
+        내가 작성한 포토카드입니다
+      </span>
+    )}
+  </div>
+) : (
+  <Link 
+    to={`/member/${memberId}`}
+    className="absolute bottom-9 left-5 flex items-center group cursor-pointer"
+    onMouseEnter={() => setIsHovered(true)}
+    onMouseLeave={() => setIsHovered(false)}
+  >
+    <User size={16} className="text-gray-600 mr-1 transition-transform duration-100 group-hover:scale-125" />
+    <span className="text-sm font-bold text-gray-600 group-hover:text-blue-600">
+      작성자: {memberId}
+    </span>
+    {isHovered && (
+      <span className="absolute left-full ml-2 bg-white px-2 py-1 rounded shadow-md text-xs whitespace-nowrap z-10 font-bold">
+        작성자 페이지로 이동
+      </span>
+    )}
+  </Link>
+)}
+
+
       <div className="absolute bottom-8 right-2 flex items-center">
         <span className="text-xs font-semibold mr-2">{currentLikeCount}</span>
         <button 
