@@ -6,6 +6,7 @@ const NotificationIcon = ({ initialNotifications = [] }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState(initialNotifications);
   const { user } = useUserStore();
+  const [eventSource, setEventSource] = useState(null);
 
   const fetchUnreadNotifications = async () => {
     try {
@@ -21,7 +22,6 @@ const NotificationIcon = ({ initialNotifications = [] }) => {
   const markNotificationAsRead = async (notificationId) => {
     try {
       await axios.post(`https://i11c207.p.ssafy.io/api/notifications/mark-as-read/${user.id}/${notificationId}`);
-      // 상태에서 읽은 알림을 제거
       setNotifications((prevNotifications) =>
         prevNotifications.filter((notification) => notification.id !== notificationId)
       );
@@ -41,27 +41,40 @@ const NotificationIcon = ({ initialNotifications = [] }) => {
     await markNotificationAsRead(notificationId);
   };
 
+  const initializeSSE = () => {
+    if (eventSource) {
+      eventSource.close(); // 기존 연결을 닫습니다.
+    }
+    const newEventSource = new EventSource(`https://i11c207.p.ssafy.io/api/follower/subscribe/${user.id}`);
+
+    newEventSource.addEventListener("follow-notification", function (event) {
+      console.log("Notification received: ", event.data);
+
+      setNotifications((prevNotifications) => [
+        ...prevNotifications,
+        { id: new Date().getTime(), message: event.data }, // 임시 ID와 메시지를 추가
+      ]);
+    });
+
+    newEventSource.onerror = function (err) {
+      console.error("SSE 연결 오류:", err);
+      newEventSource.close(); // 오류 발생 시 연결을 닫습니다.
+      setTimeout(() => {
+        initializeSSE(); // SSE 연결을 재시도합니다.
+      }, 3000); // 3초 후에 재연결 시도
+    };
+
+    setEventSource(newEventSource);
+  };
+
   useEffect(() => {
     if (user && user.id) {
-      const eventSource = new EventSource(`https://i11c207.p.ssafy.io/api/follower/subscribe/${user.id}`);
-
-      eventSource.addEventListener("follow-notification", function (event) {
-        console.log("Notification received: ", event.data);
-
-        // 새 알림을 추가하고 상태 업데이트
-        setNotifications((prevNotifications) => [
-          ...prevNotifications,
-          { id: new Date().getTime(), message: event.data }, // 임시 ID와 메시지를 추가
-        ]);
-      });
-
-      eventSource.onerror = function (err) {
-        console.error("SSE 연결 오류:", err);
-        eventSource.close(); // 오류가 발생하면 SSE 연결을 닫습니다.
-      };
+      initializeSSE();
 
       return () => {
-        eventSource.close(); // 컴포넌트가 언마운트될 때 SSE 연결을 닫습니다.
+        if (eventSource) {
+          eventSource.close(); // 컴포넌트가 언마운트될 때 SSE 연결을 닫습니다.
+        }
       };
     }
   }, [user]);
