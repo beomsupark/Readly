@@ -200,10 +200,10 @@ export default function CustomHeader() {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-10">
+        <div className="fixed inset-0 bg-[#000000] bg-opacity-40 flex justify-center items-center z-10">
           <div
             ref={modalRef}
-            className="bg-white rounded-lg shadow-lg p-6 relative"
+            className="bg-[#F5F5F5] rounded-lg shadow-lg p-6 relative"
             style={customModalStyles.content}
           >
             <div className="flex flex-col h-full">

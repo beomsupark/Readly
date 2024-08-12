@@ -1,4 +1,3 @@
-// VideoConferenceView.jsx
 const VideoConferenceView = ({
   publisher,
   subscribers,
@@ -10,14 +9,18 @@ const VideoConferenceView = ({
   const allParticipants = publisher ? [publisher, ...subscribers] : subscribers;
   const hasSharedItems = sharedItems.length > 0;
 
-  const getGridColumns = (count) => {
-    if (count <= 4) return "grid-cols-2";
-    if (count <= 9) return "grid-cols-3";
-    return "grid-cols-4";
+  const getGridDimensions = (count) => {
+    if (count <= 3) return { cols: 3, rows: 1 };
+    if (count <= 6) return { cols: 3, rows: 2}
+    if (count <= 9) return { cols: 4, rows: 2 };
+    if (count <= 12) return { cols: 4, rows: 3}
+    return { cols: 4, rows: Math.ceil(count / 4) };
   };
 
+  const { cols, rows } = getGridDimensions(allParticipants.length);
+
   const ParticipantVideo = ({ stream, clientData, isMicOn }) => (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden relative aspect-video">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden relative w-full h-full">
       <video
         autoPlay={true}
         ref={(video) => video && stream.addVideoElement(video)}
@@ -39,8 +42,8 @@ const VideoConferenceView = ({
           {notification}
         </div>
       )}
-      {hasSharedItems ? (
-        <div className="flex h-full">
+      <div className="flex h-full">
+        {hasSharedItems && (
           <div className="w-3/4 pr-2 overflow-y-auto">
             <h3 className="text-xl font-semibold mb-3">공유된 아이템</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
@@ -62,55 +65,27 @@ const VideoConferenceView = ({
               ))}
             </div>
           </div>
-          <div className="w-1/4 pl-2">
-            <h3 className="text-xl font-semibold mb-3">참가자</h3>
-            <div
-              className={`grid gap-2 ${getGridColumns(
-                allParticipants.length
-              )} h-[calc(100%-2rem)] overflow-y-auto`}
-            >
-              {allParticipants.map((participant, index) => (
-                <ParticipantVideo
-                  key={index}
-                  stream={participant}
-                  clientData={
-                    JSON.parse(participant.stream.connection.data).clientData
-                  }
-                  isMicOn={
-                    participant === publisher
-                      ? isMicOn
-                      : participant.stream.audioActive
-                  }
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="h-full">
+        )}
+        <div className={`${hasSharedItems ? 'w-1/4' : 'w-full'} pl-2`}>
           <h3 className="text-xl font-semibold mb-3">참가자</h3>
-          <div
-            className={`grid gap-2 ${getGridColumns(
-              allParticipants.length
-            )} h-[calc(100%-2rem)] overflow-y-auto`}
+          <div 
+            className="grid gap-2 h-[calc(100%-2rem)] overflow-y-auto"
+            style={{
+              gridTemplateColumns: `repeat(${cols}, 1fr)`,
+              gridTemplateRows: `repeat(${rows}, 1fr)`,
+            }}
           >
             {allParticipants.map((participant, index) => (
               <ParticipantVideo
                 key={index}
                 stream={participant}
-                clientData={
-                  JSON.parse(participant.stream.connection.data).clientData
-                }
-                isMicOn={
-                  participant === publisher
-                    ? isMicOn
-                    : participant.stream.audioActive
-                }
+                clientData={JSON.parse(participant.stream.connection.data).clientData}
+                isMicOn={participant === publisher ? isMicOn : participant.stream.audioActive}
               />
             ))}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
