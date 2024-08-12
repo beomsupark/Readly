@@ -45,9 +45,9 @@ const NotificationIcon = ({ initialNotifications = [] }) => {
     if (eventSource) {
       eventSource.close(); // 기존 연결을 닫습니다.
     }
-    const newEventSource = new EventSource(`https://i11c207.p.ssafy.io/api/follower/subscribe/${user.id}`);
+    const newEventSource = new EventSource(`https://i11c207.p.ssafy.io/api/notifications/subscribe/${user.id}`);
 
-    newEventSource.addEventListener("follow-notification", function (event) {
+    newEventSource.addEventListener("notification", function (event) {
       console.log("Notification received: ", event.data);
 
       setNotifications((prevNotifications) => [
