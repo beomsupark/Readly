@@ -17,7 +17,7 @@ public class SseEmitterService {
     private final Map<String, SseEmitter> emitters = new HashMap<>();
 
     public SseEmitter subscribe(String userId) {
-        SseEmitter emitter = new SseEmitter(30 * 60 * 1000L); // 30분 타임아웃 설정
+        SseEmitter emitter = new SseEmitter(); // 30분 타임아웃 설정 30 * 60 * 1000L
         emitters.put(userId, emitter);
 
         emitter.onCompletion(() -> emitters.remove(userId));
