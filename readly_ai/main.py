@@ -25,7 +25,7 @@ class OuterObject(BaseModel):
     bar: list[InnerObject]
 
 
-@app.post("/ai/ recommand", response_model=OuterObject)
+@app.post("/ai/recommand", response_model=OuterObject)
 async def root(query: str):
     top_k = 10
     query_embedding = embedder.encode(query, normalize_embeddings=True ,convert_to_tensor=False)
