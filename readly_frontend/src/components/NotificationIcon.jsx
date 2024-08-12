@@ -58,7 +58,7 @@ const NotificationIcon = ({ initialNotifications = [] }) => {
         { id: new Date().getTime(), message: event.data }, // 임시 ID와 메시지 추가
       ]);
   
-      setShowNotifications(true); // 빨간 점을 표시합니다.
+      //setShowNotifications(true); // 빨간 점을 표시합니다.
     });
   
     newEventSource.addEventListener("open", () => {
