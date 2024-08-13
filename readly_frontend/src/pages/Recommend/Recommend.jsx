@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import useUserStore from "../../store/userStore.js";
 import Modal from "react-modal";
 import axios from "axios";
 import GoButton from "../../components/GoButton/GoButton.jsx";
@@ -30,29 +31,53 @@ const customModalStyles = {
   },
 };
 
-const api = axios.create({
-  baseURL: "https://i11c207.p.ssafy.io/api/",
-});
+
 
 export default function Recommend() {
+  const BASE_URL = "https://i11c207.p.ssafy.io/api/";
+  // const BASE_URL = "http://localhost:8080/api/";
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedEmotion, setSelectedEmotion] = useState("");
   const [eventText, setEventText] = useState("");
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [recommendedBookIds, setRecommendedBookIds] = useState([]);
+  const token = useUserStore(state => state.token);
+  console.log("Current token:", token);
+
 
   useEffect(() => {
-    fetchInitialRecommendation();
-  }, []);
+    fetchInitialRecommendation(token);
+  }, [token]);
 
-  const fetchInitialRecommendation = async () => {
+  const fetchInitialRecommendation = async (token) => {
+    console.log(`Attempting to fetch initial book recommendation.`);
     try {
-      const response = await api.get("book/firstRecommand");
-      setBook(response.data.book);
-      setLoading(false);
+      const response = await axios.get(`${BASE_URL}book/firstRecommand`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      console.log('Full API response:', response);
+      
+      if (response.data && response.data.book) {
+        setBook(response.data.book);
+      } else {
+        console.error("Unexpected response format:", response.data);
+        // setError("책 정보를 가져오는데 실패했습니다.");
+      }
+      
+      return response.status;
     } catch (error) {
-      console.error("Error fetching initial book recommendation:", error);
+      console.error('Error fetching initial book recommendation:', 
+                    error.response ? error.response.data : error.message);
+      if (error.response) {
+        console.error("Response status:", error.response.status);
+        console.error("Response data:", error.response.data);
+      }
+      // setError("초기 추천을 불러오는데 실패했습니다. 나중에 다시 시도해주세요.");
+      throw error;
+    } finally {
       setLoading(false);
     }
   };
@@ -70,33 +95,45 @@ export default function Recommend() {
       alert("감정을 선택해주세요.");
       return;
     }
-
+  
     setLoading(true);
-
+  
     try {
       const query = `오늘은 ${selectedEmotion} 감정을 느꼈고, ${eventText}`;
-
-      const response = await axios.post(
+  
+      const aiResponse = await axios.post(
         "https://i11c207.p.ssafy.io/ai/recommand",
         {
           query: query,
         }
       );
-
-      console.log("AI 추천 응답:", response.data);
-      setRecommendedBookIds(response.data.bar);
-
-      if (response.data.bar.length > 0) {
-        const firstBookId = response.data.bar[0];
-        const bookResponse = await api.get(`book/${firstBookId}`);
-        setBook(bookResponse.data.book);
+  
+      console.log("AI 추천 응답:", aiResponse.data);
+      setRecommendedBookIds(aiResponse.data.bar);
+  
+      if (aiResponse.data.bar.length > 0) {
+        const firstBookId = aiResponse.data.bar[0];
+        const bookResponse = await axios.get(`${BASE_URL}book/${firstBookId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (bookResponse.data && bookResponse.data.book) {
+          setBook(bookResponse.data.book);
+        } else {
+          console.error("Unexpected book response format:", bookResponse.data);
+        }
       }
-
-      setLoading(false);
+  
       setModalIsOpen(false);
     } catch (error) {
       console.error("에러 발생:", error);
+      if (error.response) {
+        console.error("Response status:", error.response.status);
+        console.error("Response data:", error.response.data);
+      }
       alert("추천을 받는 데 문제가 발생했습니다. 다시 시도해주세요.");
+    } finally {
       setLoading(false);
     }
   };
