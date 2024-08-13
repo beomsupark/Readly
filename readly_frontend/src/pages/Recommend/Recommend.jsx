@@ -32,32 +32,22 @@ const customModalStyles = {
   },
 };
 
-
-
 export default function Recommend() {
-  const BASE_URL = "https://i11c207.p.ssafy.io/api/";
-  // const BASE_URL = "http://localhost:8080/api/";
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedEmotion, setSelectedEmotion] = useState("");
   const [eventText, setEventText] = useState("");
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [recommendedBookIds, setRecommendedBookIds] = useState([]);
-  const token = useUserStore(state => state.token);
-
 
   useEffect(() => {
-    fetchInitialRecommendation(token);
-  }, [token]);
+    fetchInitialRecommendation();
+  }, []);
 
-  const fetchInitialRecommendation = async (token) => {
+  const fetchInitialRecommendation = async () => {
     console.log(`Attempting to fetch initial book recommendation.`);
     try {
-      const response = await axios.get(`${BASE_URL}book/firstRecommand`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await axios.get(`${BASE_URL}book/firstRecommand`);
       console.log('Full API response:', response);
       
       if (response.data && response.data.book) {
@@ -102,7 +92,7 @@ export default function Recommend() {
       const query = `오늘은 ${selectedEmotion} 감정을 느꼈고, ${eventText}`;
   
       const aiResponse = await axios.post(
-        "https://i11c207.p.ssafy.io/ai/recommand",
+        `${BASE_URL}/ai/recommand`,
         {
           query: query,
         }
@@ -113,11 +103,7 @@ export default function Recommend() {
   
       if (aiResponse.data.bar.length > 0) {
         const firstBookId = aiResponse.data.bar[0];
-        const bookResponse = await axios.get(`${BASE_URL}book/${firstBookId}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
+        const bookResponse = await axios.get(`${BASE_URL}book/${firstBookId}`);
         if (bookResponse.data && bookResponse.data.book) {
           setBook(bookResponse.data.book);
         } else {
