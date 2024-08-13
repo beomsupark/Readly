@@ -17,7 +17,13 @@ const CreateOrEditPostModal = ({ isOpen, onClose, onSubmit, post }) => {
   if (!isOpen) return null;
 
   const handleSubmit = () => {
-    onSubmit(formData);
+    console.log("Submitting post data:", formData); // Debugging line
+  
+    // If editing an existing post, ensure the id is preserved
+    const updatedFormData = post ? { ...formData, id: post.id } : formData;
+    
+    onSubmit(updatedFormData);
+  
     if (!post) {
       setFormData({ title: "", content: "" });
     }
@@ -142,16 +148,16 @@ export default function ActivityBoard({ groupId }) {
 
   const handleViewPost = async (id) => {
     try {
-        setError(null);
-        const response = await axios.get(`${BASE_URL}/proceeding/${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        setViewingPost(response.data);
+      setError(null);
+      const response = await axios.get(`${BASE_URL}/proceeding/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setViewingPost(response.data);
     } catch (error) {
-        console.error("Error fetching post details:", error);
-        setError("글 상세 정보를 불러오는 데 실패했습니다.");
+      console.error("Error fetching post details:", error);
+      setError("글 상세 정보를 불러오는 데 실패했습니다.");
     }
-};
+  };
 
   const handleCreatePost = async (newPost) => {
     try {
@@ -181,17 +187,44 @@ export default function ActivityBoard({ groupId }) {
 
   const handleEditPost = async (id) => {
     try {
-        setError(null);
-        const response = await axios.get(`${BASE_URL}/proceeding/${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        setEditingPost(response.data);
-        setIsModalOpen(true); // 수정할 글을 설정한 후 모달 열기
+      setError(null);
+      const response = await axios.get(`${BASE_URL}/proceeding/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("Fetched post for editing:", response.data); // Debugging line
+      setEditingPost(response.data);
+      setIsModalOpen(true); // 수정할 글을 설정한 후 모달 열기
     } catch (error) {
-        console.error("Error fetching post details:", error);
-        setError("글 정보를 불러오는 데 실패했습니다.");
+      console.error("Error fetching post details:", error);
+      setError("글 정보를 불러오는 데 실패했습니다.");
     }
-};
+  };
+
+  const handleUpdatePost = async (updatedPost) => {
+    try {
+      setError(null);
+      console.log("Updating post:", updatedPost); // Debugging line
+      if (!updatedPost.proceedingId) {
+        throw new Error("Post ID is undefined.");
+      }
+      await axios.put(
+        `${BASE_URL}/proceeding/${updatedPost.proceedingId}`,
+        updatedPost,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setIsModalOpen(false);
+      setEditingPost(null);
+      fetchPosts();
+    } catch (error) {
+      console.error("Error updating post:", error);
+      setError("글 수정에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+    }
+  };
 
   const handleDeletePost = async (id) => {
     try {
@@ -211,7 +244,10 @@ export default function ActivityBoard({ groupId }) {
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-xl font-bold text-[#333333]">게시판</h2>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setIsModalOpen(true);
+            setEditingPost(null); // Reset editing post when creating a new one
+          }}
           className="bg-[#4A90E2] text-[#FFFFFF] px-6 py-3 rounded-md hover:bg-[#3A7BC8] transition duration-200 shadow-md flex items-center"
         >
           <Plus size={20} className="mr-2" />
@@ -228,8 +264,12 @@ export default function ActivityBoard({ groupId }) {
 
       <CreateOrEditPostModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleCreatePost}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingPost(null); // Close modal and reset editing post
+        }}
+        onSubmit={editingPost ? handleUpdatePost : handleCreatePost}
+        post={editingPost}
       />
 
       {viewingPost && (
@@ -239,18 +279,6 @@ export default function ActivityBoard({ groupId }) {
           post={viewingPost}
         />
       )}
-
-{editingPost && (
-    <CreateOrEditPostModal
-        isOpen={!!editingPost}
-        onClose={() => {
-            setEditingPost(null);
-            setIsModalOpen(false); // 취소 시 모달 닫기
-        }}
-        onSubmit={handleEditPost}
-        post={editingPost}
-    />
-)}
 
       {/* Posts List */}
       <div className="overflow-x-auto bg-[#FFFFFF] rounded-lg shadow-md">
@@ -301,12 +329,12 @@ export default function ActivityBoard({ groupId }) {
                       : "내용 보기"}
                   </button>
                   <button
-    onClick={() => handleEditPost(post.id)}
-    className="text-[#4CAF50] hover:text-[#3D8B40] mr-4 transition duration-200 flex items-center"
->
-    <Edit2 size={18} className="mr-1" />
-    수정
-</button>
+                    onClick={() => handleEditPost(post.id)}
+                    className="text-[#4CAF50] hover:text-[#3D8B40] mr-4 transition duration-200 flex items-center"
+                  >
+                    <Edit2 size={18} className="mr-1" />
+                    수정
+                  </button>
                   <button
                     onClick={() => handleDeletePost(post.id)}
                     className="text-[#F44336] hover:text-[#D32F2F] transition duration-200 flex items-center"
