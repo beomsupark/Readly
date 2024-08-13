@@ -10,9 +10,9 @@ const api = axios.create({
 
 axios.interceptors.request.use(
   (config) => {
+    const id = useUserStore.getState().user.id;
     const token = useUserStore.getState().token;
-    console.log("Current token:", token); // 추가된 부분
-    if (token) {
+    if (config.url !== `${API_BASE_URL}/member/${id}/token` && token) {
       config.headers["Authorization"] = `${token}`;
     }
     return config;
@@ -25,11 +25,10 @@ axios.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config; // 원래 요청 정보 저장
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      const id = useUserStore.getState().user.id;
+    if (error.response && error.response.status === 401) {
       try {
-        const response = await axios({
+        const id = useUserStore.getState().user.id;
+        const response = await api({
           url: `${API_BASE_URL}/member/${id}/token`,
           method: "GET",
           headers: {
@@ -87,13 +86,7 @@ export const getUserInfo = async () => {
     const response = await axios.get(`${API_BASE_URL}/member/info`);
     return response.data.memberInfo || response.data;
   } catch (error) {
-    console.error("Error in getUserInfo:", error);
-    if (error.response) {
-      console.error("Error response:", error.response.data);
-      console.error("Error status:", error.response.status);
-      console.error("Error headers:", error.response.headers);
-    }
-    throw error;
+    alert("사용자 정보를 가져오는 데 문제가 발생했습니다. 나중에 다시 시도해 주세요.");
   }
 };
 
@@ -117,11 +110,8 @@ export const getMemberInfo = async (id) => {
     const response = await axios.get(`${API_BASE_URL}/member/${id}`);
     return response.data.memberInfo;
   } catch (error) {
-    console.error("Error fetching member info:", error);
-    if (error.response) {
-      console.error("Error response:", error.response.data);
-      console.error("Error status:", error.response.status);
-      console.error("Error headers:", error.response.headers);
+    if (error) {
+      alert("사용자 정보를 가져오는 데 문제가 발생했습니다. 나중에 다시 시도해 주세요.");
     }
     throw error.response?.data || error.message;
   }

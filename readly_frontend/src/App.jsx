@@ -21,7 +21,6 @@ import Member from "./pages/Member/Member.jsx"
 
 function RootRedirect() {
   const token = useUserStore.getState().token;
-  console.log(token)
 
   if (token) {
     return <Navigate to="/home" replace />;
