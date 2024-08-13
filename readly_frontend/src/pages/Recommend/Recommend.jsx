@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "react-modal";
 import axios from "axios";
 import GoButton from "../../components/GoButton/GoButton.jsx";
 import FormField from "../../components/Form/FormField.jsx";
+import Logo from "../../assets/logo/readly_logo.png";
 import normal from "../../assets/emoji/normal.png";
 import joyful from "../../assets/emoji/joy.png";
 import tired from "../../assets/emoji/tired.png";
 import sad from "../../assets/emoji/sad.png";
 import angry from "../../assets/emoji/angry.png";
 import happy from "../../assets/emoji/happy.png";
+import aladinLogo from "../../assets/onboard/aladinLogo.png";
 
 const customModalStyles = {
   overlay: {
@@ -28,10 +30,32 @@ const customModalStyles = {
   },
 };
 
+const api = axios.create({
+  baseURL: "http://localhost:8080/api/",
+});
+
 export default function Recommend() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedEmotion, setSelectedEmotion] = useState("");
   const [eventText, setEventText] = useState("");
+  const [book, setBook] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [recommendedBookIds, setRecommendedBookIds] = useState([]);
+
+  useEffect(() => {
+    fetchInitialRecommendation();
+  }, []);
+
+  const fetchInitialRecommendation = async () => {
+    try {
+      const response = await api.get("book/firstRecommand");
+      setBook(response.data.book);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching initial book recommendation:", error);
+      setLoading(false);
+    }
+  };
 
   const handleEmotionSelect = (emotion) => {
     setSelectedEmotion(emotion);
@@ -47,25 +71,31 @@ export default function Recommend() {
       return;
     }
 
+    setLoading(true);
+
     try {
-      const response = await axios.post("/api/recommend", {
-        emotion: selectedEmotion,
-        event: eventText,
+      const query = `오늘은 ${selectedEmotion} 감정을 느꼈고, ${eventText}`;
+      
+      const response = await axios.post("https://i11c207.p.ssafy.io/ai/recommand", {
+        query: query
       });
-      console.log("서버 응답:", response.data);
-      // 여기에 응답 처리 로직을 추가하세요 (예: 추천 결과 표시)
-      setModalIsOpen(false); // 모달 닫기
+
+      console.log("AI 추천 응답:", response.data);
+      setRecommendedBookIds(response.data.bar);
+
+      if (response.data.bar.length > 0) {
+        const firstBookId = response.data.bar[0];
+        const bookResponse = await api.get(`book/${firstBookId}`);
+        setBook(bookResponse.data.book);
+      }
+
+      setLoading(false);
+      setModalIsOpen(false);
     } catch (error) {
       console.error("에러 발생:", error);
       alert("추천을 받는 데 문제가 발생했습니다. 다시 시도해주세요.");
+      setLoading(false);
     }
-  };
-
-  const Book = {
-    title: "코끼리의 마음",
-    description:
-      "매일 나무에 오르고 떨어지는 코끼리를 통해 각자 다른 삶의 방식과 태도에 대해 이야기하는 동화 소설. 2017년에 출간되어 국내 독자들에게 큰 사랑을 받은 .책 제목. 의 작가 톤 텔레헨의 두 번째 어른 동화 소설이다.",
-    author: "톤 텔레헨",
   };
 
   const emotions = [
@@ -81,52 +111,78 @@ export default function Recommend() {
     setModalIsOpen(true);
   };
 
-  // const closeModal = () => {
-  //   setModalIsOpen(false);
-  // };
-
   return (
     <>
-      <div className="ml-3 mb-6 lg:px-4">
+      <div className="ml-3 mb-2 lg:px-4">
         <h2 className="font-bold text-2xl">
           <span>리들리</span> <span className="text-custom-highlight">AI</span>
           가 <span className="text-custom-highlight">추천</span>하는{" "}
           <span className="text-custom-highlight">책</span>
         </h2>
       </div>
-      <div className="mt-4 mx-auto max-w-5xl lg:px-6">
+      <div className="mx-auto max-w-5xl lg:px-6">
         <div className="flex bg-[#F1EFEF] p-6 rounded-lg shadow-md w-full px-6">
-          <div className="w-1/4 pr-6">
-            <img
-              src="/path-to-your-image.png"
-              alt="Book Cover"
-              className="w-full h-auto rounded-md"
-            />
-          </div>
-          <div className="w-3/4 pl-6">
-            <div className="flex flex-col justify-between h-full">
-              <div className="mb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-bold text-xl">{Book.title}</h3>
-                  <button
-                    onClick={openModal}
-                    className="flex items-center text-blue-500 hover:underline"
-                  >
-                    <span className="text-sm text-[#868686] -mt-5 font-bold">
-                      다른 책을 원하시나요?{" "}
-                    </span>
-                    <span className="text-xl text-custom-highlight -mt-5 ml-2">
-                      &gt;
-                    </span>
-                  </button>
-                </div>
-                <p className="text-lg mb-2">{Book.author}</p>
-                <p className="text-sm text-gray-700 leading-relaxed">
-                  {Book.description}
+          {loading ? (
+            <div className="w-full flex flex-col items-center justify-center">
+              <div className="animate-bounce">
+                <img src={Logo} alt="Loading" className="w-48 h-48" />
+                <p className="text-center text-custom-highlight mt-2 text-2xl">
+                  Loading ....
                 </p>
               </div>
             </div>
-          </div>
+          ) : book ? (
+            <>
+              <div className="w-1/4 pr-6">
+                <img
+                  src={book.image}
+                  alt="Book Cover"
+                  className="w-full h-[13rem] rounded-md"
+                />
+              </div>
+              <div className="w-3/4 pl-6">
+                <div className="flex flex-col justify-between h-full">
+                  <div className="mb-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-bold text-xl">{book.title}</h3>
+                      <button
+                        onClick={openModal}
+                        className="flex items-center text-blue-500"
+                      >
+                        <span className="text-sm text-[#868686] font-bold hover:underline">
+                          다른 책을 원하시나요?{" "}
+                        </span>
+                        <span className="text-xl text-custom-highlight ml-2">
+                          &gt;
+                        </span>
+                      </button>
+                    </div>
+                    <p className="text-lg mb-2">{book.author}</p>
+                    <p className="text-sm text-gray-700 leading-relaxed">
+                      {book.detail}
+                    </p>
+                    <div className="flex justify-end rounded-full">
+                      <a
+                        href={book.purchase_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block h-12 hover:opacity-80 transition-opacity duration-200"
+                      >
+                        <img
+                          src={aladinLogo}
+                          alt="알라딘으로 이동"
+                          className="h-full w-auto object-contain rounded-full"
+                          style={{ filter: 'drop-shadow(0px 0px 1px rgba(0,0,0,0.3))' }}
+                        />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <p>책 정보를 불러오는 데 실패했습니다.</p>
+          )}
         </div>
       </div>
 
@@ -192,11 +248,11 @@ export default function Recommend() {
                 multiline={true}
               />
               <div className="flex justify-end">
-                {" "}
                 <GoButton
-                  text="AI에게 추천받기"
+                  text={loading ? "추천 중..." : "AI에게 추천받기"}
                   className="w-auto px-4 py-2 text-sm"
                   onClick={handleSubmit}
+                  disabled={loading}
                 />
               </div>
             </div>
