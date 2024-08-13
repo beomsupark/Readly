@@ -24,15 +24,15 @@ public class JWTUtil {
     @Value("${jwt.refresh-token.expirationtime}")
     private long refreshTokenExpirationTime;
 
-    public String createAccessToken(int id) {
+    public String createAccessToken(Integer id) {
         return create(id, "access-token", accessTokenExpirationTime);
     }
 
-    public String createRefreshToken(int id) {
-        return create(id, "access-token", accessTokenExpirationTime);
+    public String createRefreshToken(Integer id) {
+        return create(id, "refresh-token", refreshTokenExpirationTime);
     }
 
-    private String create(int id, String subject, long expirationTime) {
+    private String create(Integer id, String subject, long expirationTime) {
         Claims claims = Jwts.claims()
                 .setSubject(subject)
                 .setIssuedAt(new Date())
@@ -68,7 +68,7 @@ public class JWTUtil {
         }
     }
 
-    public int getMemberId(String authorization) {
+    public Integer getMemberId(String authorization) {
         Jws<Claims> claims = null;
         try {
             claims = Jwts.parser().setSigningKey(this.generateKey()).parseClaimsJws(authorization);
@@ -76,6 +76,6 @@ public class JWTUtil {
             throw new UnAuthorizedException();
         }
         Map<String, Object> value = claims.getBody();
-        return (int) value.get("id");
+        return (Integer) value.get("id");
     }
 }

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://i11c207.p.ssafy.io/api";
+const BASE_URL = 'https://i11c207.p.ssafy.io/api';
 
 export const createPhotoCard = async (bookId, text, visibility, memberId) => {
   try {

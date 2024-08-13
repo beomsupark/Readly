@@ -36,7 +36,8 @@ CREATE TABLE `members` (
   `gender` enum('F','M') DEFAULT NULL,
   `social` enum('G','I','K','R') DEFAULT 'R',
   `introduction` varchar(255) DEFAULT '자기소개를 입력해주세요',
-  `token` varchar(255) DEFAULT NULL,
+  `access_token` varchar(255) DEFAULT NULL,
+  `refresh_token` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

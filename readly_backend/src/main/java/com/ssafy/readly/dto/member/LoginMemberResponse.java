@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class LoginMemberResponse {
-    private int id;
+    private Integer id;
     private String nickname;
     private Integer point;
     private String introduction;

@@ -18,7 +18,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
 
     @Override
-    public Member getMemberEntity(int id) {
+    public Member getMemberEntity(Integer id) {
         return memberRepository.findById(id).orElseThrow(
                 () -> new NoSuchElementException("해당 회원은 존재하지 않습니다."));
     }
@@ -43,7 +43,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void checkDuplicateId(String loginId) {
-        long loginIdCount = memberRepository.findByLoginId(loginId);
+        Long loginIdCount = memberRepository.findByLoginId(loginId);
         if (loginIdCount != 0) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
@@ -57,24 +57,36 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public void saveRefreshToken(int id, String refreshToken) {
-        getMemberEntity(id).addToken(refreshToken);
-    }
-
-    @Override
-    public String getRefreshToken(int id) {
-        return memberRepository.findByToken(id).orElseThrow(
-                () -> new NoSuchElementException("리프레쉬 토큰이 존재하지 않습니다."));
+    public void saveTokens(Integer id, String refreshToken, String accessToken) {
+        getMemberEntity(id).addTokens(refreshToken, accessToken);
     }
 
     @Transactional
     @Override
-    public void deleteRefreshToken(int id) {
+    public void saveAccessToken(Integer id, String accessToken) {
+        getMemberEntity(id).addAccessToken(accessToken);
+    }
+
+    @Override
+    public String getRefreshToken(Integer id) {
+        return memberRepository.findRefreshTokenById(id).orElseThrow(
+                () -> new NoSuchElementException("Refresh-token이 존재하지 않습니다."));
+    }
+
+    @Override
+    public String getAccessToken(Integer id) {
+        return memberRepository.findAccessTokenById(id).orElseThrow(
+                () -> new NoSuchElementException("Access-token이 존재하지 않습니다."));
+    }
+
+    @Transactional
+    @Override
+    public void deleteRefreshToken(Integer id) {
         getMemberEntity(id).deleteToken();
     }
 
     @Override
-    public MemberResponse getMember(int id) {
+    public MemberResponse getMember(Integer id) {
         Member member = getMemberEntity(id);
         return new MemberResponse(
                 member.getId(),
@@ -107,14 +119,14 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public Integer addPoint(int memberId, Integer point) {
+    public Integer addPoint(Integer memberId, Integer point) {
         Member member = getMemberEntity(memberId);
         member.addPoint(point);
         return member.getPoint();
     }
 
     @Override
-    public MemberResponse getMemberbyLoginId(String loginid) {
-        return memberRepository.findDataByLoginId(loginid).orElseThrow(() -> new NoSuchElementException("해당 유저가 존재하지 않습니다."));
+    public MemberResponse getMemberbyLoginId(String loginId) {
+        return memberRepository.findDataByLoginId(loginId).orElseThrow(() -> new NoSuchElementException("해당 유저가 존재하지 않습니다."));
     }
 }

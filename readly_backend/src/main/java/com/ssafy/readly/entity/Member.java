@@ -23,7 +23,7 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private int id;
+    private Integer id;
 
     private String loginId;
     private String loginPwd;
@@ -42,7 +42,8 @@ public class Member {
     private Social social;
 
     private String introduction;
-    private String token;
+    private String refreshToken;
+    private String accessToken;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<ReadBook> readBooks = new ArrayList<>();
@@ -89,14 +90,18 @@ public class Member {
         this.introduction = introduction;
     }
 
-    public void addToken(String token) {
-        if(token != null && !token.isEmpty()) {
-            this.token = token;
-        }
+    public void addTokens(String refreshToken, String accessToken) {
+        this.refreshToken = refreshToken;
+        this.accessToken = accessToken;
+    }
+
+    public void addAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public void deleteToken() {
-        this.token = null;
+        this.accessToken = null;
+        this.refreshToken = null;
     }
 
 
