@@ -13,7 +13,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.util.List;
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
 
