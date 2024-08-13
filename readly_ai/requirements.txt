@@ -1,6 +1,6 @@
 faiss_cpu==1.8.0.post1
 fastapi==0.112.0
-numpy==2.0.1
+numpy==1.21.0
 pandas==2.2.2
 pydantic==2.8.2
 sentence_transformers==3.0.1
