@@ -1,5 +1,8 @@
 package com.ssafy.readly.controller;
 
+import com.ssafy.readly.dto.PhotoCard.PhotoCardSearchRequest;
+import com.ssafy.readly.service.photocard.PhotoCardService;
+import com.ssafy.readly.service.review.ReviewService;
 import com.ssafy.readly.util.AladdinOpenAPI;
 import com.ssafy.readly.dto.Book.BookRequest;
 import com.ssafy.readly.service.book.BookService;
@@ -20,6 +23,10 @@ public class BookController {
 
     @Autowired
     private BookService bookServiceImpl;
+    @Autowired
+    private PhotoCardService photoCardServiceImpl;
+    @Autowired
+    private ReviewService reviewServiceImpl;
 
     @PostMapping("/book/addbooks")
     public void addBook() throws Exception {
@@ -34,7 +41,8 @@ public class BookController {
         Map<String,Object> responseMap = new HashMap();
         HttpStatus status = HttpStatus.ACCEPTED;
         responseMap.put("book",bookServiceImpl.getBookById(bookId));
-
+        responseMap.put("photoard",photoCardServiceImpl.findPhotoCardForBookSearch(bookId));
+        responseMap.put("review",reviewServiceImpl.findReivewForBookSearch(bookId));
         status=HttpStatus.OK;
         return new ResponseEntity<Map<String, Object>>(responseMap, status);
     }

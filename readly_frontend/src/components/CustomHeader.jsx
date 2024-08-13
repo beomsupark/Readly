@@ -7,7 +7,6 @@ import cloudImg from "../assets/header/cloudImg.png";
 import useBookStore from "../store/bookStore";
 import LogoutButton from "../pages/Login/Logout";
 import useUserStore from "../store/userStore.js";
-import NotificationIcon from "./NotificationIcon"; // 알림 아이콘 컴포넌트 추가
 import TimecapsuleIcon from "./TimecapsuleIcon.jsx";
 
 const customModalStyles = {
@@ -168,7 +167,6 @@ export default function CustomHeader() {
         <div className="flex items-center space-x-8"> {/* 간격을 8로 설정하여 더 넓게 조정 */}
           
           <TimecapsuleIcon /> 
-          <NotificationIcon />
           
           
         </div>

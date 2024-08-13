@@ -14,28 +14,38 @@ export default function Community() {
   const { user, token } = useUserStore();
   const [joinStatus, setJoinStatus] = useState({});
   const [groups, setGroups] = useState([]);
-
-  const fetchGroups = async () => {
-    try {
-      const [availableGroups, memberGroups] = await Promise.all([
-        getAvailableGroups(),
-        getMemberGroups(user.id),
-      ]);
-
-      const memberGroupIds = memberGroups.map((group) => group.groupId);
-      const filteredGroups = availableGroups.filter(
-        (group) => !memberGroupIds.includes(group.groupId)
-      );
-      setGroups(filteredGroups);
-    } catch (error) {
-      console.error("Error fetching groups:", error);
-    }
-  };
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (user && token) {
-      fetchGroups();
-    }
+    const fetchGroups = async () => {
+      if (user && token) {
+        try {
+          setLoading(true);
+          setError(null);
+          
+          const availableGroups = await getAvailableGroups();
+          console.log('Available groups:', availableGroups);
+          
+          const memberGroups = await getMemberGroups(user.id, token);
+          console.log('Member groups:', memberGroups);
+          
+          const memberGroupIds = memberGroups.map((group) => group.groupId);
+          const filteredGroups = availableGroups.filter(
+            (group) => !memberGroupIds.includes(group.groupId)
+          );
+          setGroups(filteredGroups);
+        } catch (error) {
+          console.error("Error fetching groups:", error);
+          setError("그룹 정보를 가져오는 데 실패했습니다. 나중에 다시 시도해주세요.");
+          setGroups([]);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchGroups();
   }, [user, token]);
 
   const handleMakeCommunity = () => {
@@ -61,7 +71,14 @@ export default function Community() {
         console.log(`Successfully joined group ${groupId}`);
         setJoinStatus((prev) => ({ ...prev, [groupId]: "success" }));
         alert("그룹에 성공적으로 참여했습니다!");
-        fetchGroups(); // 그룹 목록을 새로고침합니다
+        // 그룹 목록을 새로고침합니다
+        const updatedAvailableGroups = await getAvailableGroups();
+        const updatedMemberGroups = await getMemberGroups(user.id, token);
+        const updatedMemberGroupIds = updatedMemberGroups.map((group) => group.groupId);
+        const updatedFilteredGroups = updatedAvailableGroups.filter(
+          (group) => !updatedMemberGroupIds.includes(group.groupId)
+        );
+        setGroups(updatedFilteredGroups);
         navigate(`/activity/${groupId}`); // 그룹 페이지로 리다이렉트
       } else {
         console.log(`Failed to join group ${groupId}`);
@@ -75,9 +92,19 @@ export default function Community() {
     }
   };
 
+  if (loading) {
+    return <div>로딩 중...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <>
-      <h2 className="font-bold text-2xl mb-2"><span className="text-custom-highlight">소모임</span>을 만들어요!</h2>
+      <h2 className="font-bold text-2xl mb-2">
+        <span className="text-custom-highlight">소모임</span>을 만들어요!
+      </h2>
       <div className="container mx-auto p-4 flex justify-center items-center">
         <div className="grid grid-cols-2 gap-10 mb-4">
           {groups.map((item) => (

@@ -3,7 +3,11 @@ import Modal from "react-modal";
 import GoButton from "../components/GoButton/GoButton.jsx";
 import aladinLogo from "../assets/onboard/aladinLogo.png";
 import searchIcon from "../assets/header/search.png";
-import tempImg from "../assets/onboard/card1_front.png";
+import useBookStore from "../store/bookStore.js";
+import useUserStore from "../store/userStore.js";
+import { useNavigate } from "react-router-dom";
+import { addBookToUser, fetchBookDetailsWithPhotoAndReview } from "../api/bookAPI.js";
+import SimpleReview from "./Review/SimpleReview.jsx";
 
 const customModalStyles = {
   overlay: {
@@ -36,6 +40,12 @@ export default function BookModal({
   onAddBook,
   addButtonText = "책 등록하기",
 }) {
+  const navigate = useNavigate();
+  const { user } = useUserStore();
+  const [bookDetails, setBookDetails] = useState(null);
+  const [photoard, setPhotoard] = useState(null);
+  const [review, setReview] = useState(null);
+
   const modalRef = useRef(null);
   const [localSearchQuery, setLocalSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -45,6 +55,12 @@ export default function BookModal({
     setLocalSearchQuery(""); // 모달이 열릴 때마다 검색 쿼리 초기화
   }, [isOpen]);
 
+  useEffect(() => {
+    if (book && book.id) {
+      fetchBookDetails(book.id);
+    }
+  }, [book]);
+  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -75,6 +91,18 @@ export default function BookModal({
     setShowSuggestions(false);
   };
 
+  const fetchBookDetails = async (bookId) => {
+    try {
+      const data = await fetchBookDetailsWithPhotoAndReview(bookId);
+      setBookDetails(data.book);
+      setPhotoard(data.photoard);
+      setReview(data.review);
+    } catch (error) {
+      console.error("Error fetching book details:", error);
+    }
+  };
+
+  
   const handleAddBook = async () => {
     setAddBookStatus("loading");
     try {
@@ -84,14 +112,21 @@ export default function BookModal({
       if (!book.id && !book.bookId) {
         throw new Error("Book ID is missing");
       }
+      if (!user || !user.id) {
+        throw new Error("User is not logged in");
+      }
       const bookId = book.id || book.bookId;
-      await onAddBook({ ...book, bookId });
+      await addBookToUser(user.id, bookId);
       setAddBookStatus("success");
       onRequestClose();
     } catch (error) {
       console.error("Error adding book:", error);
       setAddBookStatus("error");
     }
+  };
+
+  const handleGoToSharedBoard = () => {
+    navigate("/sharedboard");
   };
 
   return (
@@ -148,28 +183,43 @@ export default function BookModal({
             </div>
 
             <div className="flex flex-col">
-              <h2 className="font-bold text-xl mb-4">
+            <h2 className="font-bold text-xl">
                 가장 <span className="text-custom-highlight">인기</span> 많은{" "}
                 <span className="text-custom-highlight">콘텐츠</span>
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-gray-100 p-4 rounded-lg flex flex-col items-center">
-                  <img
-                    src={tempImg}
-                    alt="포토카드"
-                    className="w-48 h-64 object-cover mb-2 rounded-[20px]"
-                  />
-                  <button className="text-[#848484] px-4 py-2 rounded-full text-sm font-bold">
+                <div className="bg-gray-100 p-4 rounded-lg flex flex-col items-center h-[20rem]">
+                  {photoard ? (
+                    <>
+                      <img
+                        src={photoard.photoCardImage}
+                        alt="포토카드"
+                        className="w-48 h-full object-cover rounded-[20px]"
+                      />
+                    </>
+                  ) : (
+                    <p className="text-sm text-gray-500">포토카드가 없습니다.</p>
+                  )}
+                  <button 
+                    className="text-[#848484] px-4 py-2 rounded-full text-sm font-bold mt-auto"
+                    onClick={handleGoToSharedBoard}
+                  >
                     포토카드 더 보러가기
                   </button>
                 </div>
-                <div className="bg-gray-100 p-4 rounded-lg flex flex-col items-center">
-                  <img
-                    src={tempImg}
-                    alt="한줄평"
-                    className="w-48 h-64 object-cover mb-2 rounded-[20px]"
-                  />
-                  <button className="text-[#848484] px-4 py-2 rounded-full text-sm font-bold">
+                <div className="bg-gray-100 p-4 rounded-lg flex flex-col items-center h-[20rem]">
+                  {review ? (
+                    <SimpleReview
+                      bookImage={bookDetails.image}
+                      reviewText={review.reviewText}
+                    />
+                  ) : (
+                    <p className="text-sm text-gray-500">한줄평이 없습니다.</p>
+                  )}
+                  <button 
+                    className="text-[#848484] px-4 py-2 rounded-full text-sm font-bold mt-auto"
+                    onClick={handleGoToSharedBoard}
+                  >
                     한줄평 더 보러가기
                   </button>
                 </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import useUserStore from "../../store/userStore.js";
 import Modal from "react-modal";
 import axios from "axios";
 import GoButton from "../../components/GoButton/GoButton.jsx";
@@ -31,29 +32,52 @@ const customModalStyles = {
   },
 };
 
-const api = axios.create({
-  baseURL: BASE_URL,
-});
+
 
 export default function Recommend() {
+  const BASE_URL = "https://i11c207.p.ssafy.io/api/";
+  // const BASE_URL = "http://localhost:8080/api/";
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedEmotion, setSelectedEmotion] = useState("");
   const [eventText, setEventText] = useState("");
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [recommendedBookIds, setRecommendedBookIds] = useState([]);
+  const token = useUserStore(state => state.token);
+
 
   useEffect(() => {
-    fetchInitialRecommendation();
-  }, []);
+    fetchInitialRecommendation(token);
+  }, [token]);
 
-  const fetchInitialRecommendation = async () => {
+  const fetchInitialRecommendation = async (token) => {
+    console.log(`Attempting to fetch initial book recommendation.`);
     try {
-      const response = await api.get("book/firstRecommand");
-      setBook(response.data.book);
-      setLoading(false);
+      const response = await axios.get(`${BASE_URL}book/firstRecommand`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      console.log('Full API response:', response);
+      
+      if (response.data && response.data.book) {
+        setBook(response.data.book);
+      } else {
+        console.error("Unexpected response format:", response.data);
+        // setError("책 정보를 가져오는데 실패했습니다.");
+      }
+      
+      return response.status;
     } catch (error) {
-      console.error("Error fetching initial book recommendation:", error);
+      console.error('Error fetching initial book recommendation:', 
+                    error.response ? error.response.data : error.message);
+      if (error.response) {
+        console.error("Response status:", error.response.status);
+        console.error("Response data:", error.response.data);
+      }
+      // setError("초기 추천을 불러오는데 실패했습니다. 나중에 다시 시도해주세요.");
+      throw error;
+    } finally {
       setLoading(false);
     }
   };
@@ -71,30 +95,45 @@ export default function Recommend() {
       alert("감정을 선택해주세요.");
       return;
     }
-
+  
     setLoading(true);
-
+  
     try {
       const query = `오늘은 ${selectedEmotion} 감정을 느꼈고, ${eventText}`;
-      
-      const response = await axios.post(`${BASE_URL}/ai/recommand`, {
-        query: query
-      });
-
-      console.log("AI 추천 응답:", response.data);
-      setRecommendedBookIds(response.data.bar);
-
-      if (response.data.bar.length > 0) {
-        const firstBookId = response.data.bar[0];
-        const bookResponse = await api.get(`book/${firstBookId}`);
-        setBook(bookResponse.data.book);
+  
+      const aiResponse = await axios.post(
+        "https://i11c207.p.ssafy.io/ai/recommand",
+        {
+          query: query,
+        }
+      );
+  
+      console.log("AI 추천 응답:", aiResponse.data);
+      setRecommendedBookIds(aiResponse.data.bar);
+  
+      if (aiResponse.data.bar.length > 0) {
+        const firstBookId = aiResponse.data.bar[0];
+        const bookResponse = await axios.get(`${BASE_URL}book/${firstBookId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (bookResponse.data && bookResponse.data.book) {
+          setBook(bookResponse.data.book);
+        } else {
+          console.error("Unexpected book response format:", bookResponse.data);
+        }
       }
-
-      setLoading(false);
+  
       setModalIsOpen(false);
     } catch (error) {
       console.error("에러 발생:", error);
+      if (error.response) {
+        console.error("Response status:", error.response.status);
+        console.error("Response data:", error.response.data);
+      }
       alert("추천을 받는 데 문제가 발생했습니다. 다시 시도해주세요.");
+    } finally {
       setLoading(false);
     }
   };
@@ -123,67 +162,54 @@ export default function Recommend() {
       </div>
       <div className="mx-auto max-w-5xl lg:px-6">
         <div className="flex bg-[#F1EFEF] p-6 rounded-lg shadow-md w-full px-6">
-          {loading ? (
-            <div className="w-full flex flex-col items-center justify-center">
-              <div className="animate-bounce">
-                <img src={Logo} alt="Loading" className="w-48 h-48" />
-                <p className="text-center text-custom-highlight mt-2 text-2xl">
-                  Loading ....
+          <div className="w-1/4 pr-6">
+            <img
+              src={book?.image}
+              alt="Book Cover"
+              className="w-full h-[13rem] rounded-md"
+            />
+          </div>
+          <div className="w-3/4 pl-6">
+            <div className="flex flex-col justify-between h-full">
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-bold text-xl">{book?.title}</h3>
+                  <button
+                    onClick={openModal}
+                    className="flex items-center text-blue-500"
+                  >
+                    <span className="text-sm text-[#868686] font-bold hover:underline">
+                      다른 책을 원하시나요?{" "}
+                    </span>
+                    <span className="text-xl text-custom-highlight ml-2">
+                      &gt;
+                    </span>
+                  </button>
+                </div>
+                <p className="text-lg mb-2">{book?.author}</p>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  {book?.detail}
                 </p>
-              </div>
-            </div>
-          ) : book ? (
-            <>
-              <div className="w-1/4 pr-6">
-                <img
-                  src={book.image}
-                  alt="Book Cover"
-                  className="w-full h-[13rem] rounded-md"
-                />
-              </div>
-              <div className="w-3/4 pl-6">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="mb-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-bold text-xl">{book.title}</h3>
-                      <button
-                        onClick={openModal}
-                        className="flex items-center text-blue-500"
-                      >
-                        <span className="text-sm text-[#868686] font-bold hover:underline">
-                          다른 책을 원하시나요?{" "}
-                        </span>
-                        <span className="text-xl text-custom-highlight ml-2">
-                          &gt;
-                        </span>
-                      </button>
-                    </div>
-                    <p className="text-lg mb-2">{book.author}</p>
-                    <p className="text-sm text-gray-700 leading-relaxed">
-                      {book.detail}
-                    </p>
-                    <div className="flex justify-end rounded-full">
-                      <a
-                        href={book.purchase_link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-block h-12 hover:opacity-80 transition-opacity duration-200"
-                      >
-                        <img
-                          src={aladinLogo}
-                          alt="알라딘으로 이동"
-                          className="h-full w-auto object-contain rounded-full"
-                          style={{ filter: 'drop-shadow(0px 0px 1px rgba(0,0,0,0.3))' }}
-                        />
-                      </a>
-                    </div>
-                  </div>
+                <div className="flex justify-end rounded-full">
+                  <a
+                    href={book?.purchase_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block h-12 hover:opacity-80 transition-opacity duration-200"
+                  >
+                    <img
+                      src={aladinLogo}
+                      alt="알라딘으로 이동"
+                      className="h-full w-auto object-contain rounded-full"
+                      style={{
+                        filter: "drop-shadow(0px 0px 1px rgba(0,0,0,0.3))",
+                      }}
+                    />
+                  </a>
                 </div>
               </div>
-            </>
-          ) : (
-            <p>책 정보를 불러오는 데 실패했습니다.</p>
-          )}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -209,55 +235,66 @@ export default function Recommend() {
             </button>
           </div>
 
-          <div className="flex justify-between items-start w-full mt-12">
-            <div className="w-1/2 pr-12 flex flex-col items-center">
-              <h3 className="text-xl mb-8 text-center font-bold">
-                <span className="text-custom-highlight">오늘</span> 느꼈던{" "}
-                <span className="text-custom-highlight">감정</span>을 골라주세요
-              </h3>
-              <div className="grid grid-cols-3 gap-x-8 gap-y-6">
-                {emotions.map((emotion, index) => (
-                  <button
-                    key={index}
-                    className={`flex flex-col items-center ${
-                      selectedEmotion === emotion.text
-                        ? "ring-2 ring-blue-500 rounded-lg"
-                        : ""
-                    }`}
-                    onClick={() => handleEmotionSelect(emotion.text)}
-                  >
-                    <img
-                      src={emotion.emoji}
-                      alt={emotion.text}
-                      className="w-16 h-16 mb-2"
-                    />
-                    <span className="text-sm font-bold text-[#868686]">
-                      {emotion.text}
-                    </span>
-                  </button>
-                ))}
+          {loading ? (
+            <div className="flex-grow flex items-center justify-center">
+              <div className="animate-bounce">
+                <img src={Logo} alt="Loading" className="w-48 h-48" />
+                <p className="text-center text-custom-highlight mt-2 text-2xl">
+                  Loading ....
+                </p>
               </div>
             </div>
-            <div className="w-1/2 pl-12 flex flex-col">
-              <h3 className="text-md mb-8 font-bold text-[#767676]">
-                오늘 어떤 일이 있으셨나요?
-              </h3>
-              <FormField
-                label="있었던 일을 알려주세요"
-                value={eventText}
-                onChange={handleEventTextChange}
-                multiline={true}
-              />
-              <div className="flex justify-end">
-                <GoButton
-                  text={loading ? "추천 중..." : "AI에게 추천받기"}
-                  className="w-auto px-4 py-2 text-sm"
-                  onClick={handleSubmit}
-                  disabled={loading}
+          ) : (
+            <div className="flex justify-between items-start w-full mt-12">
+              <div className="w-1/2 pr-12 flex flex-col items-center">
+                <h3 className="text-xl mb-8 text-center font-bold">
+                  <span className="text-custom-highlight">오늘</span> 느꼈던{" "}
+                  <span className="text-custom-highlight">감정</span>을
+                  골라주세요
+                </h3>
+                <div className="grid grid-cols-3 gap-x-8 gap-y-6">
+                  {emotions.map((emotion, index) => (
+                    <button
+                      key={index}
+                      className={`flex flex-col items-center ${
+                        selectedEmotion === emotion.text
+                          ? "ring-2 ring-blue-500 rounded-lg"
+                          : ""
+                      }`}
+                      onClick={() => handleEmotionSelect(emotion.text)}
+                    >
+                      <img
+                        src={emotion.emoji}
+                        alt={emotion.text}
+                        className="w-16 h-16 mb-2"
+                      />
+                      <span className="text-sm font-bold text-[#868686]">
+                        {emotion.text}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="w-1/2 pl-12 flex flex-col">
+                <h3 className="text-md mb-8 font-bold text-[#767676]">
+                  오늘 어떤 일이 있으셨나요?
+                </h3>
+                <FormField
+                  label="있었던 일을 알려주세요"
+                  value={eventText}
+                  onChange={handleEventTextChange}
+                  multiline={true}
                 />
+                <div className="flex justify-end">
+                  <GoButton
+                    text="AI에게 추천받기"
+                    className="w-auto px-4 py-2 text-sm"
+                    onClick={handleSubmit}
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </Modal>
     </>

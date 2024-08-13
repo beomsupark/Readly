@@ -10,3 +10,4 @@ public class ProceedingRequestDTO {
     private int pageSize;
     private int pageNumber;
 }
+

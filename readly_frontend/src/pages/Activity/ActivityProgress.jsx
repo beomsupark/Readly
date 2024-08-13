@@ -359,7 +359,7 @@ export default function ActivityProgress({ groupId }) {
         handleSuggestionClick={handleSuggestionClick}
         clearSearch={() => setSearchQuery("")}
         onAddBook={handleAddBook}
-        addButtonText="그룹에 책 등록하기"
+        addButtonText="책 등록하기"
       />
     </>
   );

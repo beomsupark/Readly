@@ -121,3 +121,4 @@ const NotificationIcon = ({ initialNotifications = [] }) => {
 };
 
 export default NotificationIcon;
+

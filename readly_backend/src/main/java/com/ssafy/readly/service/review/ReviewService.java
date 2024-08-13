@@ -22,4 +22,6 @@ public interface ReviewService {
     long getReviewsCount() throws Exception;
 
     List<ReviewResponse> findReviewsByLoginId(int LoginId) throws Exception;
+
+    ReviewResponse findReivewForBookSearch(int bookId);
 }

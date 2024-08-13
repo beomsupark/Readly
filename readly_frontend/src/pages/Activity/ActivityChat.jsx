@@ -3,16 +3,6 @@ import { Client } from '@stomp/stompjs';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import useUserStore from '../../store/userStore';
-import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
-import { BASE_URL } from '../../api/authAPI';
-import {
-  MainContainer,
-  ChatContainer,
-  MessageList,
-  Message,
-  MessageInput,
-  Avatar,
-} from "@chatscope/chat-ui-kit-react";
 
 let stompClient = null;
 
@@ -46,7 +36,7 @@ const ActivityChat = ({ groupId }) => {
 
   const connect = () => {
     stompClient = new Client({
-      brokerURL: 'wss://i11c207.p.ssafy.io//gs-guide-websocket',
+      brokerURL: 'wss://i11c207.p.ssafy.io/gs-guide-websocket',
     });
 
     stompClient.onConnect = (frame) => {
@@ -95,7 +85,6 @@ const ActivityChat = ({ groupId }) => {
           roomId: groupId,
           from: user.nickname,
           content: message,
-          avatar: user.avatar, // Assuming user avatar URL is stored in user.avatar
         }),
       });
       setMessage('');
@@ -111,34 +100,40 @@ const ActivityChat = ({ groupId }) => {
   };
 
   return (
-    <div style={{ position: "relative", height: "500px" }}>
-      <MainContainer>
-        <ChatContainer>
-          <MessageList>
-            {messages.map((msg, index) => (
-              <Message
-                key={index}
-                model={{
-                  message: msg.content,
-                  sentTime: "just now",
-                  sender: msg.from,
-                  direction: msg.from === user.nickname ? "outgoing" : "incoming",
-                  avatar: msg.avatar, // Include avatar in the message model
+    <div className="container mt-3" style={{ height: '500px', display: 'flex', flexDirection: 'column' }}>
+      <div className="card" style={{ flex: 1, overflowY: 'scroll', marginBottom: '1rem' }}>
+        <div className="card-body">
+          {messages.map((msg, index) => (
+            <div
+              key={index}
+              className={`d-flex mb-3 ${msg.from === user.nickname ? 'justify-content-end' : 'justify-content-start'}`}
+            >
+              <div
+                className="p-2 rounded"
+                style={{
+                  backgroundColor: msg.from === user.nickname ? '#ADD8E6' : '#f8f9fa', // 연한 파란색: '#ADD8E6'
+                  color: msg.from === user.nickname ? '#000' : '#000', // 글자색 검정으로 통일
                 }}
-                avatarSpacer
               >
-                <Avatar src={"https://chatscope.io/storybook/react/assets/zoe-E7ZdmXF0.svg"} name={user.nickname} />
-              </Message>
-            ))}
-          </MessageList>
-          <MessageInput 
-            placeholder="Type message here" 
-            value={message}
-            onChange={(value) => setMessage(value)}
-            onSend={() => sendMessage()}
-          />
-        </ChatContainer>
-      </MainContainer>
+                <strong>{msg.from}:</strong> {msg.content}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="input-group">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Type message here"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+        />
+        <button className="btn btn-primary" onClick={sendMessage}>
+          Send
+        </button>
+      </div>
     </div>
   );
 };

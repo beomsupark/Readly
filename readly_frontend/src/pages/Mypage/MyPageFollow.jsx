@@ -90,7 +90,7 @@ export default function MypageFollow({ userId }) {
               <img
                 src={levelIcons[user.level]}
                 alt={`Level ${user.level}`}
-                className="w-7 h-7 mr-2 mb-9"
+                className="w-7 h-7 mb-9"
               />
               <div className="ml-4">
                 <img src={InfoIcon} alt="info" className="w-12 h-10" />

@@ -26,9 +26,12 @@ public class ProceedingController {
     private final ProceedingService proceedingService;
 
     @GetMapping("/proceeding")
-    public ResponseEntity<Map<String, Object>> getProceedings(@RequestBody ProceedingRequestDTO requestDTO) throws Exception {
-        List<Proceeding> proceedings = proceedingService.getProceedingsByGroupId(requestDTO.getGroupId(), requestDTO.getPageSize(), requestDTO.getPageNumber());
-        long totalProceedings = proceedingService.countProceedingsByGroupId(requestDTO.getGroupId());
+    public ResponseEntity<Map<String, Object>> getProceedings(
+            @RequestParam int groupId,
+            @RequestParam int pageSize,
+            @RequestParam int pageNumber) throws Exception {
+        List<Proceeding> proceedings = proceedingService.getProceedingsByGroupId(groupId, pageSize, pageNumber);
+        long totalProceedings = proceedingService.countProceedingsByGroupId(groupId);
 
         List<ProceedingResponseDTO> responseDTOs = proceedings.stream().map(proceeding -> {
             ProceedingResponseDTO dto = new ProceedingResponseDTO();
