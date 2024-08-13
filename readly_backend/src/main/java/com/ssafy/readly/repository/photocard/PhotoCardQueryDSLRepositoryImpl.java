@@ -166,6 +166,46 @@ public class PhotoCardQueryDSLRepositoryImpl implements PhotoCardQueryDSLReposit
         return list;
     }
 
+    /**
+     * @param bookId
+     * @return
+     */
+    @Override
+    public CreatePhotoCardResponse findPhotoCardForBookSearch(int bookId) {
+        List<CreatePhotoCardResponse> response = queryFactory.select(Projections.constructor(CreatePhotoCardResponse.class,
+                                photoCard.id,
+                                photoCard.text,
+                                member.loginId,
+                                book.title,
+                                book.author,
+                                photoCard.photoCardImage,
+                                photoCard.createdDate,
+                                like.count(),
+                                ExpressionUtils.as(
+                                        JPAExpressions.select(like.count())
+                                                .from(like)
+                                                .join(like.member,member)
+                                                .where(member.id.eq(photoCard.member.id)), "check")
+                        )
+                ).from(like)
+                .join(like.timeCapsuleItem, timeCapsuleItem)
+                .rightJoin(timeCapsuleItem.photoCard, photoCard)
+                .join(photoCard.member,member)
+                .join(photoCard.book, book)
+                .where(book.id.eq(bookId))
+                .groupBy(photoCard.id,photoCard.member.id)
+                .orderBy(new OrderSpecifier(Order.DESC, like.count()))
+                .offset(0)
+                .limit(1)
+                .fetch();
+        log.info(response.toString());
+        if(response.isEmpty()){
+            List<CreatePhotoCardResponse> list = new ArrayList<>();
+            return null;
+        }
+        return response.get(0);
+    }
+
     private OrderSpecifier[] createOrderSpecifier(PhotoCardSearchRequest reviewRequest) {
 
         List<OrderSpecifier> orderSpecifiers = new ArrayList<>();

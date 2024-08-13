@@ -64,4 +64,13 @@ public class PhotoCardServiceImpl implements PhotoCardService{
     public List<CreatePhotoCardResponse> findPhotoCardsByLoginId(int loginId) throws Exception {
         return photoCardRepositoryImpl.findPhotoCardsbyMemberId(loginId);
     }
+
+    /**
+     * @param bookId
+     * @return
+     */
+    @Override
+    public CreatePhotoCardResponse findPhotoCardForBookSearch(int bookId) {
+        return photoCardRepositoryImpl.findPhotoCardForBookSearch(bookId);
+    }
 }

@@ -23,4 +23,6 @@ public interface PhotoCardQueryDSLRepository {
     List<PhotoCard> findByPhotoCardIn(Integer[] photoCards);
 
     List<CreatePhotoCardResponse> findPhotoCardsbyMemberId(int memberId);
+
+    CreatePhotoCardResponse findPhotoCardForBookSearch(int bookId);
 }
