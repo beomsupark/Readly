@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { fetchBooks, searchBooksByTitle } from '../api/bookAPI.js';
+import { fetchBooks, searchBooksByTitle, fetchBookDetails } from '../api/bookAPI.js';
 
 const useBookStore = create((set) => ({
   books: [],
@@ -11,10 +11,8 @@ const useBookStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const books = await fetchBooks();
-      // console.log("Fetched books:", books);
       set({ books, loading: false });
     } catch (error) {
-      // console.error("Error in fetchBooks:", error);
       set({ error: error.message || 'Failed to fetch books', loading: false });
     }
   },
@@ -26,6 +24,18 @@ const useBookStore = create((set) => ({
       set({ searchResults, loading: false });
     } catch (error) {
       set({ error: error.message || 'Failed to search books', loading: false });
+    }
+  },
+
+  setSearchResults: (results) => set({ searchResults: results }),
+
+  fetchBookDetails: async (bookId) => {
+    set({ loading: true, error: null });
+    try {
+      const bookDetails = await fetchBookDetails(bookId);
+      set({ bookDetails, loading: false });
+    } catch (error) {
+      set({ error: error.message || 'Failed to fetch book details', loading: false });
     }
   },
 }));

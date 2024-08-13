@@ -57,6 +57,7 @@ export const getMemberGroups = async (memberId) => {
 export const getAvailableGroups = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/groups`);
+    console.log(response.data)
     return response.data;
   } catch (error) {
     console.error('Error fetching available groups:', error.response ? error.response.data : error.message);

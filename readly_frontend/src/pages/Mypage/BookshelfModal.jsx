@@ -13,8 +13,8 @@ const customModalStyles = {
     left: "0",
   },
   content: {
-    width: "60%",
-    maxWidth: "100%",
+    width: "80%",
+    maxWidth: "800px",
     height: "80%",
     maxHeight: "80vh",
     zIndex: "150",
@@ -47,21 +47,29 @@ export default function BookshelfList({ isOpen, onRequestClose, books }) {
         X
       </button>
       <h2 className="text-2xl font-bold mb-4">읽은 책들이에요!</h2>
-      <div className="flex flex-col gap-4">
-        {books &&
+      <div className="space-y-6">
+        {books && books.length > 0 ? (
           books.map((book) => (
-            <div key={book.id} className="flex items-center gap-4 mb-4">
+            <div key={book.id} className="flex bg-[#fdf9f9] p-4 rounded-lg shadow">
               <img
                 src={book.image}
                 alt={book.title}
-                className="w-[10rem] h-[15rem] object-cover"
+                className="w-32 h-48 object-cover mr-4"
               />
-              <div>
-                <p className="text-center">{book.title}</p>
-                <p className="text-center">{book.detail}</p>
+              <div className="flex-1">
+                <div className="border-b border-gray-300 pb-2 mb-2">
+                  <p className="font-bold text-xl">{book.title}</p>
+                  <p className="text-sm text-gray-600">{book.author}</p>
+                </div>
+                <p className="mt-2 text-sm text-gray-700 leading-relaxed">
+                  {book.detail}
+                </p>
               </div>
             </div>
-          ))}
+          ))
+        ) : (
+          <p>아직 읽은 책이 없습니다.</p>
+        )}
       </div>
     </Modal>
   );

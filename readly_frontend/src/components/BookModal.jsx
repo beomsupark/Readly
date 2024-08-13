@@ -148,7 +148,7 @@ export default function BookModal({
             </div>
 
             <div className="flex flex-col">
-              <h2 className="font-bold text-xl mb-4">
+              <h2 className="font-bold text-xl">
                 가장 <span className="text-custom-highlight">인기</span> 많은{" "}
                 <span className="text-custom-highlight">콘텐츠</span>
               </h2>
