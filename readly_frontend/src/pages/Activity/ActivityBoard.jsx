@@ -67,50 +67,49 @@ export default function ActivityBoard({ groupId }) {
   useEffect(() => {
     fetchPosts();
   }, [groupId, currentPage]);
-
+  
   const fetchPosts = async () => {
     try {
       setError(null);
-      console.log('Fetching posts with params:', { groupId, pageNumber: currentPage, pageSize });
+      console.log('Fetching posts with params:', { groupId, currentPage, pageSize });
+  
+      // GET 요청에 params로 데이터 전달
       const response = await axios.get(`${BASE_URL}/proceeding`, {
-        data: { 
-          groupId, 
-          pageNumber: currentPage, 
-          pageSize 
-        },
         headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Authorization': `Bearer ${token}`
+        },
+        params: {
+          groupId: groupId,
+          pageNumber: currentPage,
+          pageSize: pageSize
         }
       });
+  
       console.log('Server response:', response.data);
-      if (Array.isArray(response.data.proceedings)) {
-        setPosts(response.data.proceedings);
-        setTotalPosts(response.data.totalProceedings || 0);
-      } else {
-        console.error('Unexpected response format:', response.data);
-        setError('서버에서 예상치 못한 응답 형식을 받았습니다.');
-      }
+  
+      setPosts(response.data.proceedings);
+      setTotalPosts(response.data.totalProceedings || 0);
+  
     } catch (error) {
       console.error('Error fetching posts:', error);
       let errorMessage = '글 목록을 불러오는 데 실패했습니다. ';
       if (error.response) {
-        console.error('Error response:', error.response);
-        if (error.response.status === 500) {
-          errorMessage += '서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';
-          console.error('Server error details:', error.response.data);
-        } else {
-          errorMessage += `오류 코드: ${error.response.status}`;
-        }
+          console.error('Error response:', error.response);
+          if (error.response.status === 500) {
+              errorMessage += '서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';
+              console.error('Server error details:', error.response.data);
+          } else {
+              errorMessage += `오류 코드: ${error.response.status}`;
+          }
       } else if (error.request) {
-        errorMessage += '서버로부터 응답이 없습니다.';
+          errorMessage += '서버로부터 응답이 없습니다.';
       } else {
-        errorMessage += '알 수 없는 오류가 발생했습니다.';
+          errorMessage += '알 수 없는 오류가 발생했습니다.';
       }
       setError(errorMessage);
     }
   };
-
+  
 
   const handleViewPost = async (id) => {
     if (selectedPost === id) {
