@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import levelIcon1 from "../../assets/level/lv1.png";
 import levelIcon2 from "../../assets/level/lv2.png";
@@ -7,28 +7,32 @@ import levelIcon4 from "../../assets/level/lv4.png";
 import catCoin from "../../assets/level/cat_coin.png";
 import { getFollowerInfo } from "../../api/memberAPI";
 import { addFollower, removeFollower } from "../../api/followAPI";
+import { getFollowers } from "../../api/mypageAPI";
 import useUserStore from '../../store/userStore';
+import useFollowStore from '../../store/followStore';
 import './follow_btn.css';
 import Review from "../../components/Review/Review.jsx"
 import BookshelfList from "../Mypage/BookshelfModal.jsx"
 import PhotocardList from "../Mypage/PhotocardListModal.jsx"
 import ReviewList from "../Mypage/ReviewListModal.jsx"
 
-const FollowButton = ({ onClick }) => {
+const FollowButton = ({ isFollowing, onClick, isLoading }) => {
   return (
-    <label className="follow-btn-container" onClick={onClick}>
-      <input type="checkbox" defaultChecked />
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="50px" width="50px" className="like">
+    <label className={`follow-btn-container ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={onClick}>
+      <input type="checkbox" checked={isFollowing} readOnly />
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="40px" width="40px" className="like">
         <path d="M8 10V20M8 10L4 9.99998V20L8 20M8 10L13.1956 3.93847C13.6886 3.3633 14.4642 3.11604 15.1992 3.29977L15.2467 3.31166C16.5885 3.64711 17.1929 5.21057 16.4258 6.36135L14 9.99998H18.5604C19.8225 9.99998 20.7691 11.1546 20.5216 12.3922L19.3216 18.3922C19.1346 19.3271 18.3138 20 17.3604 20L8 20"></path>
       </svg>
-      <svg width="50" height="50" xmlns="http://www.w3.org/2000/svg" className="celebrate">
-        <polygon points="0,0 10,10"></polygon>
-        <polygon points="0,25 10,25"></polygon>
-        <polygon points="0,50 10,40"></polygon>
-        <polygon points="50,0 40,10"></polygon>
-        <polygon points="50,25 40,25"></polygon>
-        <polygon points="50,50 40,40"></polygon>
-      </svg>
+      {isFollowing && (
+        <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" className="celebrate">
+          <polygon points="0,0 10,10"></polygon>
+          <polygon points="0,25 10,25"></polygon>
+          <polygon points="0,50 10,40"></polygon>
+          <polygon points="50,0 40,10"></polygon>
+          <polygon points="50,25 40,25"></polygon>
+          <polygon points="50,50 40,40"></polygon>
+        </svg>
+      )}
     </label>
   );
 };
@@ -39,33 +43,48 @@ export default function Member() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowLoading, setIsFollowLoading] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [photocardModalIsOpen, setPhotocardModalIsOpen] = useState(false);
   const [reviewModalIsOpen, setReviewModalIsOpen] = useState(false);
   const [userId, setUserId] = useState(null);
 
-  
-  const currentUser = useUserStore(state => state.user); // user 객체에서 ID와 token을 가져옴
+  const currentUser = useUserStore(state => state.user);
+  const { followings, setFollowings, addFollowing, removeFollowing } = useFollowStore();
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchData = async () => {
       try {
+        setIsLoading(true);
         const data = await getFollowerInfo(memberId);
         setUserData(data);
-        setUserId(data.memberResponse.id);  // 여기서 userId를 설정합니다.
-        console.log(data);
-        console.log(data.memberResponse.id);
-        // 팔로우 상태 확인 로직 추가 필요
+        setUserId(data.memberResponse.id);
+  
+        if (currentUser) {
+          const followersData = await getFollowers(currentUser.id);
+          const followingsSet = new Set(followersData.map(follower => follower.id));
+          setFollowings(followingsSet);
+  
+          // Log the check to ensure correctness
+          if (followingsSet.has(data.memberResponse.id)) {
+            console.log('Already following this user.');
+            setIsFollowing(true);
+          } else {
+            console.log('Not following this user.');
+            setIsFollowing(false);
+          }
+        }
       } catch (err) {
-        console.error("Error fetching user data:", err);
+        console.error("Error fetching data:", err);
         setError(err.message);
       } finally {
         setIsLoading(false);
       }
     };
   
-    fetchUserData();
-  }, [memberId]);
+    fetchData();
+  }, [memberId, currentUser, setFollowings]);
+  
 
   const calculateLevel = (point) => {
     if (point < 1000) return 1;
@@ -84,30 +103,33 @@ export default function Member() {
     }
   };
 
-  const handleFollowClick = async () => {
+  const handleFollowClick = useCallback(async () => {
+    if (isFollowLoading || !currentUser || !userId) {
+      return;
+    }
+
+    setIsFollowLoading(true);
     try {
-      if (!currentUser || !userId) {
-        console.error('User is not logged in or userId is not set.');
-        return;
-      }
-      
       const { id: currentUserId } = currentUser;
       
       if (isFollowing) {
         await removeFollower(currentUserId, userId);
-        setIsFollowing(false);
+        removeFollowing(userId);
       } else {
         await addFollower(currentUserId, userId);
-        setIsFollowing(true);
+        addFollowing(userId);
       }
+      setIsFollowing(!isFollowing);
     } catch (error) {
       console.error('팔로우 작업 중 오류 발생:', error);
       if (error.response && error.response.status === 500) {
-        // 사용자에게 오류 메시지를 표시
-        // alert('팔로우 작업 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        alert('팔로우 작업 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
       }
+    } finally {
+      setIsFollowLoading(false);
     }
-  };
+  }, [isFollowLoading, currentUser, userId, isFollowing, removeFollowing, addFollowing]);
+
 
   const openModal = () => {
     setModalIsOpen(true);
@@ -146,7 +168,7 @@ export default function Member() {
         <div>
           <div className="flex text-center">
             <h2 className="text-2xl font-bold mr-2">{user.memberResponse.nickname}</h2>
-            <FollowButton onClick={handleFollowClick} />
+            <FollowButton isFollowing={isFollowing} onClick={handleFollowClick} isLoading={isFollowLoading} />
           </div>
           <p className="text-base">{user.memberResponse.introduction}</p>
         </div>
