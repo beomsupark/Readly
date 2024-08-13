@@ -23,12 +23,13 @@ public class NotificationController {
     public static Map<Long, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
 
     // 메시지 알림
-    @GetMapping("/subscribe/{userId}")
+    // 메시지 알림
+    @GetMapping(value = "/subscribe/{userId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(@PathVariable Long userId) throws Exception {
         SseEmitter sseEmitter = notificationService.subscribe(userId);
-
         return sseEmitter;
     }
+
     @GetMapping("/unread/{memberId}")
     public ResponseEntity<List<Notification>> getUnreadNotifications(@PathVariable int memberId) {
         try {

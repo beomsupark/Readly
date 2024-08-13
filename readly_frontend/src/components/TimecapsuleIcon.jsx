@@ -9,7 +9,7 @@ const Timecapsule = () => {
   const { user } = useUserStore(); // user 정보를 가져옴
   const memberId = user.id; // user의 id를 memberId로 설정
 
-  const [alarmCount, setAlarmCount] = useState(0);
+  const [unreadAlarmsCount, setUnreadAlarmsCount] = useState(0);
   const [alarms, setAlarms] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedCapsule, setSelectedCapsule] = useState(null);
@@ -19,8 +19,9 @@ const Timecapsule = () => {
     // 로그인 후 알람 개수 불러오기
     const fetchUnreadCount = async () => {
       try {
-        const response = await axios.get(`https://i11c207.p.ssafy.io/api/timecapsule/${memberId}/alarm/unread-count`);
-        setAlarmCount(response.data.alarmCount);
+        const response = await axios.get(`http://localhost:8080/api/timecapsule/${memberId}/alarm/unread-count`);
+        setUnreadAlarmsCount(response.data);
+        console.log("Unread Alarm Count:", response.data); // Log the unread alarm count
       } catch (error) {
         console.error("Failed to fetch unread alarm count:", error);
       }
@@ -30,24 +31,27 @@ const Timecapsule = () => {
   }, [memberId]);
 
   const handleIconClick = async () => {
-    setIsDropdownOpen(!isDropdownOpen);
-
     if (!isDropdownOpen) {
       try {
-        const response = await axios.get(`https://i11c207.p.ssafy.io/api/timecapsule/${memberId}/alarm`);
+        const response = await axios.get(`http://localhost:8080/api/timecapsule/${memberId}/alarm`);
         setAlarms(response.data);
+        setUnreadAlarmsCount(response.data.filter(alarm => !alarm.isRead).length);
+        setIsDropdownOpen(true);
       } catch (error) {
         console.error("Failed to fetch alarms:", error);
       }
+    } else {
+      setIsDropdownOpen(false);
     }
   };
 
   const handleAlarmClick = async (timeCapsuleId) => {
     try {
-      const response = await axios.get(`https://i11c207.p.ssafy.io/api/timecapsule/${timeCapsuleId}`);
-      console.log(response.data)
+      const response = await axios.get(`http://localhost:8080/api/timecapsule/${timeCapsuleId}`);
       setSelectedCapsule(response.data);
       setIsModalOpen(true);
+      // 특정 알람을 클릭하면 해당 알람을 읽음 처리할 수 있습니다.
+      setUnreadAlarmsCount(prevCount => prevCount - 1);
     } catch (error) {
       console.error("Failed to fetch time capsule details:", error);
     }
@@ -70,12 +74,10 @@ const Timecapsule = () => {
 
   return (
     <div className="relative">
-      <div className="cursor-pointer flex items-center" onClick={handleIconClick}>
+       <div className="cursor-pointer flex items-center relative" onClick={handleIconClick}>
         <span className="text-2xl">⏳</span>
-        {alarmCount > 0 && (
-          <span className="ml-1 bg-red-500 text-white text-xs rounded-full px-2 py-1">
-            {alarmCount}
-          </span>
+        {unreadAlarmsCount > 0 && (
+            <span className="notification-dot"></span>
         )}
       </div>
 
@@ -88,12 +90,15 @@ const Timecapsule = () => {
               {alarms.map((alarm) => (
                 <li
                   key={alarm.timeCapsuleId}
-                  className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${
+                  className={`px-4 py-2 cursor-pointer hover:bg-gray-100 flex items-center ${
                     alarm.isRead ? "text-gray-500" : "text-black font-bold"
                   }`}
                   onClick={() => handleAlarmClick(alarm.timeCapsuleId)}
                 >
                   {`Time Capsule from ${alarm.createdDate}`}
+                  {!alarm.isRead && (
+                    <span className="ml-2 bg-red-500 w-3 h-3 rounded-full"></span> // 빨간 점 표시
+                  )}
                 </li>
               ))}
             </ul>

@@ -4,8 +4,6 @@ import com.ssafy.readly.controller.NotificationController;
 import com.ssafy.readly.entity.Notification;
 import com.ssafy.readly.enums.IsRead;
 import com.ssafy.readly.repository.notification.NotificationRepository;
-import com.ssafy.readly.service.follower.SseEmitterService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -13,12 +11,10 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.util.List;
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
-    private final SseEmitterService sseEmitterService;
 
     @Override
     public void sendNotification(int memberId, String message) throws Exception {
