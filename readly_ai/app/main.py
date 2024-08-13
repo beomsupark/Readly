@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer , util
 
 embedder = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-df = pd.read_csv("./books.csv",encoding='cp949').fillna(" ")
+df = pd.read_csv("books.csv",encoding='cp949').fillna(" ")
 sentences = df['D']
 embeddings = embedder.encode(sentences)
 index = faiss.IndexFlatL2(embeddings.shape[1]) # 초기화 : 벡터의 크기를 지정
