@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import useUserStore from "../store/userStore";
+import { BASE_URL } from '../api/authAPI';
 
 const NotificationIcon = ({ initialNotifications = [] }) => {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -10,7 +11,7 @@ const NotificationIcon = ({ initialNotifications = [] }) => {
 
   const fetchUnreadNotifications = async () => {
     try {
-      const response = await axios.get(`https://i11c207.p.ssafy.io/api/notifications/unread/${user.id}`);
+      const response = await axios.get(`${BASE_URL}/notifications/unread/${user.id}`);
       const notificationsData = Array.isArray(response.data) ? response.data : [];
       setNotifications(notificationsData);
     } catch (error) {
@@ -21,7 +22,7 @@ const NotificationIcon = ({ initialNotifications = [] }) => {
 
   const markNotificationAsRead = async (notificationId) => {
     try {
-      await axios.post(`https://i11c207.p.ssafy.io/api/notifications/mark-as-read/${user.id}/${notificationId}`);
+      await axios.post(`${BASE_URL}/notifications/mark-as-read/${user.id}/${notificationId}`);
       setNotifications((prevNotifications) =>
         prevNotifications.filter((notification) => notification.id !== notificationId)
       );
@@ -48,7 +49,7 @@ const NotificationIcon = ({ initialNotifications = [] }) => {
       eventSource.close(); // 기존 연결을 닫습니다.
     }
   
-    const newEventSource = new EventSource(`https://i11c207.p.ssafy.io/api/notifications/subscribe/${user.id}`);
+    const newEventSource = new EventSource(`${BASE_URL}/notifications/subscribe/${user.id}`);
   
     newEventSource.addEventListener("addMessage", function (event) {
       console.log("Notification received: ", event.data);

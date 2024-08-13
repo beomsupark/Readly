@@ -11,6 +11,7 @@ import sad from "../../assets/emoji/sad.png";
 import angry from "../../assets/emoji/angry.png";
 import happy from "../../assets/emoji/happy.png";
 import aladinLogo from "../../assets/onboard/aladinLogo.png";
+import { BASE_URL } from '../../api/authAPI.js';
 
 const customModalStyles = {
   overlay: {
@@ -31,7 +32,7 @@ const customModalStyles = {
 };
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/api/",
+  baseURL: BASE_URL,
 });
 
 export default function Recommend() {
@@ -76,7 +77,7 @@ export default function Recommend() {
     try {
       const query = `오늘은 ${selectedEmotion} 감정을 느꼈고, ${eventText}`;
       
-      const response = await axios.post("https://i11c207.p.ssafy.io/ai/recommand", {
+      const response = await axios.post(`${BASE_URL}/ai/recommand`, {
         query: query
       });
 

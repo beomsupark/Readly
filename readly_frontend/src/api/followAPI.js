@@ -1,11 +1,7 @@
 import axios from 'axios';
-import useUserStore from '../store/userStore';
-
-const BASE_URL = 'https://i11c207.p.ssafy.io/api';
+import { BASE_URL } from './authAPI';
 
 export const addFollower = async (memberId, followerMemberId) => {
-  const token = useUserStore.getState().token;
-
   try {
     console.log("Adding follower:", { memberId, followerMemberId });
     const response = await axios.post(`${BASE_URL}/follower`,
@@ -16,7 +12,6 @@ export const addFollower = async (memberId, followerMemberId) => {
       {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
         }
       }
     );
@@ -33,8 +28,6 @@ export const addFollower = async (memberId, followerMemberId) => {
 };
 
 export const removeFollower = async (memberId, followerMemberId) => {
-  const token = useUserStore.getState().token;
-
   try {
     console.log("Removing follower:", { memberId, followerMemberId });
     const response = await axios.delete(`${BASE_URL}/follower`,
@@ -45,7 +38,6 @@ export const removeFollower = async (memberId, followerMemberId) => {
         },
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
         }
       }
     );

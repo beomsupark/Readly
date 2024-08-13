@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Modal from "react-modal";
 import useUserStore from "../store/userStore"; // userStore import
+import { BASE_URL } from '../api/authAPI';
 
 Modal.setAppElement("#root"); // Modal 접근성을 위한 설정
 
@@ -19,7 +20,7 @@ const Timecapsule = () => {
     // 로그인 후 알람 개수 불러오기
     const fetchUnreadCount = async () => {
       try {
-        const response = await axios.get(`https://i11c207.p.ssafy.io/api/timecapsule/${memberId}/alarm/unread-count`);
+        const response = await axios.get(`${BASE_URL}/timecapsule/${memberId}/alarm/unread-count`);
         setUnreadAlarmsCount(response.data);
         console.log("Unread Alarm Count:", response.data); // Log the unread alarm count
       } catch (error) {
@@ -33,7 +34,7 @@ const Timecapsule = () => {
   const handleIconClick = async () => {
     if (!isDropdownOpen) {
       try {
-        const response = await axios.get(`https://i11c207.p.ssafy.io/api/timecapsule/${memberId}/alarm`);
+        const response = await axios.get(`${BASE_URL}/timecapsule/${memberId}/alarm`);
         setAlarms(response.data);
         setUnreadAlarmsCount(response.data.filter(alarm => !alarm.isRead).length);
         setIsDropdownOpen(true);
@@ -47,7 +48,7 @@ const Timecapsule = () => {
 
   const handleAlarmClick = async (timeCapsuleId) => {
     try {
-      const response = await axios.get(`https://i11c207.p.ssafy.io/api/timecapsule/${timeCapsuleId}`);
+      const response = await axios.get(`${BASE_URL}/timecapsule/${timeCapsuleId}`);
       setSelectedCapsule(response.data);
       setIsModalOpen(true);
       // 특정 알람을 클릭하면 해당 알람을 읽음 처리할 수 있습니다.
@@ -59,7 +60,7 @@ const Timecapsule = () => {
 
   const handleDeleteAlarm = async (timeCapsuleId) => {
     try {
-      await axios.delete(`https://i11c207.p.ssafy.io/api/timecapsule/${timeCapsuleId}`);
+      await axios.delete(`${BASE_URL}/timecapsule/${timeCapsuleId}`);
       setAlarms(prevAlarms => prevAlarms.filter(alarm => alarm.timeCapsuleId !== timeCapsuleId));
       setUnreadAlarmsCount(prevCount => prevCount - 1);
     } catch (error) {

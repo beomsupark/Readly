@@ -1,11 +1,7 @@
 import axios from 'axios';
-import useUserStore from '../store/userStore';
-
-const BASE_URL = 'https://i11c207.p.ssafy.io/api';
+import { BASE_URL } from './authAPI';
 
 export const addLike = async (memberId, reviewId = null, photoCardId = null) => {
-  const token = useUserStore.getState().token;
-
   try {
     console.log("Adding like:", { memberId, reviewId, photoCardId });
     const response = await axios.post(`${BASE_URL}/like`,
@@ -17,7 +13,6 @@ export const addLike = async (memberId, reviewId = null, photoCardId = null) => 
       {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
         }
       }
     );
@@ -34,8 +29,6 @@ export const addLike = async (memberId, reviewId = null, photoCardId = null) => 
 };
 
 export const removeLike = async (memberId, reviewId = null, photoCardId = null) => {
-  const token = useUserStore.getState().token;
-
   try {
     console.log("Removing like:", { memberId, reviewId, photoCardId });
     const response = await axios.delete(`${BASE_URL}/like`,
@@ -47,7 +40,6 @@ export const removeLike = async (memberId, reviewId = null, photoCardId = null) 
         },
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
         }
       }
     );

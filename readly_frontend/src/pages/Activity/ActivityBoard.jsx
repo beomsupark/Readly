@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import useUserStore from "../../store/userStore";
 import { AlertCircle, Plus, Eye, EyeOff, Edit2, Trash2 } from "lucide-react";
-
-const BASE_URL = "https://i11c207.p.ssafy.io/api";
+import { BASE_URL } from '../../api/authAPI';
 
 const CreatePostModal = ({ isOpen, onClose, onSubmit }) => {
   const [newPost, setNewPost] = useState({ title: "", content: "" });
@@ -60,8 +58,6 @@ export default function ActivityBoard({ groupId }) {
   const [editingPost, setEditingPost] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState(null);
-  const { token } = useUserStore();
-
   const pageSize = 1;
 
   useEffect(() => {
@@ -78,10 +74,6 @@ export default function ActivityBoard({ groupId }) {
           pageNumber: currentPage, 
           pageSize 
         },
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
       });
       console.log('Server response:', response.data);
       if (Array.isArray(response.data.proceedings)) {
@@ -118,9 +110,7 @@ export default function ActivityBoard({ groupId }) {
     } else {
       try {
         setError(null);
-        const response = await axios.get(`${BASE_URL}/proceeding/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get(`${BASE_URL}/proceeding/${id}`);
         setSelectedPost(response.data);
       } catch (error) {
         console.error("Error fetching post details:", error);
@@ -139,12 +129,6 @@ export default function ActivityBoard({ groupId }) {
           ...newPost,
           groupId,
         },
-        {
-          headers: { 
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-        }
       );
       console.log("Create post response:", response.data); // Add this line for debugging
       setIsModalOpen(false);
@@ -165,9 +149,6 @@ export default function ActivityBoard({ groupId }) {
           title: editingPost.title,
           content: editingPost.content,
         },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
       );
       setEditingPost(null);
       fetchPosts();
@@ -180,9 +161,7 @@ export default function ActivityBoard({ groupId }) {
   const handleDeletePost = async (id) => {
     try {
       setError(null);
-      await axios.delete(`${BASE_URL}/proceeding/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(`${BASE_URL}/proceeding/${id}`);
       fetchPosts();
     } catch (error) {
       console.error("Error deleting post:", error);
