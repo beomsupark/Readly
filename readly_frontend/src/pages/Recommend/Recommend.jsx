@@ -43,7 +43,6 @@ export default function Recommend() {
   const [loading, setLoading] = useState(true);
   const [recommendedBookIds, setRecommendedBookIds] = useState([]);
   const token = useUserStore(state => state.token);
-  console.log("Current token:", token);
 
 
   useEffect(() => {

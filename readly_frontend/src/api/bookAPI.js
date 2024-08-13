@@ -34,3 +34,25 @@ export const fetchBookDetails = async (bookId) => {
     throw error;
   }
 };
+
+export const fetchBookDetailsWithPhotoAndReview = async (bookId) => {
+  try {
+    console.log('전송한다', bookId)
+    const response = await axios.get(`${BASE_URL}/book/searchBook/${bookId}`);
+    console.log('받는다', response.data)
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching book details with photo and review:', error.response ? error.response.data : error.message);
+    throw error;
+  }
+};
+
+export const addBookToUser = async (memberId, bookId) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/user/add`, { memberId, bookId });
+    return response.data;
+  } catch (error) {
+    console.error('Error adding book to user:', error);
+    throw error;
+  }
+};
