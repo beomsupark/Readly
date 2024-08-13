@@ -80,5 +80,14 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewQueryDSLRepository.getReviewsByLoginId(LoginId);
     }
 
+    /**
+     * @param bookId
+     * @return
+     */
+    @Override
+    public ReviewResponse findReivewForBookSearch(int bookId) {
+        return reviewQueryDSLRepository.findReivewForBookSearch(bookId);
+    }
+
 
 }

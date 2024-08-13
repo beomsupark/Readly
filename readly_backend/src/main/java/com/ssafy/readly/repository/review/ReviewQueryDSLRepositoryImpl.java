@@ -121,6 +121,41 @@ public class ReviewQueryDSLRepositoryImpl implements ReviewQueryDSLRepository {
         return list;
     }
 
+    /**
+     * @param bookId
+     * @return
+     */
+    @Override
+    public ReviewResponse findReivewForBookSearch(int bookId) {
+
+        List<ReviewResponse> list = queryFactory.select(Projections.constructor(ReviewResponse.class,
+                        review.id,
+                        book.image,
+                        member.loginId,
+                        book.title,
+                        book.author,
+                        review.createdDate,
+                        review.text,
+                        review.visibility,
+                        like.count(),
+                        ExpressionUtils.as(
+                                JPAExpressions.select(like.count())
+                                        .from(like)
+                                        .join(like.member,member)
+                                        .where(member.id.eq(review.member.id)), "check"))
+                ).from(like)
+                .join(like.timeCapsuleItem, timeCapsuleItem)
+                .rightJoin(timeCapsuleItem.review, review)
+                .join(review.member, member)
+                .join(review.book, book)
+                .groupBy(review.id,review.member.id)
+                .orderBy(new OrderSpecifier(Order.DESC, like.count()))
+                .offset(1)
+                .limit(1)
+                .fetch();
+        return list.get(0);
+    }
+
     private OrderSpecifier[] createOrderSpecifier(ReviewSearchRequest reviewRequest) {
 
         List<OrderSpecifier> orderSpecifiers = new ArrayList<>();
