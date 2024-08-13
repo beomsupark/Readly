@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import useUserStore from "./store/userStore";
 import Login from "./pages/Login/Login.jsx";
@@ -18,6 +18,16 @@ import MakeCommunity from "./pages/Community/MakeCommunity.jsx";
 import Activity from "./pages/Activity/Activity.jsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Member from "./pages/Member/Member.jsx"
+
+function RootRedirect() {
+  const token = useUserStore.getState().token;
+
+  if (token) {
+    return <Navigate to="/home" replace />;
+  } else {
+    return <OnBoard />;
+  }
+}
 
 function App() {
   const location = useLocation();
@@ -55,13 +65,13 @@ function App() {
   }, [location.pathname]);
 
   const setUser = useUserStore((state) => state.setUser);
+  const user = useUserStore((state) => state.user);
 
   useEffect(() => {
-    const userInfo = localStorage.getItem("userInfo");
-    if (userInfo) {
-      setUser(JSON.parse(userInfo));
+    if (user) {
+      setUser(user);
     }
-  }, [setUser]);
+  }, [user, setUser]);
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden">
@@ -71,7 +81,7 @@ function App() {
         <main className={`flex-1 ${!isFullScreenPage ? "ml-28" : ""}`}>
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/" element={<OnBoard />} />
+            <Route path="/" element={<RootRedirect />} />
             <Route element={<ProtectedRoute />}>
               <Route path="/home" element={<Home />} />
               <Route path="/sharedboard" element={<SharedBoard />} />

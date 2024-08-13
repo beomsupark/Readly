@@ -25,7 +25,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public void singnUp(SignUpMemberRequest signUpMember) {
+    public void signUp(SignUpMemberRequest signUpMember) {
         checkDuplicateId(signUpMember.getLoginId());
 
         Member member = new Member(
@@ -114,7 +114,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberResponse getMemberbyLoginId(String loginId) {
-        return memberRepository.findDataByLoginId(loginId).orElseThrow(() -> new NoSuchElementException("해당 유저가 존재하지 않습니다."));
+    public MemberResponse getMemberbyLoginId(String loginid) {
+        return memberRepository.findDataByLoginId(loginid).orElseThrow(() -> new NoSuchElementException("해당 유저가 존재하지 않습니다."));
     }
 }

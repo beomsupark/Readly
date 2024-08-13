@@ -45,7 +45,7 @@ class MemberServiceImplTest {
                 Social.R);
 
         // When
-        memberServiceImpl.singnUp(signUpMember);
+        memberServiceImpl.signUp(signUpMember);
         Optional<Member> findMember = memberRepositoryImpl.findById(1);
 
         // Then
@@ -69,7 +69,7 @@ class MemberServiceImplTest {
                 Gender.M,
                 Social.R);
 
-        memberServiceImpl.singnUp(signUpMember);
+        memberServiceImpl.signUp(signUpMember);
 
         // When Then
         assertThrows(IllegalStateException.class, () -> {

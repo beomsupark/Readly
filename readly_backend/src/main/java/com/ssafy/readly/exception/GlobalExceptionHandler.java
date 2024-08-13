@@ -85,6 +85,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(map, headers, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(value = UnAuthorizedException.class)
+    public ResponseEntity<Map<String, Object>> handleUnAuthorizedException(UnAuthorizedException e) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("errorMessage", e.getMessage());
+        return new ResponseEntity<>(map, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception e) {
         Map<String, Object> map = new HashMap<>();

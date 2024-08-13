@@ -1,18 +1,18 @@
 import axios from "axios";
 import useUserStore from "../store/userStore"; // userStore의 실제 경로로 수정해주세요
 
-const API_BASE_URL = "https://i11c207.p.ssafy.io/api";
+const API_BASE_URL = 'http://localhost:8080/api';
 
 // axios 인스턴스 생성
 const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
-api.interceptors.request.use(
+axios.interceptors.request.use(
   (config) => {
+    const id = useUserStore.getState().user.id;
     const token = useUserStore.getState().token;
-    console.log("Current token:", token); // 추가된 부분
-    if (token) {
+    if (config.url !== `${API_BASE_URL}/member/${id}/token` && token) {
       config.headers["Authorization"] = `${token}`;
     }
     return config;
@@ -21,13 +21,31 @@ api.interceptors.request.use(
 );
 
 // 응답 인터셉터 추가
-api.interceptors.response.use(
+axios.interceptors.response.use(
   (response) => response,
   async (error) => {
+    const originalRequest = error.config; // 원래 요청 정보 저장
     if (error.response && error.response.status === 401) {
-      // 토큰이 만료되었거나 유효하지 않은 경우
-      useUserStore.getState().clearUser();
-      throw new Error("인증에 실패했습니다. 다시 로그인해주세요.");
+      try {
+        const id = useUserStore.getState().user.id;
+        const response = await api({
+          url: `${API_BASE_URL}/member/${id}/token`,
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true, // 쿠키를 보내기 위한 설정
+        });
+
+        useUserStore.getState().setToken(response.data.accessToken);
+        originalRequest.headers["Authorization"] = `${response.data.accessToken}`;
+
+        // 원래 요청을 다시 시도
+        return axios(originalRequest);
+      } catch (refreshError) {
+        useUserStore.getState().clearUser();
+        throw new Error("인증에 실패했습니다. 다시 로그인해주세요.");
+      }
     }
     return Promise.reject(error);
   }
@@ -65,22 +83,16 @@ export const logout = async () => {
 
 export const getUserInfo = async () => {
   try {
-    const response = await api.get("/member/info");
+    const response = await axios.get(`${API_BASE_URL}/member/info`);
     return response.data.memberInfo || response.data;
   } catch (error) {
-    console.error("Error in getUserInfo:", error);
-    if (error.response) {
-      console.error("Error response:", error.response.data);
-      console.error("Error status:", error.response.status);
-      console.error("Error headers:", error.response.headers);
-    }
-    throw error;
+    alert("사용자 정보를 가져오는 데 문제가 발생했습니다. 나중에 다시 시도해 주세요.");
   }
 };
 
 export const updateUserInfo = async (updateData) => {
   try {
-    const response = await api.patch("/member", updateData);
+    const response = await axios.patch(`${API_BASE_URL}/member`, updateData);
 
     if (response.status === 200) {
       return response.data;
@@ -95,14 +107,11 @@ export const updateUserInfo = async (updateData) => {
 
 export const getMemberInfo = async (id) => {
   try {
-    const response = await api.get(`/member/${id}`);
+    const response = await axios.get(`${API_BASE_URL}/member/${id}`);
     return response.data.memberInfo;
   } catch (error) {
-    console.error("Error fetching member info:", error);
-    if (error.response) {
-      console.error("Error response:", error.response.data);
-      console.error("Error status:", error.response.status);
-      console.error("Error headers:", error.response.headers);
+    if (error) {
+      alert("사용자 정보를 가져오는 데 문제가 발생했습니다. 나중에 다시 시도해 주세요.");
     }
     throw error.response?.data || error.message;
   }
