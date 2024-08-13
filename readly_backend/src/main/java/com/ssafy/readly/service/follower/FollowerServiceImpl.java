@@ -2,7 +2,6 @@ package com.ssafy.readly.service.follower;
 
 import com.ssafy.readly.dto.follower.RequestFollowerDto;
 import com.ssafy.readly.repository.follower.FollowerRepository;
-import com.ssafy.readly.service.notification.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 public class FollowerServiceImpl implements FollowerService {
 
     private final FollowerRepository followerRepository;
-    private final NotificationService notificationService;
 
     @Override
     public void addFollower(RequestFollowerDto requestFollowerDto) throws Exception {
