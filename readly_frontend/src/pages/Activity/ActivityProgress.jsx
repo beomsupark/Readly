@@ -8,6 +8,7 @@ import GroupCurrentPageModal from "../../components/ProgressBar/Group/GroupCurre
 import BookModal from "../../components/BookModal.jsx";
 import useBookStore from "../../store/bookStore";
 import { postReview } from "../../api/reviewAPI";
+import { BASE_URL } from '../../api/authAPI.js';
 
 const getLayoutClasses = (memberCount) => {
   if (memberCount <= 4) {
@@ -62,10 +63,7 @@ export default function ActivityProgress({ groupId }) {
     try {
       console.log(`Fetching data for groupId: ${groupId}`);
       const response = await axios.get(
-        `https://i11c207.p.ssafy.io/api/group/read-books/${groupId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        `${BASE_URL}/group/read-books/${groupId}`,
       );
       console.log("API Response:", response.data);
 
@@ -93,15 +91,12 @@ export default function ActivityProgress({ groupId }) {
   const updateCurrentPage = async (memberId, newPage) => {
     try {
       await axios.patch(
-        `https://i11c207.p.ssafy.io/api/user/update-page`,
+        `${BASE_URL}/user/update-page`,
         {
           bookId: bookInfo.book_id,
           memberId,
           currentPage: newPage,
         },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
       );
 
       setReadBooks((prevReadBooks) =>
@@ -220,9 +215,7 @@ export default function ActivityProgress({ groupId }) {
       };
       console.log("Request data:", requestData);
 
-      await axios.post("https://i11c207.p.ssafy.io/api/group/add", requestData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.post(`${BASE_URL}/group/add`, requestData);
 
       setBookInfo({
         book_id: book.bookId,

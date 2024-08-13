@@ -9,6 +9,7 @@ import { getMemberGroups } from "../../api/communityAPI";
 import useUserStore from "../../store/userStore";
 import axios from 'axios';
 import { GroupDelete, GroupLeave } from './DeleteGroup.jsx';
+import { BASE_URL } from '../../api/authAPI.js';
 
 export default function Activity() {
   const { groupId } = useParams();
@@ -73,7 +74,7 @@ export default function Activity() {
   useEffect(() => {
     const fetchGroupData = async () => {
       try {
-        const response = await axios.get(`https://i11c207.p.ssafy.io/api/group/read-books/${selectedGroupId}`, {
+        const response = await axios.get(`${BASE_URL}/group/read-books/${selectedGroupId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const userInfo = response.data.readBooks.find(book => book.member_id === user.id);

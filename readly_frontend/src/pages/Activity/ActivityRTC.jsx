@@ -5,8 +5,7 @@ import useUserStore from "../../store/userStore";
 import ShareModal from "./ShareModal";
 import VideoConferenceView from "./VideoConferenceView";
 import ConferenceControls from "./ConferenceControls";
-
-const API_BASE_URL = "https://i11c207.p.ssafy.io/api";
+import { BASE_URL } from '../../api/authAPI';
 
 const ActivityRTC = ({ groupId, isActiveTab }) => {
   const [isVideoConferenceActive, setIsVideoConferenceActive] = useState(false);
@@ -85,18 +84,18 @@ const ActivityRTC = ({ groupId, isActiveTab }) => {
   };
 
   const getMyPhotocards = async () => {
-    const response = await axios.get(`${API_BASE_URL}/member/photocards/${user.id}`);
+    const response = await axios.get(`${BASE_URL}/member/photocards/${user.id}`);
     return response.data["my-photocards"];
   };
 
   const getMyReviews = async () => {
-    const response = await axios.get(`${API_BASE_URL}/member/reviews/${user.id}`);
+    const response = await axios.get(`${BASE_URL}/member/reviews/${user.id}`);
     return response.data["my-reviews"];
   };
 
   const checkSessionExists = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/rtc/sessions/check`, {
+      const response = await axios.get(`${BASE_URL}/rtc/sessions/check`, {
         params: { sessionId: groupId.toString() },
       });
       return response.data;
@@ -107,7 +106,7 @@ const ActivityRTC = ({ groupId, isActiveTab }) => {
 
   const initializeSession = async () => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/rtc/sessions`, {
+      const response = await axios.post(`${BASE_URL}/rtc/sessions`, {
         customSessionId: groupId.toString(),
       });
       setIsRoomCreated(true);
@@ -120,7 +119,7 @@ const ActivityRTC = ({ groupId, isActiveTab }) => {
   const getToken = async () => {
     try {
       const sessionId = await initializeSession();
-      const response = await axios.post(`${API_BASE_URL}/rtc/sessions/${sessionId}/connections`);
+      const response = await axios.post(`${BASE_URL}/rtc/sessions/${sessionId}/connections`);
       return response.data;
     } catch (error) {
       console.error("토큰 가져오기 오류:", error);

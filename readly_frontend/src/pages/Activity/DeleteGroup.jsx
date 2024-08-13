@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../../api/authAPI';
 
-export function GroupDelete({ groupId, token, onDeleteSuccess }) {
+export function GroupDelete({ groupId, onDeleteSuccess }) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -12,18 +13,14 @@ export function GroupDelete({ groupId, token, onDeleteSuccess }) {
 
   const confirmDeleteGroup = async () => {
     try {
-      const response = await axios.get(`https://i11c207.p.ssafy.io/api/group/read-books/${groupId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(`${BASE_URL}/group/read-books/${groupId}`);
       if (response.data.readBooks.length > 1) {
         alert("그룹 내 인원이 1명 이상입니다. 그룹을 삭제할 수 없습니다.");
         setIsDeleteModalOpen(false);
         return;
       }
       
-      await axios.delete(`https://i11c207.p.ssafy.io/api/group/${groupId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(`${BASE_URL}/group/${groupId}`);
       
       alert("그룹이 성공적으로 삭제되었습니다.");
       onDeleteSuccess();
@@ -81,7 +78,7 @@ export function GroupDelete({ groupId, token, onDeleteSuccess }) {
   );
 }
 
-export function GroupLeave({ groupId, userId, token, onLeaveSuccess }) {
+export function GroupLeave({ groupId, userId, onLeaveSuccess }) {
   const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -91,9 +88,7 @@ export function GroupLeave({ groupId, userId, token, onLeaveSuccess }) {
 
   const confirmLeaveGroup = async () => {
     try {
-      await axios.delete(`https://i11c207.p.ssafy.io/api/group/${groupId}/member/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(`${BASE_URL}/group/${groupId}/member/${userId}`);
       
       alert("그룹에서 성공적으로 탈퇴했습니다.");
       onLeaveSuccess(groupId);

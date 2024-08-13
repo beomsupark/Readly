@@ -1,18 +1,19 @@
 import axios from "axios";
 import useUserStore from "../store/userStore"; // userStore의 실제 경로로 수정해주세요
 
-const API_BASE_URL = "https://i11c207.p.ssafy.io/api";
+export const BASE_URL = "https://i11c207.p.ssafy.io/api";
+// export const BASE_URL = "http://localhost:8080/api";
 
 // axios 인스턴스 생성
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: BASE_URL,
 });
 
 axios.interceptors.request.use(
   (config) => {
     const id = useUserStore.getState().user.id;
     const token = useUserStore.getState().token;
-    if (config.url !== `${API_BASE_URL}/member/${id}/token` && token) {
+    if (config.url !== `${BASE_URL}/member/${id}/token` && token) {
       config.headers["Authorization"] = `${token}`;
     }
     return config;
@@ -29,7 +30,7 @@ axios.interceptors.response.use(
       try {
         const id = useUserStore.getState().user.id;
         const response = await api({
-          url: `${API_BASE_URL}/member/${id}/token`,
+          url: `${BASE_URL}/member/${id}/token`,
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -83,7 +84,7 @@ export const logout = async () => {
 
 export const getUserInfo = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/member/info`);
+    const response = await axios.get(`${BASE_URL}/member/info`);
     return response.data.memberInfo || response.data;
   } catch (error) {
     alert("사용자 정보를 가져오는 데 문제가 발생했습니다. 나중에 다시 시도해 주세요.");
@@ -92,7 +93,7 @@ export const getUserInfo = async () => {
 
 export const updateUserInfo = async (updateData) => {
   try {
-    const response = await axios.patch(`${API_BASE_URL}/member`, updateData);
+    const response = await axios.patch(`${BASE_URL}/member`, updateData);
 
     if (response.status === 200) {
       return response.data;
@@ -107,7 +108,7 @@ export const updateUserInfo = async (updateData) => {
 
 export const getMemberInfo = async (id) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/member/${id}`);
+    const response = await axios.get(`${BASE_URL}/member/${id}`);
     return response.data.memberInfo;
   } catch (error) {
     if (error) {

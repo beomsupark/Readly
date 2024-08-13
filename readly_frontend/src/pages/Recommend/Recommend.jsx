@@ -12,6 +12,7 @@ import sad from "../../assets/emoji/sad.png";
 import angry from "../../assets/emoji/angry.png";
 import happy from "../../assets/emoji/happy.png";
 import aladinLogo from "../../assets/onboard/aladinLogo.png";
+import { BASE_URL } from '../../api/authAPI.js';
 
 const customModalStyles = {
   overlay: {

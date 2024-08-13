@@ -156,7 +156,7 @@ export default function SignupForm() {
             />
             {tooltips.loginId && (
               <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-300 rounded shadow-lg p-2 text-sm text-[#000000] z-10">
-                아이디는 15자 이하로 입력해주세요.
+                아이디는 16자 이하로 입력해주세요.
               </div>
             )}
           </div>
@@ -192,7 +192,7 @@ export default function SignupForm() {
             />
             {tooltips.nickname && (
               <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-300 rounded shadow-lg p-2 text-sm text-[#000000] z-10">
-                닉네임은 10자 이하로 입력해주세요.
+                닉네임은 16자 이하로 입력해주세요.
               </div>
             )}
           </div>
@@ -209,7 +209,6 @@ export default function SignupForm() {
             />
             {tooltips.memberName && (
               <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-300 rounded shadow-lg p-2 text-sm text-[#000000] z-10">
-                이름은 8자 이하로 입력해주세요.
               </div>
             )}
           </div>
@@ -243,7 +242,7 @@ export default function SignupForm() {
             />
             {tooltips.email && (
               <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-300 rounded shadow-lg p-2 text-sm text-[#000000] z-10">
-                이메일은 40자 이하로 입력해주세요.
+                이메일은 30자 이하로 입력해주세요.
               </div>
             )}
           </div>

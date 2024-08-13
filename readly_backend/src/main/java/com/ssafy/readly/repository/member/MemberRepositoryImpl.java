@@ -42,17 +42,27 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public Optional<String> findByToken(int id) {
+    public Optional<String> findRefreshTokenById(Integer id) {
         return Optional.ofNullable(
                 queryFactory
-                .select(member.token)
+                .select(member.refreshToken)
                 .from(member)
                 .where(member.id.eq(id))
                 .fetchOne());
     }
 
     @Override
-    public Optional<Member> findById(int id) {
+    public Optional<String> findAccessTokenById(Integer id) {
+        return Optional.ofNullable(
+                queryFactory
+                        .select(member.accessToken)
+                        .from(member)
+                        .where(member.id.eq(id))
+                        .fetchOne());
+    }
+
+    @Override
+    public Optional<Member> findById(Integer id) {
         return Optional.ofNullable(em.find(Member.class, id));
     }
 
@@ -66,11 +76,11 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     /**
-     * @param Loginid
+     * @param LoginId
      * @return
      */
     @Override
-    public Optional<MemberResponse> findDataByLoginId(String Loginid) {
+    public Optional<MemberResponse> findDataByLoginId(String LoginId) {
         return Optional.ofNullable(queryFactory
                 .select(Projections.constructor(MemberResponse.class,
                         member.id,
@@ -85,9 +95,7 @@ public class MemberRepositoryImpl implements MemberRepository {
                         member.gender,
                         member.introduction))
                 .from(member)
-                .where(member.loginId.eq(Loginid))
+                .where(member.loginId.eq(LoginId))
                 .fetchOne());
     }
-
-
 }

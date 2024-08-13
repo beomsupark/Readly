@@ -1,11 +1,7 @@
 import axios from 'axios';
-import useUserStore from '../store/userStore';
-
-const BASE_URL = 'https://i11c207.p.ssafy.io/api';
+import { BASE_URL } from './authAPI';
 
 export const getReviews = async (searchType, orderType, pageSize, pageNumber) => {
-  const token = useUserStore.getState().token;
-
   try {
     console.log("get review send:", {
       searchType,
@@ -23,7 +19,6 @@ export const getReviews = async (searchType, orderType, pageSize, pageNumber) =>
       {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
         }
       }
     );
@@ -41,8 +36,6 @@ export const getReviews = async (searchType, orderType, pageSize, pageNumber) =>
 
 export const postReview = async (memberId, bookId, text, visibility) => {
   console.log('Sending review data:', { memberId, bookId, text, visibility });
-  const token = useUserStore.getState().token;  // 토큰 가져오기
-
   try {
     const response = await axios.post(`${BASE_URL}/review/addreview`, 
       {
@@ -54,7 +47,6 @@ export const postReview = async (memberId, bookId, text, visibility) => {
       {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
         }
       }
     );

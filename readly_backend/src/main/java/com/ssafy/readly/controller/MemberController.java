@@ -44,7 +44,7 @@ public class MemberController {
 
         String accessToken = jwtUtil.createAccessToken(loginMemberResponse.getId());
         String refreshToken = jwtUtil.createRefreshToken(loginMemberResponse.getId());
-        memberService.saveRefreshToken(loginMemberResponse.getId(), refreshToken);
+        memberService.saveTokens(loginMemberResponse.getId(), refreshToken, accessToken);
 
         CookieUtil.createCookie(response, "refreshToken", refreshToken, 604800, true);
         responseMap.put("accessToken", accessToken);
@@ -57,10 +57,10 @@ public class MemberController {
 
     @GetMapping("/member/{id}")
     public ResponseEntity<Map<String, Object>> getMemberInfo(
-            @PathVariable("id") int id, HttpServletRequest request) throws Exception {
+            @PathVariable("id") Integer id, HttpServletRequest request) throws Exception {
         Map<String, Object> responseMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
-        if (id == (int) request.getAttribute("memberId")) {
+        if (id.equals((Integer) request.getAttribute("memberId"))) {
             MemberResponse memberResponse = memberService.getMember(id);
             responseMap.put("memberInfo", memberResponse);
             status = HttpStatus.OK;
@@ -73,20 +73,21 @@ public class MemberController {
     }
 
     @DeleteMapping("/member/{id}/logout")
-    public ResponseEntity<?> logout(@PathVariable("id") int id) throws Exception {
+    public ResponseEntity<Void> logout(@PathVariable("id") Integer id) throws Exception {
         memberService.deleteRefreshToken(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/member/{id}/token")
     public ResponseEntity<Map<String, Object>> createAccessToken(
-            @PathVariable("id") int id, HttpServletRequest request) {
+            @PathVariable("id") Integer id, HttpServletRequest request) {
         Map<String, Object> responseMap = new HashMap<>();
         HttpStatus status = HttpStatus.ACCEPTED;
         String refreshToken = CookieUtil.getCookie("refreshToken", request);
         if(jwtUtil.checkToken(refreshToken)) {
             if (refreshToken.equals(memberService.getRefreshToken(id))) {
                 String accessToken = jwtUtil.createAccessToken(id);
+                memberService.saveAccessToken(id, accessToken);
                 responseMap.put("accessToken", accessToken);
                 status = HttpStatus.CREATED;
             }
@@ -98,9 +99,9 @@ public class MemberController {
     }
 
     @PatchMapping("/member")
-    public ResponseEntity<?> updateMember(@RequestBody UpdateMemberRequest updateMemberRequest) throws Exception {
+    public ResponseEntity<Void> updateMember(@RequestBody UpdateMemberRequest updateMemberRequest) throws Exception {
         memberService.updateMember(updateMemberRequest);
-        return new ResponseEntity<Map<String, Object>>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

@@ -1,16 +1,7 @@
 import axios from 'axios';
-import useUserStore from '../store/userStore';
-
-const BASE_URL = 'https://i11c207.p.ssafy.io/api';
-
-const getHeaders = (token) => ({
-  'Content-Type': 'application/json',
-  'Authorization': `Bearer ${token}`
-});
+import { BASE_URL } from './authAPI';
 
 export const fetchTimeCapsuleItems = async (memberId, startDate, endDate) => {
-  const { token } = useUserStore.getState();
-  
   if (!memberId || !startDate || !endDate) {
     throw new Error('Missing required parameters: memberId, startDate, or endDate');
   }
@@ -19,7 +10,6 @@ export const fetchTimeCapsuleItems = async (memberId, startDate, endDate) => {
     const response = await axios.post(
       `${BASE_URL}/items/date`, 
       { memberId, startDate, endDate },
-      { headers: getHeaders(token) }
     );
     console.log('Fetched time capsule items:', response.data);
     return response.data;
@@ -30,8 +20,6 @@ export const fetchTimeCapsuleItems = async (memberId, startDate, endDate) => {
 };
 
 export async function createTimeCapsule(memberId, startDate, endDate, reviewIds, photoCardIds) {
-  const { token } = useUserStore.getState();
-  
   // 데이터 유효성 검사
   if (!memberId || !startDate || !endDate) {
     throw new Error('필수 파라미터가 누락되었습니다: memberId, startDate, endDate');
@@ -48,9 +36,7 @@ export async function createTimeCapsule(memberId, startDate, endDate, reviewIds,
 
     console.log('타임캡슐 생성을 위한 페이로드:', payload);
 
-    const response = await axios.post(`${BASE_URL}/timecapsule`, payload, { 
-      headers: getHeaders(token) 
-    });
+    const response = await axios.post(`${BASE_URL}/timecapsule`, payload);
     
     console.log('타임캡슐 생성 응답 상태:', response.status);
 
@@ -72,16 +58,13 @@ export async function createTimeCapsule(memberId, startDate, endDate, reviewIds,
 }
 
 export const openTimeCapsule = async (timeCapsuleId) => {
-  const { token } = useUserStore.getState();
-  
   if (!timeCapsuleId) {
     throw new Error('필수 파라미터가 누락되었습니다: timeCapsuleId');
   }
 
   try {
     const response = await axios.get(
-      `${BASE_URL}/timecapsule/${timeCapsuleId}`,
-      { headers: getHeaders(token) }
+      `${BASE_URL}/timecapsule/${timeCapsuleId}`
     );
 
     console.log('타임캡슐 개봉 응답:', response.data);
@@ -117,14 +100,13 @@ export const openTimeCapsule = async (timeCapsuleId) => {
 };
 
 export const getTimeCapsuleItems = async (memberId, startDate, endDate) => {
-  const { token } = useUserStore.getState();
-  
   try {
     const response = await axios.post(`${BASE_URL}/items/date`, {
       memberId,
       startDate,
       endDate
-    }, { headers: getHeaders(token) });
+    },
+    );
     
     console.log('Retrieved time capsule items:', JSON.stringify(response.data, null, 2));
     return {

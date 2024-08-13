@@ -59,7 +59,7 @@ const ActivityChat = ({ groupId }) => {
   const fetchHistory = async (roomId) => {
     try {
       setIsHistoryLoading(true);
-      const response = await axios.get(`https://i11c207.p.ssafy.io/api/history/${roomId}`);
+      const response = await axios.get(`${BASE_URL}/history/${roomId}`);
       const fetchedMessages = Array.isArray(response.data) ? response.data : [];
       showHistory(fetchedMessages);
       setIsHistoryLoading(false);

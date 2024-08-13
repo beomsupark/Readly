@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import useUserStore from "../../store/userStore";
 import { AlertCircle, Plus, Eye, EyeOff, Edit2, Trash2 } from "lucide-react";
-
-const BASE_URL = "https://i11c207.p.ssafy.io/api";
+import { BASE_URL } from '../../api/authAPI';
 
 const CreateOrEditPostModal = ({ isOpen, onClose, onSubmit, post }) => {
   const [formData, setFormData] = useState(post || { title: "", content: "" });
@@ -229,9 +227,7 @@ export default function ActivityBoard({ groupId }) {
   const handleDeletePost = async (id) => {
     try {
       setError(null);
-      await axios.delete(`${BASE_URL}/proceeding/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(`${BASE_URL}/proceeding/${id}`);
       fetchPosts();
     } catch (error) {
       console.error("Error deleting post:", error);

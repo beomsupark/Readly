@@ -8,6 +8,7 @@ import BookModal from "../../components/BookModal.jsx";
 import useBookStore from "../../store/bookStore";
 import CreateReview from "../../components/Review/CreateReview";
 import { postReview } from "../../api/reviewAPI";
+import { BASE_URL } from '../../api/authAPI.js';
 
 export default function MyPageProgress({ userId }) {
   const [proceedingBooks, setProceedingBooks] = useState([]);
@@ -36,10 +37,7 @@ export default function MyPageProgress({ userId }) {
     try {
       console.log(`Fetching data for userId: ${userId}`);
       const response = await axios.get(
-        `https://i11c207.p.ssafy.io/api/member/proceeding-books/${userId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        `${BASE_URL}/member/proceeding-books/${userId}`,
       );
       console.log("API Response:", response.data);
 
@@ -70,11 +68,8 @@ export default function MyPageProgress({ userId }) {
       console.log("Update request data:", requestData);
 
       const response = await axios.put(
-        `https://i11c207.p.ssafy.io/api/member/proceeding-books/update`,
+        `${BASE_URL}/member/proceeding-books/update`,
         requestData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
       );
       console.log("Update response:", response.data);
 
@@ -147,11 +142,8 @@ export default function MyPageProgress({ userId }) {
       console.log("Add book request data:", requestData);
 
       const response = await axios.post(
-        "https://i11c207.p.ssafy.io/api/user/add",
+        `${BASE_URL}/user/add`,
         requestData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
       );
       console.log("Add book response:", response.data);
 

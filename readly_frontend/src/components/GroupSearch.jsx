@@ -5,6 +5,7 @@ import searchIcon from "../assets/header/search.png";
 import useBookStore from "../store/bookStore";
 import BookModal from "./BookModal";
 import useUserStore from "../store/userStore";
+import { BASE_URL } from '../api/authAPI';
 
 const customModalStyles = {
   overlay: {
@@ -73,13 +74,12 @@ export default function GroupBookSearch({ isOpen, onRequestClose, groupId, curre
   const handleBookRegister = useCallback(
     async (book) => {
       try {
-        await axios.post('https://i11c207.p.ssafy.io/api/group/add', {
+        await axios.post(`${BASE_URL}/group/add`, {
           oldBookId: currentBookId || null,
           groupId: groupId,
           bookId: book.id
-        }, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        },
+        );
         
         onBookRegister(book);
         setIsBookModalOpen(false);
