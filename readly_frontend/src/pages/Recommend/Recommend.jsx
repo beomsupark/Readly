@@ -155,22 +155,8 @@ export default function Recommend() {
             </div>
             <h3 className="font-bold text-lg mb-2">{info.book?.title || "제목 없음"}</h3>
             <p className="text-sm text-gray-600 mb-2">{info.book?.author || "저자 미상"}</p>
-            <p className="text-xs text-gray-500 mb-4">ISBN: {info.book?.ISBN || "없음"}</p>
             <p className="text-sm text-gray-700 mb-4 flex-grow">{info.book?.detail?.slice(0, 100)}...</p>
-            
-            {info.photocard && (
-              <div className="mb-4 p-3 bg-gray-100 rounded">
-                <p className="text-xs font-semibold mb-1">포토카드</p>
-                <p className="text-sm">{info.photocard.text}</p>
-              </div>
-            )}
-            
-            {info.review && (
-              <div className="mb-4 p-3 bg-gray-100 rounded">
-                <p className="text-xs font-semibold mb-1">리뷰</p>
-                <p className="text-sm">{info.review.text}</p>
-              </div>
-            )}
+          
 
             {info.book && info.book.purchase_link ? (
               <a
