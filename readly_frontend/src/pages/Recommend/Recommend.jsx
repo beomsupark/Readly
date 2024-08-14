@@ -13,6 +13,9 @@ import angry from "../../assets/emoji/angry.png";
 import happy from "../../assets/emoji/happy.png";
 import aladinLogo from "../../assets/onboard/aladinLogo.png";
 import { BASE_URL } from '../../api/authAPI.js';
+import { addBookToUser, fetchBookDetailsWithPhotoAndReview } from "../../api/bookAPI.js";
+import SimpleReview from "../components/Review/SimpleReview.jsx";
+import { useNavigate } from "react-router-dom";
 
 const customModalStyles = {
   overlay: {
@@ -33,6 +36,8 @@ const customModalStyles = {
 };
 
 export default function Recommend() {
+  const navigate = useNavigate();
+  const { user } = useUserStore();
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedEmotion, setSelectedEmotion] = useState("");
   const [eventText, setEventText] = useState("");
@@ -41,6 +46,9 @@ export default function Recommend() {
   const [recommendedBooks, setRecommendedBooks] = useState([]);
   const [showRecommendations, setShowRecommendations] = useState(false);
   const [recommendedBooksInfo, setRecommendedBooksInfo] = useState([]);
+  const [addBookStatus, setAddBookStatus] = useState(null);
+  const [photoard, setPhotoard] = useState(null);
+  const [review, setReview] = useState(null);
 
   useEffect(() => {
     fetchInitialRecommendation();
@@ -53,7 +61,8 @@ export default function Recommend() {
       console.log('Full API response:', response);
       
       if (response.data && response.data.book) {
-        setBook(response.data.book);
+        const bookId = response.data.book.id;
+        await fetchBookDetails(bookId);
       } else {
         console.error("Unexpected response format:", response.data);
       }
@@ -69,6 +78,17 @@ export default function Recommend() {
       throw error;
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchBookDetails = async (bookId) => {
+    try {
+      const data = await fetchBookDetailsWithPhotoAndReview(bookId);
+      setBook(data.book);
+      setPhotoard(data.photoard);
+      setReview(data.review);
+    } catch (error) {
+      console.error("Error fetching book details:", error);
     }
   };
 
@@ -106,12 +126,12 @@ export default function Recommend() {
           .then(res => res.data)
           .catch(err => {
             console.error(`Error fetching book info with id ${id}:`, err);
-            return null; // 에러가 발생한 경우 null을 반환
+            return null;
           })
       );
       
       const booksInfo = await Promise.all(bookInfoPromises);
-      setRecommendedBooksInfo(booksInfo.filter(info => info !== null)); // null 값 제거
+      setRecommendedBooksInfo(booksInfo.filter(info => info !== null));
       setShowRecommendations(true);
     } catch (error) {
       console.error("에러 발생:", error);
@@ -123,6 +143,28 @@ export default function Recommend() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAddBook = async () => {
+    if (!book || !user) {
+      alert("책 정보가 없거나 로그인되지 않았습니다.");
+      return;
+    }
+
+    setAddBookStatus("loading");
+    try {
+      await addBookToUser(user.id, book.id);
+      setAddBookStatus("success");
+      alert("책이 성공적으로 등록되었습니다.");
+    } catch (error) {
+      console.error("Error adding book:", error);
+      setAddBookStatus("error");
+      alert("책 등록에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
+  const handleGoToSharedBoard = () => {
+    navigate("/sharedboard");
   };
 
   const emotions = [
@@ -157,23 +199,29 @@ export default function Recommend() {
             <p className="text-sm text-gray-600 mb-2">{info.book?.author || "저자 미상"}</p>
             <p className="text-sm text-gray-700 mb-4 flex-grow">{info.book?.detail?.slice(0, 100)}...</p>
           
-
-            {info.book && info.book.purchase_link ? (
-              <a
-                href={info.book.purchase_link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-2 inline-block"
-              >
-                <img
-                  src={aladinLogo}
-                  alt="알라딘으로 이동"
-                  className="h-6 w-auto object-contain rounded-full"
-                />
-              </a>
-            ) : (
-              <p className="text-xs text-gray-500 mt-2">구매 링크 없음</p>
-            )}
+            <div className="flex justify-between items-center mt-4">
+              {info.book && info.book.purchase_link ? (
+                
+                  href={info.book.purchase_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block"
+                >
+                  <img
+                    src={aladinLogo}
+                    alt="알라딘으로 이동"
+                    className="h-6 w-auto object-contain rounded-full"
+                  />
+                </a>
+              ) : (
+                <p className="text-xs text-gray-500">구매 링크 없음</p>
+              )}
+              <GoButton
+                text="책 등록하기"
+                onClick={() => handleAddBook(info.book)}
+                className="ml-2"
+              />
+            </div>
           </div>
         </div>
       ))}
@@ -219,7 +267,7 @@ export default function Recommend() {
                 <p className="text-sm text-gray-700 leading-relaxed">
                   {book?.detail}
                 </p>
-                <div className="flex justify-end rounded-full mt-4">
+                <div className="flex justify-between items-center mt-4">
                   <a
                     href={book?.purchase_link}
                     target="_blank"
@@ -235,6 +283,11 @@ export default function Recommend() {
                       }}
                     />
                   </a>
+                  <GoButton
+                    text={addBookStatus === "loading" ? "등록 중..." : "책 등록하기"}
+                    onClick={handleAddBook}
+                    disabled={addBookStatus === "loading"}
+                  />
                 </div>
               </div>
             </div>
