@@ -8,9 +8,10 @@ import ReviewImg1 from "../assets/onboard/review1.png";
 import ReviewImg2 from "../assets/onboard/review2.png";
 import ReviewImg3 from "../assets/onboard/review3.png";
 import ReviewImg4 from "../assets/onboard/review4.png";
+import ReviewImg5 from "../assets/onboard/review5.png";
 import TimeCat from "../assets/onboard/time_cat.png";
 import TimeBg from "../assets/onboard/time_bg.png";
-import MeetingBg from "../assets/onboard/meeting_bg.png";
+import MeetingBg from "../assets/onboard/onboard.png";
 import Bg from "../assets/background/background_img.png";
 
 import GoButton from "../components/GoButton/GoButton.jsx";
@@ -116,7 +117,7 @@ export default function OnBoard() {
             </h2>
             <div className="mt-8 overflow-hidden">
               <div className="flex animate-slide-right">
-                {[ReviewImg1, ReviewImg2, ReviewImg3, ReviewImg4].map(
+                {[ReviewImg1, ReviewImg2, ReviewImg3, ReviewImg4, ReviewImg5].map(
                   (img, index) => (
                     <div key={index} className="flex-none w-80 h-96 mx-2">
                       <img
@@ -128,7 +129,7 @@ export default function OnBoard() {
                   )
                 )}
                 {/* 무한 루프를 위해 이미지 반복 */}
-                {[ReviewImg1, ReviewImg2, ReviewImg3, ReviewImg4].map(
+                {[ReviewImg1, ReviewImg2, ReviewImg3, ReviewImg4, ReviewImg5].map(
                   (img, index) => (
                     <div
                       key={`repeat-${index}`}
@@ -173,9 +174,9 @@ export default function OnBoard() {
 
           <div className="w-full min-h-screen bg-white flex items-center justify-center relative overflow-hidden">
             <div className="relative w-full h-full flex items-center justify-center">
-              <img src={MeetingBg} alt="" className="inset-0 opacity-30 z-10" />
+              <img src={MeetingBg} alt="" className="inset-0 opacity-50 z-10" />
               <div className="absolute inset-0 flex items-center justify-center">
-                <h1 className="text-[3rem] font-bold text-center z-20">
+                <h1 className="text-[3rem] font-bold text-center z-20 -mt-[20rem]">
                   다양한 <span className="text-custom-highlight">사람들</span>과
                   <br />
                   <span className="text-custom-highlight">독서활동</span>도 할
