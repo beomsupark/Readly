@@ -3,6 +3,7 @@ import { Client } from '@stomp/stompjs';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import useUserStore from '../../store/userStore';
+import { BASE_URL } from '../../api/authAPI';
 
 let stompClient = null;
 
