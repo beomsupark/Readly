@@ -164,7 +164,7 @@ export default function CustomHeader() {
         </div>
       </div>
       <div className="flex-1 flex justify-end items-center mr-6 relative" ref={dropdownRef}>
-        <div className="flex items-center space-x-8"> {/* 간격을 8로 설정하여 더 넓게 조정 */}
+        <div className="flex items-center space-x-8 mr-4"> {/* 간격을 8로 설정하여 더 넓게 조정 */}
           
           <TimecapsuleIcon /> 
           

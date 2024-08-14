@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import axios from "axios";
 import GoButton from "../../components/GoButton/GoButton.jsx";
-import CreateReview from "../../components/Review/CreateReview.jsx";
+import GroupCreateReview from "../../components/Review/GroupCreateReview.jsx";
 import useUserStore from "../../store/userStore.js";
 import GroupProgressBar from "../../components/ProgressBar/Group/GroupProgressBar.jsx";
 import GroupCurrentPageModal from "../../components/ProgressBar/Group/GroupCurrentPageModal.jsx";
@@ -353,7 +353,7 @@ export default function ActivityProgress({ groupId }) {
         }
       />
 
-      <CreateReview
+      <GroupCreateReview
         isOpen={reviewModalIsOpen}
         onRequestClose={closeReviewModal}
         book={{

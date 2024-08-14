@@ -1,88 +1,109 @@
-import React, { useState, useEffect } from 'react';
-import Modal from 'react-modal';
-import PropTypes from 'prop-types';
+import { useState } from "react";
+import Modal from "react-modal";
+import Review from "../../components/Review/Review.jsx";
+import CustomRadioButton from "../../components/RadioButton/CustomRadioButton.jsx";
+import GoButton from "../../components/GoButton/GoButton.jsx";
 
-const customStyles = {
+Modal.setAppElement("#root");
+
+const customModalStyles = {
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    width: "100%",
+    height: "100vh",
+    zIndex: "10",
+    position: "fixed",
+    top: "0",
+    left: "0",
+  },
   content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-    width: '500px',
-    padding: '20px',
-    borderRadius: '10px',
+    width: "50%",
+    maxWidth: "100%",
+    height: "80%",
+    maxHeight: "80vh",
+    zIndex: "150",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    borderRadius: "10px",
+    boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.25)",
+    backgroundColor: "#F5F5F5",
+    padding: "20px",
+    overflow: "auto",
   },
 };
 
-Modal.setAppElement('#root'); // 또는 your app element
+export default function CreateReview({
+  isOpen,
+  onRequestClose,
+  book,
+  reviewText,
+  onReviewSubmit,
+}) {
+  const [visibility, setVisibility] = useState("A");
 
-function GroupCreateReview({ isOpen, onRequestClose, book, onReviewSubmit, groupName }) {
-  const [reviewText, setReviewText] = useState('');
-
-  useEffect(() => {
-    if (!isOpen) {
-      setReviewText('');
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!book.title) {
+      alert("책을 입력해주세요.");
+      return;
     }
-  }, [isOpen]);
-
-  const handleSubmit = () => {
-    onReviewSubmit(reviewText);
-    setReviewText('');
-    onRequestClose();
+    if (!reviewText.trim()) {
+      alert("글귀를 입력해주세요.");
+      return;
+    }
+  
+    // Submit the review
+    onReviewSubmit({
+      bookId: book.bookId,  // 여기를 book.id에서 book.bookId로 변경
+      reviewText,
+      visibility,
+    });
+  
+    // Reset the form
+    setVisibility("A");
   };
-
-  if (!book) return null;
 
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      style={customStyles}
-      contentLabel="Create Group Review Modal"
+      style={customModalStyles}
+      shouldCloseOnOverlayClick={true}
+      closeTimeoutMS={300}
     >
-      <h2 className="text-2xl font-bold mb-4">{groupName} 그룹의 리뷰 작성</h2>
-      <h3 className="text-xl font-semibold mb-2">{book.book_title}</h3>
-      <div className="mb-4">
-        <img src={book.book_image} alt={book.book_title} className="w-32 h-auto mb-2" />
-        <p className="text-sm text-gray-600">저자: {book.book_author}</p>
+      <button
+        onClick={onRequestClose}
+        className="absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-700"
+      >
+        X
+      </button>
+
+      <h2 className="text-2xl font-bold mb-4">{book.title} 한줄평</h2>
+      <div className="p-4 rounded-lg mb-4 w-[15rem] h-[19rem]">
+        <Review
+          bookImage={book.cover}
+          title={book.title}
+          author={book.author || "Author Name"}
+          review={reviewText}
+          likeCount={0}
+        />
       </div>
-      <textarea
-        value={reviewText}
-        onChange={(e) => setReviewText(e.target.value)}
-        className="w-full h-32 p-2 border rounded mb-4"
-        placeholder="그룹의 리뷰를 입력해주세요..."
-      />
-      <div className="flex justify-end">
-        <button
-          onClick={onRequestClose}
-          className="mr-2 px-4 py-2 bg-gray-200 rounded"
-        >
-          취소
-        </button>
-        <button
-          onClick={handleSubmit}
-          className="px-4 py-2 bg-blue-500 text-white rounded"
-          disabled={!reviewText.trim()}
-        >
-          리뷰 제출
-        </button>
+      <div className="mt-5 ml-3 justify-start sm:w-40 lg:w-48">
+        <CustomRadioButton
+          options={[
+            { value: "A", label: "공개" },
+            { value: "E", label: "비공개" },
+          ]}
+          selectedOption={visibility}
+          onChange={setVisibility}
+        />
+      </div>
+      <div className="mt-4 flex justify-end gap-2">
+        <GoButton text="생성" onClick={handleSubmit} />
+        <GoButton text="취소" onClick={onRequestClose} />
       </div>
     </Modal>
   );
 }
-
-GroupCreateReview.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onRequestClose: PropTypes.func.isRequired,
-  book: PropTypes.shape({
-    book_title: PropTypes.string,
-    book_author: PropTypes.string,
-    book_image: PropTypes.string,
-  }),
-  onReviewSubmit: PropTypes.func.isRequired,
-  groupName: PropTypes.string.isRequired,
-};
-
-export default GroupCreateReview;

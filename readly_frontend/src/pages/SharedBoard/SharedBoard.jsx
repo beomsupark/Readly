@@ -103,7 +103,7 @@ export default function SharedBoard() {
         </div>
 
         {/* 최신순, 좋아요순 */}
-        <div className="ml-3 justify-start sm:w-40 lg:w-48">
+        {/* <div className="ml-3 justify-start sm:w-40 lg:w-48">
           <CustomRadioButton
             options={[
               { label: "최신순", value: "latest" },
@@ -120,7 +120,7 @@ export default function SharedBoard() {
             }
             onChange={handleOrderChange}
           />
-        </div>
+        </div> */}
       </div>
       <div className="mt-5 -ml-1">
         {loading && <p>로딩 중...</p>}
