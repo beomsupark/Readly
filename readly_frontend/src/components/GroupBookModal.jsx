@@ -6,7 +6,10 @@ import searchIcon from "../assets/header/search.png";
 import useBookStore from "../store/bookStore.js";
 import useUserStore from "../store/userStore.js";
 import { useNavigate } from "react-router-dom";
-import { addBookToGroup, fetchBookDetailsWithPhotoAndReview } from "../api/bookAPI.js";
+import {
+  addBookToGroup,
+  fetchBookDetailsWithPhotoAndReview,
+} from "../api/bookAPI.js";
 import SimpleReview from "./Review/SimpleReview.jsx";
 
 const customModalStyles = {
@@ -39,7 +42,7 @@ export default function GroupBookModal({
   onAddBook,
   groupId,
   oldBookId,
-  addButtonText = "그룹에 책 등록하기",
+  addButtonText = "책 등록하기",
 }) {
   const navigate = useNavigate();
   const { user } = useUserStore();
@@ -89,18 +92,36 @@ export default function GroupBookModal({
   };
 
   const handleAddBook = async () => {
+    console.log("handleAddBook 함수 호출됨");
     setAddBookStatus("loading");
     try {
       if (!bookDetails) {
+        console.error("Book object is missing");
         throw new Error("Book object is missing");
       }
-      await addBookToGroup(oldBookId, groupId, bookDetails.id);
+      if (groupId === undefined || groupId === null) {
+        console.error("groupId is missing");
+        throw new Error("groupId is missing");
+      }
+      // oldBookId는 없을 수 있으므로 검증하지 않습니다.
+      
+      console.log("그룹에 책 추가 시도:", {
+        oldBookId,
+        groupId,
+        bookId: bookDetails.id,
+      });
+      console.log("addBookToGroup 함수 호출 직전");
+      const result = await addBookToGroup(oldBookId, groupId, bookDetails.id);
+      console.log("addBookToGroup 함수 호출 완료, 결과:", result);
       setAddBookStatus("success");
+      console.log("onAddBook 함수 호출 직전");
       onAddBook(bookDetails);
+      console.log("onAddBook 함수 호출 완료");
       onRequestClose();
     } catch (error) {
       console.error("Error adding book to group:", error);
       setAddBookStatus("error");
+      alert("책을 그룹에 추가하는 데 실패했습니다. 다시 시도해주세요.");
     }
   };
 
@@ -166,9 +187,11 @@ export default function GroupBookModal({
                       />
                     </>
                   ) : (
-                    <p className="text-sm text-gray-500">포토카드가 없습니다.</p>
+                    <p className="text-sm text-gray-500">
+                      포토카드가 없습니다.
+                    </p>
                   )}
-                  <button 
+                  <button
                     className="text-[#848484] px-4 py-2 rounded-full text-sm font-bold mt-auto"
                     onClick={handleGoToSharedBoard}
                   >
@@ -184,7 +207,7 @@ export default function GroupBookModal({
                   ) : (
                     <p className="text-sm text-gray-500">한줄평이 없습니다.</p>
                   )}
-                  <button 
+                  <button
                     className="text-[#848484] px-4 py-2 rounded-full text-sm font-bold mt-auto"
                     onClick={handleGoToSharedBoard}
                   >
@@ -216,10 +239,15 @@ export default function GroupBookModal({
                     <div className="w-full">
                       <GoButton
                         text={
-                          addBookStatus === "loading" ? "등록 중..." : addButtonText
+                          addBookStatus === "loading"
+                            ? "등록 중..."
+                            : addButtonText
                         }
                         className="w-full"
-                        onClick={handleAddBook}
+                        onClick={() => {
+                          console.log("GoButton 클릭됨");
+                          handleAddBook();
+                        }}
                         disabled={addBookStatus === "loading"}
                       />
                     </div>
