@@ -5,6 +5,7 @@ import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardRequest;
 import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardResponse;
 import com.ssafy.readly.dto.PhotoCard.PhotoCardSearchRequest;
 import com.ssafy.readly.entity.PhotoCard;
+import com.ssafy.readly.enums.Visibility;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface PhotoCardService {
 
     List<CreatePhotoCardResponse> findPhotoCardsSorted(PhotoCardSearchRequest request) throws Exception;
 
-    public long getPhotoCardsCount() throws Exception;
+    public long getPhotoCardsCount(Visibility visibility) throws Exception;
 
     List<CreatePhotoCardResponse> findPhotoCardsByLoginId(int loginId) throws Exception;
 

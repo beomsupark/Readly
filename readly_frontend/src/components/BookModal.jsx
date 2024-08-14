@@ -124,8 +124,9 @@ export default function BookModal({
       setAddBookStatus("error");
     }
   };
-
+  
   const handleGoToSharedBoard = () => {
+    onRequestClose(); // 모달을 닫습니다.
     navigate("/sharedboard");
   };
 

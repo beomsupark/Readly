@@ -85,7 +85,7 @@ export default function MypageFollow({ userId }) {
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow p-4 mb-4 relative">
+      <div className="bg-white rounded-lg shadow p-4 mb-4 relative w-3/4 h-[9rem]">
         <div className="flex space-x-2 mb-2 gap-4 flex-wrap">
           {displayFollows.map((user) => (
             <div

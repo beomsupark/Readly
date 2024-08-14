@@ -1,8 +1,7 @@
-// src/components/Form/TagFormField.jsx
 import { useState } from 'react';
 import './FormField.css';
 
-const TagFormField = ({ label, tags, setTags }) => {
+const TagFormField = ({ label, tags, setTags, placeholder }) => {
   const [inputValue, setInputValue] = useState('');
 
   const handleKeyDown = (e) => {
@@ -22,7 +21,7 @@ const TagFormField = ({ label, tags, setTags }) => {
       <input
         type="text"
         className="form__field"
-        placeholder={label}
+        placeholder={placeholder || label}
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         onKeyDown={handleKeyDown}

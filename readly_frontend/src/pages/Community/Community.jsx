@@ -126,7 +126,7 @@ export default function Community() {
                   alt="Group"
                   className="w-[10rem] h-[10rem] p-4"
                 />
-                <div className="flex flex-col p-4 space-y-4">
+                <div className="flex flex-col p-4 space-y-2 w-full">
                   <div className="flex flex-wrap gap-2">
                     {item.tags.map((tag, index) => (
                       <span
@@ -139,26 +139,31 @@ export default function Community() {
                   </div>
                   <h2 className="text-xl font-bold">{item.title}</h2>
                   <p className="mb-2">{item.description}</p>
-                  <p className="text-sm text-gray-600">
-                    인원: {item.currentParticipants}명 / {item.maxParticipants}명
-                  </p>
-                  {item.currentParticipants < item.maxParticipants &&
-                    joinStatus[item.groupId] !== "success" && (
-                      <GoButton
-                        text="참여하기"
-                        onClick={() => handleJoinGroup(item.groupId)}
-                        disabled={joinStatus[item.groupId] === "success"}
-                      />
-                    )}
-                  {joinStatus[item.groupId] === "success" && (
-                    <p className="text-green-500 font-bold">참여 완료!</p>
-                  )}
-                  {joinStatus[item.groupId] === "fail" && (
-                    <p className="text-red-500">참여 실패</p>
-                  )}
-                  {joinStatus[item.groupId] === "error" && (
-                    <p className="text-red-500">오류 발생</p>
-                  )}
+                  <div className="flex justify-between items-center">
+                    <div className="w-40">
+                      {item.currentParticipants < item.maxParticipants &&
+                        joinStatus[item.groupId] !== "success" && (
+                          <GoButton
+                            text="참여하기"
+                            onClick={() => handleJoinGroup(item.groupId)}
+                            disabled={joinStatus[item.groupId] === "success"}
+                            className="w-full text-center"
+                          />
+                        )}
+                      {joinStatus[item.groupId] === "success" && (
+                        <p className="text-green-500 font-bold text-center">참여 완료!</p>
+                      )}
+                      {joinStatus[item.groupId] === "fail" && (
+                        <p className="text-red-500 text-center">참여 실패</p>
+                      )}
+                      {joinStatus[item.groupId] === "error" && (
+                        <p className="text-red-500 text-center">오류 발생</p>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-600 font-bold">
+                      인원: {item.currentParticipants}명 / {item.maxParticipants}명
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -175,7 +180,7 @@ export default function Community() {
         ) : (
           <div className="text-center">
             <p className="text-xl mb-4">현재 참여 가능한 소모임이 없습니다.</p>
-            <GoButton text="소모임 만들기" onClick={handleMakeCommunity} />
+            <GoButton text="소모임 만들기" onClick={handleMakeCommunity} className="w-32 text-center" />
           </div>
         )}
       </div>

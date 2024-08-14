@@ -124,7 +124,7 @@ public class PhotoCardController {
         HttpStatus status = HttpStatus.ACCEPTED;
         Map<String, Object> responseMap = new HashMap<String, Object>();
         List<CreatePhotoCardResponse> reviews = photoCardServiceImpl.findPhotoCardsSorted(request);
-        long count = photoCardServiceImpl.getPhotoCardsCount();
+        long count = photoCardServiceImpl.getPhotoCardsCount(request.getVisibility());
         responseMap.put("reviews", reviews);
         responseMap.put("total_count",count);
         return new ResponseEntity<Map<String, Object>>(responseMap, status);

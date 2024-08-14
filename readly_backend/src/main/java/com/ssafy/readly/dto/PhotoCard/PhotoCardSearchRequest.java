@@ -11,4 +11,5 @@ public class PhotoCardSearchRequest {
     private OrderType orderType;
     private int pageSize;
     private int pageNumber;
+    private Visibility visibility;
 }

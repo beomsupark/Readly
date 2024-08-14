@@ -61,7 +61,7 @@ public class ReviewController {
         HttpStatus status = HttpStatus.ACCEPTED;
         Map<String, Object> responseMap = new HashMap<String, Object>();
         List<ReviewResponse> reviews = reviewService.findReviewsSorted(request);
-        long count = reviewService.getReviewsCount();
+        long count = reviewService.getReviewsCount(request.getVisibility());
         responseMap.put("reviews", reviews);
         responseMap.put("total_count", count);
         return new ResponseEntity<Map<String, Object>>(responseMap, status);

@@ -1,20 +1,22 @@
 import axios from 'axios';
 import { BASE_URL } from './authAPI';
 
-export const getReviews = async (searchType, orderType, pageSize, pageNumber) => {
+export const getReviews = async (searchType, orderType, pageSize, pageNumber, visibility) => {
   try {
     console.log("get review send:", {
       searchType,
       orderType,
       pageSize,
       pageNumber,
+      visibility, 
     });
     const response = await axios.post(`${BASE_URL}/review/getReviews`, 
       {
         searchType,
         orderType,
         pageSize,
-        pageNumber: pageNumber
+        pageNumber: pageNumber,
+        visibility,
       },
       {
         headers: {

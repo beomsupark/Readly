@@ -55,7 +55,7 @@ export default function MypageBookshelf({ userId }) {
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow p-4 mb-4 relative">
+      <div className="bg-white rounded-lg shadow p-4 mb-4 relative w-3/4 h-[9rem]">
         <div className="flex space-x-2 mb-2">
           {displayBooks.map((book) => (
             <div key={book.id} className="bg-gray-200 p-2 rounded">

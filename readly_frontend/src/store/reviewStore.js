@@ -15,7 +15,7 @@ const useReviewStore = create((set, get) => ({
     set({ loading: true, error: null });
     try {
       const { searchType, orderType } = get();
-      const response = await getReviews(searchType, orderType, 10, page);
+      const response = await getReviews(searchType, orderType, 10, page, 'E');
       set({
         reviews: response.reviews,
         currentPage: page,

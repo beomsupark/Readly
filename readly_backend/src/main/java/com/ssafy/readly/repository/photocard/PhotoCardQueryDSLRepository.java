@@ -5,6 +5,7 @@ import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardResponse;
 import com.ssafy.readly.dto.PhotoCard.PhotoCardSearchRequest;
 import com.ssafy.readly.dto.timecapsule.TimeCapsuleRequest;
 import com.ssafy.readly.entity.PhotoCard;
+import com.ssafy.readly.enums.Visibility;
 
 import java.util.List;
 
@@ -25,4 +26,6 @@ public interface PhotoCardQueryDSLRepository {
     List<CreatePhotoCardResponse> findPhotoCardsbyMemberId(int memberId);
 
     CreatePhotoCardResponse findPhotoCardForBookSearch(int bookId);
+
+    long getPhotoCardCount(Visibility visibility);
 }

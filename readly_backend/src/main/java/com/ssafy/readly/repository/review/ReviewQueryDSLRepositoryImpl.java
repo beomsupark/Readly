@@ -4,12 +4,14 @@ import com.querydsl.core.types.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardResponse;
 import com.ssafy.readly.dto.review.ReviewResponse;
 import com.ssafy.readly.dto.review.ReviewSearchRequest;
 import com.ssafy.readly.dto.timecapsule.TimeCapsuleRequest;
 import com.ssafy.readly.entity.Review;
 import com.ssafy.readly.enums.OrderType;
 import com.ssafy.readly.enums.SearchType;
+import com.ssafy.readly.enums.Visibility;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -18,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.ssafy.readly.entity.QMember.member;
 import static com.ssafy.readly.entity.QReview.review;
@@ -61,6 +64,7 @@ public class ReviewQueryDSLRepositoryImpl implements ReviewQueryDSLRepository {
                 .rightJoin(timeCapsuleItem.review, review)
                 .join(review.member, member)
                 .join(review.book, book)
+                .where(review.visibility.eq(reviewRequest.getVisibility()))
                 .groupBy(review.id,review.member.id)
                 .orderBy(orderSpecifiers)
                 .offset(reviewRequest.getPageNumber())
@@ -128,7 +132,7 @@ public class ReviewQueryDSLRepositoryImpl implements ReviewQueryDSLRepository {
     @Override
     public ReviewResponse findReivewForBookSearch(int bookId) {
 
-        List<ReviewResponse> list = queryFactory.select(Projections.constructor(ReviewResponse.class,
+        List<ReviewResponse> response = queryFactory.select(Projections.constructor(ReviewResponse.class,
                         review.id,
                         book.image,
                         member.loginId,
@@ -148,12 +152,26 @@ public class ReviewQueryDSLRepositoryImpl implements ReviewQueryDSLRepository {
                 .rightJoin(timeCapsuleItem.review, review)
                 .join(review.member, member)
                 .join(review.book, book)
+                .where(book.id.eq(bookId))
                 .groupBy(review.id,review.member.id)
                 .orderBy(new OrderSpecifier(Order.DESC, like.count()))
-                .offset(1)
+                .offset(0)
                 .limit(1)
                 .fetch();
-        return list.get(0);
+        if(response.isEmpty()){
+            List<CreatePhotoCardResponse> list = new ArrayList<>();
+            return null;
+        }
+        return response.get(0);
+    }
+
+    /**
+     * @param visibility
+     * @return
+     */
+    @Override
+    public long getReviewCount(Visibility visibility) {
+        return Optional.ofNullable(queryFactory.select(review.count()).from(review).where(review.visibility.eq(visibility)).fetchFirst()).orElse(0L);
     }
 
     private OrderSpecifier[] createOrderSpecifier(ReviewSearchRequest reviewRequest) {

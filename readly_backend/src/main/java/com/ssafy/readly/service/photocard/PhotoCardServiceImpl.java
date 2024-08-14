@@ -4,6 +4,7 @@ import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardRequest;
 import com.ssafy.readly.dto.PhotoCard.CreatePhotoCardResponse;
 import com.ssafy.readly.dto.PhotoCard.PhotoCardSearchRequest;
 import com.ssafy.readly.entity.PhotoCard;
+import com.ssafy.readly.enums.Visibility;
 import com.ssafy.readly.repository.photocard.PhotoCardQueryDSLRepository;
 import com.ssafy.readly.repository.photocard.PhotoCardRepository;
 import jakarta.transaction.Transactional;
@@ -51,8 +52,8 @@ public class PhotoCardServiceImpl implements PhotoCardService{
     }
 
     @Override
-    public long getPhotoCardsCount(){
-        return photoCardRepository.count();
+    public long getPhotoCardsCount(Visibility visibility){
+        return photoCardRepositoryImpl.getPhotoCardCount(visibility);
     }
 
     /**

@@ -43,7 +43,8 @@ export const getPhotoCard = async (
   searchType,
   orderType,
   pageSize,
-  pageNumber
+  pageNumber,
+  visibility,
 ) => {
   try {
     console.log("get photo card send:", {
@@ -51,12 +52,14 @@ export const getPhotoCard = async (
       orderType,
       pageSize,
       pageNumber,
+      visibility,
     });
     const response = await axios.post(`${BASE_URL}/photocard/getPhotoCards`, {
       searchType,
       orderType,
       pageSize,
-      pageNumber
+      pageNumber,
+      visibility,
     });
     console.log("Received response:", response.data);
     return response.data;
