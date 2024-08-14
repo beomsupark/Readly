@@ -20,16 +20,11 @@ const PhotocardBack = ({
   const [isHovered, setIsHovered] = useState(false);
   const { user } = useUserStore();
   const { likes, toggleLike, setInitialLikeStatus } = useLikeStore();
+  const [localLikeCount, setLocalLikeCount] = useState(initialLikeCount);
 
-  // 기존에 저장된 좋아요 상태를 로컬 스토리지에서 불러오기
-  const isLiked =
-    likes[photoCardId] !== undefined
-      ? likes[photoCardId]
-      : initialLikeCheck === 1;
-  const currentLikeCount = isLiked ? initialLikeCount + 1 : initialLikeCount;
+  const isLiked = likes[photoCardId] !== undefined ? likes[photoCardId] : initialLikeCheck === 1;
 
   useEffect(() => {
-    // 컴포넌트가 로드될 때 로컬 스토리지에 저장된 상태로 설정
     setInitialLikeStatus(photoCardId, isLiked);
   }, [photoCardId, isLiked, setInitialLikeStatus]);
 
@@ -142,7 +137,8 @@ const PhotocardBack = ({
 
   const handleLikeClick = async (event) => {
     event.stopPropagation();
-    await toggleLike(user.id, photoCardId);
+    const newLikeStatus = await toggleLike(user.id, photoCardId);
+    setLocalLikeCount(prev => newLikeStatus ? prev + 1 : prev - 1);
     if (onLikeClick) {
       onLikeClick(event);
     }
@@ -196,7 +192,7 @@ const PhotocardBack = ({
       )}
 
       <div className="absolute bottom-8 right-2 flex items-center">
-        <span className="text-xs font-semibold mr-2">{currentLikeCount}</span>
+        <span className="text-xs font-semibold mr-2">{localLikeCount}</span>
         <button
           className="heart-container"
           title="Like"
