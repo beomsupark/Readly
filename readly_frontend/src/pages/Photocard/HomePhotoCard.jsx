@@ -56,7 +56,7 @@ export default function HomePhotocard({ onPhotoCardClick }) {
             className={`flex flex-col sm:flex-row justify-between items-center transition-transform duration-500 ${isAnimating ? 'translate-x-full' : 'translate-x-0'}`}
             key={currentIndex}
           >
-            <div className="grid grid-cols-2 w-full sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 p-2 flex-grow">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 p-2 flex-grow">
               {currentPhotocards.map((photocard, index) => (
                 <div 
                   key={`${currentIndex}-${index}`} 
