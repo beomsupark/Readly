@@ -72,4 +72,6 @@ INSERT INTO `timecapsule_items` (`id`, `timecapsule_id`, `photocard_id`, `review
 (48, 14, 20, NULL, 'P'),
 (49, 15, NULL, 48, 'R'),
 (50, 15, NULL, 66, 'R'),
-(51, 15, 20, NULL, 'P');
+(51, 15, 20, NULL, 'P'),
+(52, 16, 22, NULL, 'P'),
+(53, 16, NULL,101, 'R');

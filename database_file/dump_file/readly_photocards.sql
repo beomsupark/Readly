@@ -45,27 +45,29 @@ CREATE TABLE `photocards` (
 LOCK TABLES `photocards` WRITE;
 /*!40000 ALTER TABLE `photocards` DISABLE KEYS */;
 INSERT INTO photocards VALUES 
-(1, '삶은 여행이다', 'A', 1, 1, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/201429657-%EC%83%9D%EC%84%B1ai%EB%A1%9C-%EB%A7%8C%EB%93%A4%EC%96%B4%EB%82%B8-%EC%8B%A0%EB%B9%84%EB%A1%9C%EC%9A%B4-%EB%8F%99%ED%99%94%EA%B0%99%EC%9D%80-%EB%B6%84%EC%9C%84%EA%B8%B0%EC%9D%98-%EB%82%98%EB%AC%B4%EC%99%80-%EB%8B%AC.jpg', '2024-07-31 15:00:00'),
-(2, '세상을 바꾸는 힘', 'A', 2, 2, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/201581567-%EB%8F%99%ED%99%94%EA%B0%99%EC%9D%80-%EC%9E%90%EC%97%B0-%EB%85%B9%EC%83%89-%ED%99%98%EA%B2%BD-%EB%B0%B0%EA%B2%BD-%EC%9D%BC%EB%9F%AC%EC%8A%A4%ED%8A%B8-%EC%83%9D%EC%84%B1-ai.jpg', '2024-07-31 15:00:00'),
+(1, '삶은 여행이다', 'E', 1, 1, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/201429657-%EC%83%9D%EC%84%B1ai%EB%A1%9C-%EB%A7%8C%EB%93%A4%EC%96%B4%EB%82%B8-%EC%8B%A0%EB%B9%84%EB%A1%9C%EC%9A%B4-%EB%8F%99%ED%99%94%EA%B0%99%EC%9D%80-%EB%B6%84%EC%9C%84%EA%B8%B0%EC%9D%98-%EB%82%98%EB%AC%B4%EC%99%80-%EB%8B%AC.jpg', '2024-07-31 15:00:00'),
+(2, '세상을 바꾸는 힘', 'E', 2, 2, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/201581567-%EB%8F%99%ED%99%94%EA%B0%99%EC%9D%80-%EC%9E%90%EC%97%B0-%EB%85%B9%EC%83%89-%ED%99%98%EA%B2%BD-%EB%B0%B0%EA%B2%BD-%EC%9D%BC%EB%9F%AC%EC%8A%A4%ED%8A%B8-%EC%83%9D%EC%84%B1-ai.jpg', '2024-07-31 15:00:00'),
 (3, '끝없는 도전', 'E', 3, 3, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/2aee4e0b-57ef-4ca7-89b3-3fe87a70bf27.png', '2024-07-31 15:00:00'),
-(4, '마음을 열어라', 'A', 4, 4, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/31e8c877-bd65-4819-bfaa-b7d0f33ec5ca.png', '2024-07-31 15:00:00'),
+(4, '마음을 열어라', 'E', 4, 4, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/31e8c877-bd65-4819-bfaa-b7d0f33ec5ca.png', '2024-07-31 15:00:00'),
 (5, '사랑은 모든 것', 'E', 5, 5, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/5c17c676-6865-4f9b-9253-d908134fe0de.png', '2024-07-31 15:00:00'),
-(6, '시간의 흐름', 'A', 6, 6, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/736a752a-9e03-412c-ad79-0fae1fe66cd2.png', '2024-07-31 15:00:00'),
-(7, '진실을 찾아서', 'A', 7, 7, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/ai-generated-8650258_1280.png', '2024-07-31 15:00:00'),
+(6, '시간의 흐름', 'E', 6, 6, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/736a752a-9e03-412c-ad79-0fae1fe66cd2.png', '2024-07-31 15:00:00'),
+(7, '진실을 찾아서', 'E', 7, 7, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/ai-generated-8650258_1280.png', '2024-07-31 15:00:00'),
 (8, '희망의 빛', 'E', 8, 8, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/b5132d4d-9fc1-411f-b8b3-462ffe12d7d1.png', '2024-07-31 15:00:00'),
-(9, '어둠 속의 빛', 'A', 9, 9, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/f8ec975d-6570-49ad-9d22-eba3143deeed.png', '2024-07-31 15:00:00'),
-(10, '꿈꾸는 자의 길', 'A', 10, 10, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/fairytale-castle-hilltop-generative-ai_918839-2978.jpg', '2024-07-31 15:00:00'),
+(9, '어둠 속의 빛', 'E', 9, 9, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/f8ec975d-6570-49ad-9d22-eba3143deeed.png', '2024-07-31 15:00:00'),
+(10, '꿈꾸는 자의 길', 'E', 10, 10, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/fairytale-castle-hilltop-generative-ai_918839-2978.jpg', '2024-07-31 15:00:00'),
 (11, '새로운 시작', 'E', 11, 11, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/ff3ee37b-3bf1-4695-846a-daa8bfbab9c5.png', '2024-07-31 15:00:00'),
-(12, '끝이 없는 길', 'A', 12, 12, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(1).jpg', '2024-07-31 15:00:00'),
-(13, '변화를 꿈꾸다', 'A', 5, 13, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(2).jpg', '2024-08-01 15:00:00'),
+(12, '끝이 없는 길', 'E', 12, 12, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(1).jpg', '2024-07-31 15:00:00'),
+(13, '변화를 꿈꾸다', 'E', 5, 13, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(2).jpg', '2024-08-01 15:00:00'),
 (14, '마음의 평화', 'E', 3, 14, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(3).jpg', '2024-08-01 15:00:00'),
-(15, '용기의 힘', 'A', 7, 15, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(4).jpg', '2024-08-01 15:00:00'),
+(15, '용기의 힘', 'E', 7, 15, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(4).jpg', '2024-08-01 15:00:00'),
 (16, '자연의 소리', 'E', 2, 16, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(5).jpg', '2024-08-01 15:00:00'),
-(17, '내면의 소리', 'A', 9, 17, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(6).jpg', '2024-08-01 15:00:00'),
-(18, '삶의 의미', 'A', 4, 18, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(7).jpg', '2024-08-01 15:00:00'),
+(17, '내면의 소리', 'E', 9, 17, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(6).jpg', '2024-08-01 15:00:00'),
+(18, '삶의 의미', 'E', 4, 18, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(7).jpg', '2024-08-01 15:00:00'),
 (19, '무한한 가능성', 'E', 11, 19, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images+(8).jpg', '2024-08-01 15:00:00'),
-(20, '영원의 순간', 'A', 1, 20, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/jbuJO1706360331.jpg', '2024-08-01 15:00:00'),
-(21, '자유를 찾아서', 'A', 8, 21, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images.jpg', '2024-08-01 15:00:00');
+(20, '영원의 순간', 'E', 13, 20, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/jbuJO1706360331.jpg', '2024-08-01 15:00:00'),
+(21, '자유를 찾아서', 'E', 13, 21, 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/images.jpg', '2024-08-01 15:00:00'),
+(22, '새는 알에서 빠져나오려고 몸부림친다. 알은 세계이다. 태어나려는 자는 누구든 세계를 부숴야 한다.', 'E', '13', '412', 'https://c207-bucket.s3.ap-southeast-2.amazonaws.com/ffb2f9e7-6616-4dbe-a4b9-6699d67707bc.png', '2024-08-14 07:47:24');
+
 
 /*!40000 ALTER TABLE `photocards` ENABLE KEYS */;
 UNLOCK TABLES;

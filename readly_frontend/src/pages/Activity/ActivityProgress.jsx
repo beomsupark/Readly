@@ -66,7 +66,7 @@ export default function ActivityProgress({ groupId }) {
       const response = await axios.get(
         `${BASE_URL}/group/read-books/${groupId}`
       );
-      console.log("API Response:", response.data);
+      console.log("API Response1:", response.data);
 
       if (response.data && response.data.bookInfo && response.data.readBooks) {
         setBookInfo(response.data.bookInfo);

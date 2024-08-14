@@ -101,7 +101,7 @@ VALUES
 (76, 4, 12, 0, 12),
 (77, 5, 12, 0, 12),
 (78, 6, 12, 0, 12),
-(79, 7, 12, 0, 12),
+(79, 13, 12, 0, 12),
 (80, 1, 13, 0, NULL),
 (81, 2, 13, 0, NULL),
 (82, 3, 14, 0, NULL),
@@ -125,10 +125,17 @@ VALUES
 (100, 9, 23, 0, NULL),
 (101, 10, 23, 0, NULL),
 (102, 11, 24, 0, NULL),
-(103, 12, 24, 0, NULL);
+(103, 12, 24, 0, NULL),
+(104, 13, 24, 0, NULL);
 /*!40000 ALTER TABLE `read_books` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+
+INSERT INTO `read_books` (`id`, `member_id`, `book_id`, `current_page`, `read_type`,`group_id`)
+VALUES
+(105, 9, 24, 240, 'D' ,NULL),
+(106,9,37,64,'D',NULL);
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
