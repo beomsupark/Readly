@@ -41,7 +41,7 @@ export default function SharedBoard() {
   const handleOrderChange = (value) => {
     const orderType = "DESC";
     const searchType = value === "latest" ? "TimeStamp" : "Like";
-
+    
     if (activeLink === "photocard") {
       setPhotocardOrderType(orderType);
       setPhotocardSearchType(searchType);

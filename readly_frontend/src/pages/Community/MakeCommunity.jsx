@@ -14,6 +14,7 @@ export default function MakeCommunity() {
   const [maxParticipants, setMaxParticipants] = useState(2);
   const [tags, setTags] = useState([]);
   const { user } = useUserStore();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const groupData = {
@@ -27,14 +28,14 @@ export default function MakeCommunity() {
     };
 
     try {
-      const status = await createGroup(groupData);
-      if (status === 201) {
+      const response = await createGroup(groupData);
+      if (response.status === 201 && response.data && response.data.groupId) {
         console.log("Group created successfully");
         alert("소모임이 성공적으로 생성되었습니다.");
-        navigate("/community");
+        navigate(`/activity/${response.data.groupId}`);
       } else {
-        console.error("Unexpected status code:", status);
-        alert(`소모임 생성 중 오류가 발생했습니다. (상태 코드: ${status})`);
+        console.error("Unexpected response:", response);
+        alert(`소모임 생성 중 오류가 발생했습니다. (상태 코드: ${response.status})`);
       }
     } catch (error) {
       console.error("Error creating group:", error);

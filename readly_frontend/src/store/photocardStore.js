@@ -42,7 +42,8 @@ const usePhotocardStore = create((set, get) => ({
         searchType,
         orderType,
         10, // 페이지 크기
-        page
+        page,
+        'E'
       );
       set({
         photocards: response.reviews,
@@ -63,7 +64,8 @@ const usePhotocardStore = create((set, get) => ({
         'Like',
         'DESC',
         6,
-        page
+        page,
+        'E'
       );
       console.log("Fetched home photocards:", response);
       set({

@@ -233,16 +233,14 @@ export default function ActivityProgress({ groupId }) {
       })));
   
       // 성공 메시지 표시
+      alert(`책이 "${book.title}"로 변경되었습니다. 모든 멤버의 진행도가 초기화되었습니다.`);
+  
       // 모달 닫기
       setIsBookModalOpen(false);
-      setReadBooks(prevReadBooks => {
-        const updatedBooks = prevReadBooks.map(readBook => ({
-          ...readBook,
-          currentPage: 0,
-        }));
-        alert(`책이 "${book.title}"로 변경되었습니다. 모든 멤버의 진행도가 초기화되었습니다.`);
-        return updatedBooks;
-      });
+  
+      // 페이지 새로고침
+      window.location.reload();
+  
     } catch (error) {
       console.error("Error adding book to group:", error);
       if (error.response) {
