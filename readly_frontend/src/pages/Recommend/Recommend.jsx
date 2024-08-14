@@ -12,9 +12,12 @@ import sad from "../../assets/emoji/sad.png";
 import angry from "../../assets/emoji/angry.png";
 import happy from "../../assets/emoji/happy.png";
 import aladinLogo from "../../assets/onboard/aladinLogo.png";
-import { BASE_URL } from '../../api/authAPI.js';
-import { addBookToUser, fetchBookDetailsWithPhotoAndReview } from "../../api/bookAPI.js";
-import SimpleReview from "../components/Review/SimpleReview.jsx";
+import { BASE_URL } from "../../api/authAPI.js";
+import {
+  addBookToUser,
+  fetchBookDetailsWithPhotoAndReview,
+} from "../../api/bookAPI.js";
+import SimpleReview from "../../components/Review/SimpleReview.jsx";
 import { useNavigate } from "react-router-dom";
 
 const customModalStyles = {
@@ -58,19 +61,21 @@ export default function Recommend() {
     console.log(`Attempting to fetch initial book recommendation.`);
     try {
       const response = await axios.get(`${BASE_URL}/book/firstRecommand`);
-      console.log('Full API response:', response);
-      
+      console.log("Full API response:", response);
+
       if (response.data && response.data.book) {
         const bookId = response.data.book.id;
         await fetchBookDetails(bookId);
       } else {
         console.error("Unexpected response format:", response.data);
       }
-      
+
       return response.status;
     } catch (error) {
-      console.error('Error fetching initial book recommendation:', 
-                    error.response ? error.response.data : error.message);
+      console.error(
+        "Error fetching initial book recommendation:",
+        error.response ? error.response.data : error.message
+      );
       if (error.response) {
         console.error("Response status:", error.response.status);
         console.error("Response data:", error.response.data);
@@ -105,33 +110,34 @@ export default function Recommend() {
       alert("감정을 선택해주세요.");
       return;
     }
-  
+
     setLoading(true);
-  
+
     try {
       const query = `오늘은 ${selectedEmotion} 감정을 느꼈고, ${eventText}`;
-  
+
       const aiResponse = await axios.post(
         `https://i11c207.p.ssafy.io/ai/recommand`,
         {
           query: query,
         }
       );
-  
+
       console.log("AI 추천 응답:", aiResponse.data);
-      const bookIds = aiResponse.data.bar.map(item => item.foo);
-      
-      const bookInfoPromises = bookIds.map(id => 
-        axios.get(`${BASE_URL}/book/searchBook/${id}`)
-          .then(res => res.data)
-          .catch(err => {
+      const bookIds = aiResponse.data.bar.map((item) => item.foo);
+
+      const bookInfoPromises = bookIds.map((id) =>
+        axios
+          .get(`${BASE_URL}/book/searchBook/${id}`)
+          .then((res) => res.data)
+          .catch((err) => {
             console.error(`Error fetching book info with id ${id}:`, err);
             return null;
           })
       );
-      
+
       const booksInfo = await Promise.all(bookInfoPromises);
-      setRecommendedBooksInfo(booksInfo.filter(info => info !== null));
+      setRecommendedBooksInfo(booksInfo.filter((info) => info !== null));
       setShowRecommendations(true);
     } catch (error) {
       console.error("에러 발생:", error);
@@ -145,15 +151,15 @@ export default function Recommend() {
     }
   };
 
-  const handleAddBook = async () => {
-    if (!book || !user) {
+  const handleAddBook = async (bookToAdd) => {
+    if (!bookToAdd || !user) {
       alert("책 정보가 없거나 로그인되지 않았습니다.");
       return;
     }
 
     setAddBookStatus("loading");
     try {
-      await addBookToUser(user.id, book.id);
+      await addBookToUser(user.id, bookToAdd.id);
       setAddBookStatus("success");
       alert("책이 성공적으로 등록되었습니다.");
     } catch (error) {
@@ -188,17 +194,27 @@ export default function Recommend() {
           <div className="flex flex-col h-full">
             <div className="mb-4">
               {info.book && info.book.image ? (
-                <img src={info.book.image} alt={info.book.title} className="w-full h-48 object-cover rounded" />
+                <img
+                  src={info.book.image}
+                  alt={info.book.title}
+                  className="w-full h-48 object-cover rounded"
+                />
               ) : (
                 <div className="w-full h-48 bg-gray-200 flex items-center justify-center rounded">
                   이미지 없음
                 </div>
               )}
             </div>
-            <h3 className="font-bold text-lg mb-2">{info.book?.title || "제목 없음"}</h3>
-            <p className="text-sm text-gray-600 mb-2">{info.book?.author || "저자 미상"}</p>
-            <p className="text-sm text-gray-700 mb-4 flex-grow">{info.book?.detail?.slice(0, 100)}...</p>
-          
+            <h3 className="font-bold text-lg mb-2">
+              {info.book?.title || "제목 없음"}
+            </h3>
+            <p className="text-sm text-gray-600 mb-2">
+              {info.book?.author || "저자 미상"}
+            </p>
+            <p className="text-sm text-gray-700 mb-4 flex-grow">
+              {info.book?.detail?.slice(0, 100)}...
+            </p>
+
             <div className="flex justify-between items-center mt-4">
               {info.book && info.book.purchase_link ? (
                 <a
@@ -250,7 +266,9 @@ export default function Recommend() {
             <div className="flex flex-col justify-between h-full">
               <div className="mb-4">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
-                  <h3 className="font-bold text-lg sm:text-xl mb-2 sm:mb-0">{book?.title}</h3>
+                  <h3 className="font-bold text-lg sm:text-xl mb-2 sm:mb-0">
+                    {book?.title}
+                  </h3>
                   <button
                     onClick={openModal}
                     className="flex items-center text-blue-500"
@@ -284,7 +302,9 @@ export default function Recommend() {
                     />
                   </a>
                   <GoButton
-                    text={addBookStatus === "loading" ? "등록 중..." : "책 등록하기"}
+                    text={
+                      addBookStatus === "loading" ? "등록 중..." : "책 등록하기"
+                    }
                     onClick={handleAddBook}
                     disabled={addBookStatus === "loading"}
                   />
@@ -320,7 +340,11 @@ export default function Recommend() {
           {loading ? (
             <div className="flex-grow flex items-center justify-center">
               <div className="animate-bounce">
-                <img src={Logo} alt="Loading" className="w-32 h-32 sm:w-48 sm:h-48" />
+                <img
+                  src={Logo}
+                  alt="Loading"
+                  className="w-32 h-32 sm:w-48 sm:h-48"
+                />
                 <p className="text-center text-custom-highlight mt-2 text-xl sm:text-2xl">
                   Loading ....
                 </p>
