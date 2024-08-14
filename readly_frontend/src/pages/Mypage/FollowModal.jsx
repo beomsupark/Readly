@@ -1,4 +1,5 @@
 import Modal from "react-modal";
+import { useNavigate } from "react-router-dom";
 import LevelIcon1 from "../../assets/level/lv1.png";
 import LevelIcon2 from "../../assets/level/lv2.png";
 import LevelIcon3 from "../../assets/level/lv3.png";
@@ -36,11 +37,18 @@ const customModalStyles = {
 };
 
 export default function FollowList({ isOpen, onRequestClose, follows }) {
+  const navigate = useNavigate();
+
   const levelIcons = {
     1: LevelIcon1,
     2: LevelIcon2,
     3: LevelIcon3,
     4: LevelIcon4,
+  };
+
+  const navigateToMemberPage = (followedId) => {
+    console.log("Navigating to member page 팔로우모달:", followedId);
+    navigate(`/member/${followedId}`);
   };
 
   return (
@@ -64,6 +72,7 @@ export default function FollowList({ isOpen, onRequestClose, follows }) {
           follows.map((user) => (
             <div
               key={user.followedId}
+              onClick={() => navigateToMemberPage(user.followedId)}
               className="bg-gray-200 w-[9rem] h-[10rem] p-2 rounded-xl flex-cols items-center bg-[#FFFFFF]"
             >
               <img

@@ -20,12 +20,14 @@ export default function MypageFollow({ userId }) {
       try {
         setIsLoading(true);
         const fetchedFollowers = await getFollowers(userId);
-        
+        console.log("Fetched followers:", fetchedFollowers); // 추가된 로그
+
         const followersWithLevel = fetchedFollowers.map(user => ({
           ...user,
           level: calculateLevel(user.followedPoint)
         }));
 
+        console.log("Followers with level:", followersWithLevel); // 추가된 로그
         setFollows(followersWithLevel);
         setIsLoading(false);
       } catch (error) {
@@ -39,16 +41,18 @@ export default function MypageFollow({ userId }) {
   }, [userId]);
 
   const openFollowListModal = () => {
+    console.log("Opening follow list modal"); // 추가된 로그
     setFollowListModalIsOpen(true);
   };
 
   const closeFollowListModal = () => {
+    console.log("Closing follow list modal"); // 추가된 로그
     setFollowListModalIsOpen(false);
   };
 
-  const navigateToMemberPage = (followedName) => {
-    console.log("Navigating to member page:", followedName); // For debugging
-    navigate(`/member/${followedName}`);
+  const navigateToMemberPage = (followedId) => {
+    console.log("Navigating to member page 팔로우페이지:", followedId);
+    navigate(`/member/${followedId}`);
   };
 
   const levelIcons = {
@@ -77,6 +81,8 @@ export default function MypageFollow({ userId }) {
   const displayFollows = follows.slice(0, 7);
   const emptySlots = Math.max(0, 7 - displayFollows.length);
 
+  console.log("Displaying followers:", displayFollows); // 추가된 로그
+
   return (
     <>
       <div className="bg-white rounded-lg shadow p-4 mb-4 relative w-3/4 h-[9rem]">
@@ -84,8 +90,8 @@ export default function MypageFollow({ userId }) {
           {displayFollows.map((user) => (
             <div
               key={user.followedId}
-              onClick={() => navigateToMemberPage(user.followedName)}
-              className="bg-gray-200 p-2 rounded-xl flex items-center bg-[#F5F5F5] cursor-pointer w-36 h-[5rem]"
+              // onClick={() => navigateToMemberPage(user.followedId)}
+              className="bg-gray-200 p-2 rounded-xl flex items-center bg-[#F5F5F5] w-36 h-[5rem]"
             >
               <img
                 src={levelIcons[user.level]}
@@ -100,7 +106,7 @@ export default function MypageFollow({ userId }) {
           ))}
           {renderEmptyItems(emptySlots)}
         </div>
-        <div className="absolute top-4 right-4">
+        {/* <div className="absolute top-4 right-4">
           <button
             onClick={openFollowListModal}
             className="text-blue-500 hover:text-blue-700 text-lg font-bold"
@@ -108,7 +114,7 @@ export default function MypageFollow({ userId }) {
             <span className="text-custom-highlight">&gt;</span>{" "}
             <span className="text-[1rem] text-[#868686]">더보기</span>
           </button>
-        </div>
+        </div> */}
       </div>
 
       <FollowList

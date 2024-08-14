@@ -14,6 +14,7 @@ import './follow_btn.css';
 import BookshelfList from "../Mypage/BookshelfModal.jsx"
 import MemberPhotocardList from "./MemberPhotocardList.jsx"
 import ReviewList from "../Mypage/ReviewListModal.jsx"
+import TimeCat from "../../assets/onboard/time_cat.png"
 
 const FollowButton = ({ isFollowing, onClick, isLoading }) => {
   return (
@@ -63,9 +64,8 @@ export default function Member() {
           const followingsData = await getFollowers(currentUser.id);
           console.log('Followings data:', followingsData);
           
-
           console.log('Follower IDs:', followingsData.map(follower => follower.followedId));
-console.log('Current member response ID:', data.memberResponse.id);
+          console.log('Current member response ID:', data.memberResponse.id);
 
           const isAlreadyFollowing = followingsData.some(follower => follower.followedId === data.memberResponse.id);
           console.log('Is already following:', isAlreadyFollowing, 'Member ID:', memberId);
@@ -126,8 +126,6 @@ console.log('Current member response ID:', data.memberResponse.id);
     }
   }, [isFollowLoading, currentUser, userId, isFollowing, removeFollowing, addFollowing, followings]);
   
-  
-
   const calculateLevel = (point) => {
     if (point < 1000) return 1;
     if (point < 2000) return 2;
@@ -144,7 +142,6 @@ console.log('Current member response ID:', data.memberResponse.id);
       default: return levelIcon1;
     }
   };
-
 
   const openModal = () => {
     setModalIsOpen(true);
@@ -172,6 +169,7 @@ console.log('Current member response ID:', data.memberResponse.id);
 
   const MemberHeader = ({ user }) => {
     const levelIcon = getLevelIcon(calculateLevel(user.memberResponse.point));
+    const isCurrentUserPage = currentUser && currentUser.id === user.memberResponse.id;
 
     return (
       <header className="flex justify-between items-center py-1 px-3 bg-white">
@@ -183,11 +181,13 @@ console.log('Current member response ID:', data.memberResponse.id);
         <div>
           <div className="flex text-center">
             <h2 className="text-2xl font-bold mr-2">{user.memberResponse.nickname}</h2>
-            <FollowButton 
-          isFollowing={isFollowing} 
-          onClick={handleFollowClick} 
-          isLoading={isFollowLoading} 
-        />
+            {!isCurrentUserPage && (
+              <FollowButton 
+                isFollowing={isFollowing} 
+                onClick={handleFollowClick} 
+                isLoading={isFollowLoading} 
+              />
+            )}
           </div>
           <p className="text-base">{user.memberResponse.introduction}</p>
         </div>
@@ -231,7 +231,7 @@ console.log('Current member response ID:', data.memberResponse.id);
         <div className="flex space-x-6">
           <p className="font-bold text-2xl text-black ">{userData.memberResponse.nickname}님의 책장</p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4 mb-4 relative">
+        <div className="bg-white rounded-lg shadow p-4 mb-4 relative w-3/4 h-[9rem]">
           <div className="flex space-x-2 mb-2">
             {renderItems(
               userData.readBookResponse,
@@ -243,7 +243,7 @@ console.log('Current member response ID:', data.memberResponse.id);
             )}
           </div>
           <div className="absolute top-4 right-4">
-            <button onClick={openModal} className="text-blue-500 hover:text-blue-700 text-lg font-bold">
+            <button onClick={openModal} className="text-blue-500 hover:text-blue-700 text-lg font-bold mr-1">
               <span className="text-custom-highlight">&gt;</span>{" "}
               <span className="text-[1rem] text-[#868686]">더보기</span>
             </button>
@@ -251,7 +251,7 @@ console.log('Current member response ID:', data.memberResponse.id);
         </div>
 
         <div className="mt-4">
-          <div className="relative bg-white rounded-lg shadow p-4 mb-4">
+          <div className="relative bg-white rounded-lg shadow p-4 mb-4 w-3/4 h-[11rem]">
             <h3 className="font-bold mb-2">{userData.memberResponse.nickname}님이 만든 포토카드</h3>
             <div className="flex flex-wrap gap-1">
               {renderItems(
@@ -264,14 +264,14 @@ console.log('Current member response ID:', data.memberResponse.id);
               )}
             </div>
             <div className="absolute top-4 right-4">
-              <button onClick={openPhotocardModal} className="text-blue-500 hover:text-blue-700 text-lg font-bold mr-80">
+              <button onClick={openPhotocardModal} className="text-blue-500 hover:text-blue-700 text-lg font-bold mr-1">
                 <span className="text-custom-highlight">&gt;</span>{" "}
                 <span className="text-[1rem] text-[#868686]">더보기</span>
               </button>
             </div>
           </div>
 
-          <div className="relative bg-white rounded-lg shadow p-4">
+          <div className="relative bg-white rounded-lg shadow p-4 w-3/4 h-[11rem]">
             <h3 className="font-bold mb-2">{userData.memberResponse.nickname}님이 남긴 한줄평</h3>
             <div className="flex flex-wrap gap-3">
               {renderItems(
@@ -288,13 +288,16 @@ console.log('Current member response ID:', data.memberResponse.id);
               )}
             </div>
             <div className="absolute top-4 right-4">
-              <button onClick={openReviewModal} className="text-blue-500 hover:text-blue-700 text-lg font-bold mr-80">
+              <button onClick={openReviewModal} className="text-blue-500 hover:text-blue-700 text-lg font-bold mr-1">
                 <span className="text-custom-highlight">&gt;</span>{" "}
                 <span className="text-[1rem] text-[#868686]">더보기</span>
               </button>
             </div>
           </div>
         </div>
+        <div className="fixed bottom-10 right-40 flex flex-col items-end z-10">
+            <img src={TimeCat} alt="timecat" className="w-[12rem] mb-2" />
+          </div>
       </div>
 
       <BookshelfList
