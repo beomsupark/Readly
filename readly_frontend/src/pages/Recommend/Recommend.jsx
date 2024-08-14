@@ -156,12 +156,14 @@ export default function Recommend() {
       alert("책 정보가 없거나 로그인되지 않았습니다.");
       return;
     }
-
+  
     setAddBookStatus("loading");
     try {
       await addBookToUser(user.id, bookToAdd.id);
       setAddBookStatus("success");
       alert("책이 성공적으로 등록되었습니다.");
+      setModalIsOpen(false);  // 모달 닫기
+      navigate('/mypage');  // '/mypage'로 이동
     } catch (error) {
       console.error("Error adding book:", error);
       setAddBookStatus("error");
