@@ -11,9 +11,8 @@ import { getFollowers } from "../../api/mypageAPI";
 import useUserStore from '../../store/userStore';
 import useFollowStore from '../../store/followStore';
 import './follow_btn.css';
-import Review from "../../components/Review/Review.jsx"
 import BookshelfList from "../Mypage/BookshelfModal.jsx"
-import PhotocardList from "../Mypage/PhotocardListModal.jsx"
+import MemberPhotocardList from "./MemberPhotocardList.jsx"
 import ReviewList from "../Mypage/ReviewListModal.jsx"
 
 const FollowButton = ({ isFollowing, onClick, isLoading }) => {
@@ -277,16 +276,14 @@ console.log('Current member response ID:', data.memberResponse.id);
             <div className="flex flex-wrap gap-3">
               {renderItems(
                 userData.reviewResponse,
-                (review, index) => (
-                  <div key={index} className="w-[7rem] h-[6rem]">
-                    <Review
-                      bookImage={review.bookImage}
-                      title={review.bookTitle}
-                      author={review.bookAuthor}
-                      review={review.reviewText}
-                      likeCount={review.likeCount}
-                    />
-                  </div>
+                (review) => (
+                  <div key={review.reviewId} className="w-[6rem] h-[7rem]">
+                  <img
+                    src={review.bookImage}
+                    alt={review.bookTitle}
+                    className="w-full h-full object-fill rounded"
+                  />
+                </div>
                 )
               )}
             </div>
@@ -306,7 +303,7 @@ console.log('Current member response ID:', data.memberResponse.id);
         books={userData.readBookResponse}
       />
 
-      <PhotocardList
+      <MemberPhotocardList
         isOpen={photocardModalIsOpen}
         onRequestClose={closePhotocardModal}
         photocards={userData.photoCardResponse}

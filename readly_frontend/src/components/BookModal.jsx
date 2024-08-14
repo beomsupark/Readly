@@ -12,7 +12,7 @@ import SimpleReview from "./Review/SimpleReview.jsx";
 const customModalStyles = {
   overlay: {
     backgroundColor: "rgba(0, 0, 0, 0.4)",
-    zIndex: "10",
+    zIndex: "99",
   },
   content: {
     width: "90%",
