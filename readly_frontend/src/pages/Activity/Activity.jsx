@@ -142,7 +142,7 @@ export default function Activity() {
         {activeTab === "진행도" && <ActivityProgress groupId={selectedGroupId} />}
         {activeTab === "소통" && <ActivityChat groupId={selectedGroupId} />}
         {activeTab === "화상" && <ActivityRTC groupId={selectedGroupId} isActiveTab={activeTab === "화상"} />}
-        {activeTab === "회의록" && <ActivityBoard groupId={selectedGroupId} />}
+        {activeTab === "게시판" && <ActivityBoard groupId={selectedGroupId} />}
         {activeTab === "그룹 삭제" && userRole === 'L' && (
           <GroupDelete 
             groupId={selectedGroupId} 
