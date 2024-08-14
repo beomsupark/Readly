@@ -56,9 +56,14 @@ export default function Activity() {
           if (!groupId) {
             navigate(`/activity/${initialGroupId}`);
           }
+        } else {
+          alert("현재 소모임이 없습니다");
+          navigate('/Home');
         }
       } catch (error) {
         console.error("Failed to fetch groups:", error);
+        alert("그룹 정보를 가져오는 데 실패했습니다");
+        navigate('/Home');
       }
     };
 

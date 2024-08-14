@@ -141,7 +141,7 @@ export default function SignupForm() {
 
   return (
     <div className="login-content login-content-signup p-12">
-      <div>
+      <div className="mt-4">
         <form className="wrapper-box" onSubmit={handleRegister}>
           <div className="relative">
             <input
@@ -174,7 +174,7 @@ export default function SignupForm() {
             />
             {tooltips.loginPwd && (
               <div className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-300 rounded shadow-lg p-2 text-sm text-[#000000] z-10">
-                비밀번호는 영문 대문자, 소문자, 숫자 및 특수기호가 각각 최소 1개
+                비밀번호는 영문, 숫자 및 특수기호가 각각 최소 1개
                 이상 포함되어야 하며, 길이는 8자 이상 16자 이하이어야 합니다.
               </div>
             )}

@@ -30,11 +30,19 @@ export default function Community() {
           const memberGroups = await getMemberGroups(user.id, token);
           console.log('Member groups:', memberGroups);
           
-          const memberGroupIds = memberGroups.map((group) => group.groupId);
-          const filteredGroups = availableGroups.filter(
-            (group) => !memberGroupIds.includes(group.groupId)
-          );
-          setGroups(filteredGroups);
+          if (availableGroups.length === 0) {
+            setError("현재 사용 가능한 소모임이 없습니다.");
+            setGroups([]);
+          } else if (memberGroups.length === 0) {
+            // 사용자가 가입한 소모임이 없는 경우, 모든 사용 가능한 그룹을 표시
+            setGroups(availableGroups);
+          } else {
+            const memberGroupIds = memberGroups.map((group) => group.groupId);
+            const filteredGroups = availableGroups.filter(
+              (group) => !memberGroupIds.includes(group.groupId)
+            );
+            setGroups(filteredGroups);
+          }
         } catch (error) {
           console.error("Error fetching groups:", error);
           setError("그룹 정보를 가져오는 데 실패했습니다. 나중에 다시 시도해주세요.");
@@ -106,63 +114,70 @@ export default function Community() {
         <span className="text-custom-highlight">소모임</span>을 만들어요!
       </h2>
       <div className="container mx-auto p-4 flex justify-center items-center">
-        <div className="grid grid-cols-2 gap-10 mb-4">
-          {groups.map((item) => (
-            <div
-              key={item.groupId}
-              className="flex bg-[#F8F8F8] w-[35rem] h-[18rem] rounded-lg overflow-hidden shadow-lg items-center"
-            >
-              <img
-                src={GroupImg}
-                alt="Group"
-                className="w-[10rem] h-[10rem] p-4"
-              />
-              <div className="flex flex-col p-4 space-y-4">
-                <div className="flex flex-wrap gap-2">
-                  {item.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="inline-block bg-[#E5E7EB] text-[#777777] rounded-md p-2 text-sm font-semibold"
-                    >
-                      # {tag}
-                    </span>
-                  ))}
-                </div>
-                <h2 className="text-xl font-bold">{item.title}</h2>
-                <p className="mb-2">{item.description}</p>
-                <p className="text-sm text-gray-600">
-                  인원: {item.currentParticipants}명 / {item.maxParticipants}명
-                </p>
-                {item.currentParticipants < item.maxParticipants &&
-                  joinStatus[item.groupId] !== "success" && (
-                    <GoButton
-                      text="참여하기"
-                      onClick={() => handleJoinGroup(item.groupId)}
-                      disabled={joinStatus[item.groupId] === "success"}
-                    />
+        {groups.length > 0 ? (
+          <div className="grid grid-cols-2 gap-10 mb-4">
+            {groups.map((item) => (
+              <div
+                key={item.groupId}
+                className="flex bg-[#F8F8F8] w-[35rem] h-[18rem] rounded-lg overflow-hidden shadow-lg items-center"
+              >
+                <img
+                  src={GroupImg}
+                  alt="Group"
+                  className="w-[10rem] h-[10rem] p-4"
+                />
+                <div className="flex flex-col p-4 space-y-4">
+                  <div className="flex flex-wrap gap-2">
+                    {item.tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="inline-block bg-[#E5E7EB] text-[#777777] rounded-md p-2 text-sm font-semibold"
+                      >
+                        # {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <h2 className="text-xl font-bold">{item.title}</h2>
+                  <p className="mb-2">{item.description}</p>
+                  <p className="text-sm text-gray-600">
+                    인원: {item.currentParticipants}명 / {item.maxParticipants}명
+                  </p>
+                  {item.currentParticipants < item.maxParticipants &&
+                    joinStatus[item.groupId] !== "success" && (
+                      <GoButton
+                        text="참여하기"
+                        onClick={() => handleJoinGroup(item.groupId)}
+                        disabled={joinStatus[item.groupId] === "success"}
+                      />
+                    )}
+                  {joinStatus[item.groupId] === "success" && (
+                    <p className="text-green-500 font-bold">참여 완료!</p>
                   )}
-                {joinStatus[item.groupId] === "success" && (
-                  <p className="text-green-500 font-bold">참여 완료!</p>
-                )}
-                {joinStatus[item.groupId] === "fail" && (
-                  <p className="text-red-500">참여 실패</p>
-                )}
-                {joinStatus[item.groupId] === "error" && (
-                  <p className="text-red-500">오류 발생</p>
-                )}
+                  {joinStatus[item.groupId] === "fail" && (
+                    <p className="text-red-500">참여 실패</p>
+                  )}
+                  {joinStatus[item.groupId] === "error" && (
+                    <p className="text-red-500">오류 발생</p>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
 
-          <div
-            onClick={handleMakeCommunity}
-            className="flex bg-[#F8F8F8] w-[35rem] h-[18rem] rounded-lg overflow-hidden shadow-lg cursor-pointer items-center justify-center"
-          >
-            <button className="w-full bg-gray-200 p-4 rounded-lg flex items-center justify-center">
-              <p className="text-4xl mr-2">+</p>
-            </button>
+            <div
+              onClick={handleMakeCommunity}
+              className="flex bg-[#F8F8F8] w-[35rem] h-[18rem] rounded-lg overflow-hidden shadow-lg cursor-pointer items-center justify-center"
+            >
+              <button className="w-full bg-gray-200 p-4 rounded-lg flex items-center justify-center">
+                <p className="text-4xl mr-2">+</p>
+              </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="text-center">
+            <p className="text-xl mb-4">현재 참여 가능한 소모임이 없습니다.</p>
+            <GoButton text="소모임 만들기" onClick={handleMakeCommunity} />
+          </div>
+        )}
       </div>
     </>
   );

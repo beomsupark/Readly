@@ -66,13 +66,13 @@ const VideoConferenceView = ({
             </div>
           </div>
         )}
-        <div className={`${hasSharedItems ? 'w-1/4' : 'w-full'} pl-2`}>
+        <div className={`${hasSharedItems ? 'w-3/4' : 'w-full '} pl-2`}>
           <h3 className="text-xl font-semibold mb-3">참가자</h3>
           <div 
-            className="grid gap-2 h-[calc(100%-2rem)] overflow-y-auto"
+            className="grid gap-2 h-[calc(55%)] overflow-y-auto"
             style={{
               gridTemplateColumns: `repeat(${cols}, 1fr)`,
-              gridTemplateRows: `repeat(${rows}, 1fr)`,
+              gridTemplateRows: `repeat(${rows}, 2fr)`,
             }}
           >
             {allParticipants.map((participant, index) => (

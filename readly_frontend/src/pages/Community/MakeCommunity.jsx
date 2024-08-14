@@ -68,6 +68,7 @@ export default function MakeCommunity() {
             label="태그를 입력해주세요"
             tags={tags}
             setTags={setTags}
+            placeholder="입력"
           />
           <div className="absolute bottom-4 right-4">
             <GoButton text="소모임 생성" onClick={handleSubmit} />
