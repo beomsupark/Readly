@@ -55,3 +55,17 @@ export const addBookToUser = async (memberId, bookId) => {
     throw error;
   }
 };
+
+export const addBookToGroup = async (oldBookId, groupId, bookId) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/api/group/add`, {
+      oldBookId,
+      groupId,
+      bookId
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error adding book to group:', error);
+    throw error;
+  }
+};

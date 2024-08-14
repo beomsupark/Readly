@@ -35,7 +35,7 @@ export default function OnBoard() {
               <span className="text-custom-highlight">ly</span>
             </h2>
             <h1 className="font-bold text-[2.5rem] -mt-24 ml-[9.5rem]">
-              리들리를 <span className="text-custom-highlight">소개</span>
+              리들리를 <span className="text-custom-highlight">소개</span>합니다
             </h1>
           </div>
 

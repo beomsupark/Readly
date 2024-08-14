@@ -6,7 +6,7 @@ import useBookStore from "../store/bookStore";
 import BookModal from "./BookModal";
 import useUserStore from "../store/userStore";
 import { BASE_URL } from '../api/authAPI';
-
+import GroupBookModal from "./GroupBookModal.jsx"
 const customModalStyles = {
   overlay: {
     backgroundColor: "rgba(0, 0, 0, 0.4)",
@@ -74,14 +74,7 @@ export default function GroupBookSearch({ isOpen, onRequestClose, groupId, curre
   const handleBookRegister = useCallback(
     async (book) => {
       try {
-        await axios.post(`${BASE_URL}/group/add`, {
-          oldBookId: currentBookId || null,
-          groupId: groupId,
-          bookId: book.id
-        },
-        );
-        
-        onBookRegister(book);
+        await onBookRegister(book);
         setIsBookModalOpen(false);
         onRequestClose();
       } catch (error) {
@@ -89,7 +82,7 @@ export default function GroupBookSearch({ isOpen, onRequestClose, groupId, curre
         // 여기에 에러 처리 로직 추가
       }
     },
-    [groupId, currentBookId, token, onBookRegister, onRequestClose]
+    [onBookRegister, onRequestClose]
   );
 
   return (
@@ -146,17 +139,19 @@ export default function GroupBookSearch({ isOpen, onRequestClose, groupId, curre
       </div>
 
       {selectedBook && (
-        <BookModal
+        <GroupBookModal
           isOpen={isBookModalOpen}
           onRequestClose={() => setIsBookModalOpen(false)}
           book={selectedBook}
-          onRegisterBook={handleBookRegister}
+          onAddBook={handleBookRegister}
           searchQuery={searchQuery}
           handleInputChange={handleInputChange}
           handleSearch={handleSearch}
           suggestions={searchResults}
           handleSuggestionClick={handleSuggestionClick}
           clearSearch={() => setSearchQuery("")}
+          groupId={groupId}
+          oldBookId={currentBookId}
         />
       )}
     </Modal>
