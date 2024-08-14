@@ -201,7 +201,7 @@ export default function Recommend() {
           
             <div className="flex justify-between items-center mt-4">
               {info.book && info.book.purchase_link ? (
-                
+                <a
                   href={info.book.purchase_link}
                   target="_blank"
                   rel="noopener noreferrer"
