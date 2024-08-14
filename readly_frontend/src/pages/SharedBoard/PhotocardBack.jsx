@@ -1,32 +1,37 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import "../../components/Review/like_btn.css";
 import { User } from "lucide-react";
 import useUserStore from "../../store/userStore.js";
-import useLikeStore from "../../store/likeStore.js";
+import { getFollowerInfo } from "../../api/memberAPI.js"; // getFollowerInfo를 가져옵니다.
 
 const PhotocardBack = ({
   photoCardText,
   memberId,
   bookTitle,
   bookAuthor,
-  likeCount: initialLikeCount,
-  likeCheck: initialLikeCheck,
-  onLikeClick,
   photoCardCreatedDate,
-  photoCardId,
 }) => {
   const canvasRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
   const { user } = useUserStore();
-  const { likes, toggleLike, setInitialLikeStatus } = useLikeStore();
-  const [localLikeCount, setLocalLikeCount] = useState(initialLikeCount);
-
-  const isLiked = likes[photoCardId] !== undefined ? likes[photoCardId] : initialLikeCheck === 1;
+  const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
-    setInitialLikeStatus(photoCardId, isLiked);
-  }, [photoCardId, isLiked, setInitialLikeStatus]);
+    // memberId가 변경될 때마다 해당 유저 정보를 가져오는 함수
+    const fetchUserInfo = async () => {
+      try {
+        const data = await getFollowerInfo(memberId); // API 호출
+        setUserInfo(data);
+        console.log("Fetched User Info:", data);
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      }
+    };
+
+    if (memberId) {
+      fetchUserInfo();
+    }
+  }, [memberId]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -135,15 +140,6 @@ const PhotocardBack = ({
     return lines;
   }
 
-  const handleLikeClick = async (event) => {
-    event.stopPropagation();
-    const newLikeStatus = await toggleLike(user.id, photoCardId);
-    setLocalLikeCount(prev => newLikeStatus ? prev + 1 : prev - 1);
-    if (onLikeClick) {
-      onLikeClick(event);
-    }
-  };
-
   const isCurrentUser = user.nickname === memberId;
 
   return (
@@ -161,7 +157,7 @@ const PhotocardBack = ({
             className="text-gray-600 mr-1 transition-transform duration-100 group-hover:scale-125"
           />
           <span className="text-sm font-bold text-gray-600 group-hover:text-blue-600">
-            작성자: {memberId}
+            작성자: {userInfo ? userInfo.memberResponse.nickname : memberId}
           </span>
           {isHovered && (
             <span className="absolute left-full ml-2 bg-white px-2 py-1 rounded shadow-md text-xs whitespace-nowrap z-10 font-bold">
@@ -181,7 +177,7 @@ const PhotocardBack = ({
             className="text-gray-600 mr-1 transition-transform duration-100 group-hover:scale-125"
           />
           <span className="text-sm font-bold text-gray-600 group-hover:text-blue-600">
-            작성자: {memberId}
+            작성자: {userInfo ? userInfo.memberResponse.nickname : memberId}
           </span>
           {isHovered && (
             <span className="absolute left-full ml-2 bg-white px-2 py-1 rounded shadow-md text-xs whitespace-nowrap z-10 font-bold">
@@ -190,45 +186,6 @@ const PhotocardBack = ({
           )}
         </Link>
       )}
-
-      <div className="absolute bottom-8 right-2 flex items-center">
-        <span className="text-xs font-semibold mr-2">{localLikeCount}</span>
-        <button
-          className="heart-container"
-          title="Like"
-          onClick={handleLikeClick}
-        >
-          <div className="svg-container">
-            <svg
-              viewBox="0 0 24 24"
-              className={`svg-outline ${isLiked ? "hidden" : ""}`}
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
-            </svg>
-            <svg
-              viewBox="0 0 24 24"
-              className={`svg-filled ${isLiked ? "" : "hidden"}`}
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
-            </svg>
-            <svg
-              className={`svg-celebrate ${isLiked ? "" : "hidden"}`}
-              width="100"
-              height="100"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <polygon points="10,10 20,20"></polygon>
-              <polygon points="10,50 20,50"></polygon>
-              <polygon points="20,80 30,70"></polygon>
-              <polygon points="90,10 80,20"></polygon>
-              <polygon points="90,50 80,50"></polygon>
-              <polygon points="80,80 70,70"></polygon>
-            </svg>
-          </div>
-        </button>
-      </div>
     </div>
   );
 };

@@ -83,7 +83,7 @@ export default function CreateReview({
       <h2 className="text-2xl font-bold mb-4">{book.title} 한줄평</h2>
       <div className="p-4 rounded-lg mb-4 w-[15rem] h-[19rem]">
         <Review
-          bookImage={book.cover}
+          bookImage={book.image}
           title={book.title}
           author={book.author || "Author Name"}
           review={reviewText}

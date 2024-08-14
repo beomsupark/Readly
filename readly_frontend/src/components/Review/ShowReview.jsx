@@ -1,64 +1,43 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { User } from "lucide-react";
-import "../../components/Review/like_btn.css";
 import useUserStore from "../../store/userStore.js";
-import useLikeStore from "../../store/likeStore.js";
+import { getFollowerInfo } from "../../api/memberAPI.js";
 
 const ShowReview = ({
   review,
   isModal = false,
-  onLikeClick,
-  externalLikeState,
 }) => {
   const {
-    id,
     bookImage,
     bookTitle,
     bookAuthor,
     memberId,
     reviewText,
-    likeCount: initialLikeCount,
-    likeCheck,
   } = review;
 
   const [isHovered, setIsHovered] = useState(false);
-  const { user } = useUserStore();
-  const { likes, toggleLike, setInitialLikeStatus } = useLikeStore();
-
-  const [isLiked, setIsLiked] = useState(() => {
-    // localStorage에서 좋아요 상태를 확인
-    const storedLikes = JSON.parse(localStorage.getItem("likes") || "{}");
-    return storedLikes[id] !== undefined ? storedLikes[id] : likeCheck === 1;
-  });
-  const [currentLikeCount, setCurrentLikeCount] = useState(initialLikeCount);
+  const { user } = useUserStore()
+  const [userInfo, setUserInfo] = useState(null);
 
   useEffect(() => {
-    setInitialLikeStatus(id, isLiked);
-  }, [id, isLiked, setInitialLikeStatus]);
+    // memberId가 변경될 때마다 해당 유저 정보를 가져오는 함수
+    const fetchUserInfo = async () => {
+      try {
+        const data = await getFollowerInfo(memberId); // API 호출
+        setUserInfo(data);
+        console.log("Fetched User Info:", data);
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      }
+    };
 
-  useEffect(() => {
-    if (externalLikeState !== undefined) {
-      setIsLiked(externalLikeState);
-      setCurrentLikeCount(initialLikeCount);
+    if (memberId) {
+      fetchUserInfo();
     }
-  }, [externalLikeState, initialLikeCount]);
+  }, [memberId]);
 
-  const handleLikeClick = async (event) => {
-    event.stopPropagation();
-    const newLikeStatus = await toggleLike(user.id, id, true); // true indicates it's a review
-    setIsLiked(newLikeStatus);
-    setCurrentLikeCount((prev) => (newLikeStatus ? prev + 1 : prev - 1));
-
-    // localStorage에 좋아요 상태 저장
-    const storedLikes = JSON.parse(localStorage.getItem("likes") || "{}");
-    storedLikes[id] = newLikeStatus;
-    localStorage.setItem("likes", JSON.stringify(storedLikes));
-
-    if (onLikeClick) {
-      onLikeClick(id, newLikeStatus);
-    }
-  };
+  
 
   const containerClasses = isModal
     ? "w-full bg-[#F5F5F5] rounded-lg shadow-md overflow-hidden flex flex-col"
@@ -120,7 +99,7 @@ const ShowReview = ({
                     isModal ? "text-sm" : "text-[10px]"
                   }`}
                 >
-                  {memberId}
+                  {userInfo ? userInfo.memberResponse.nickname : memberId}
                 </span>
                 {isHovered && (
                   <span className="absolute left-0 bottom-full mb-2 bg-white px-2 py-1 rounded shadow-md text-xs whitespace-nowrap z-10 font-bold">
@@ -144,7 +123,7 @@ const ShowReview = ({
                     isModal ? "text-sm" : "text-[10px]"
                   }`}
                 >
-                  {memberId}
+                  {userInfo ? userInfo.memberResponse.nickname : memberId}
                 </span>
                 {isHovered && (
                   <span className="absolute left-0 bottom-full mb-2 bg-white px-2 py-1 rounded shadow-md text-xs whitespace-nowrap z-10 font-bold">
@@ -154,31 +133,7 @@ const ShowReview = ({
               </Link>
             )}
           </div>
-          <div className="flex items-center space-x-1">
-            <button
-              className={`heart-container ${isModal ? "" : "scale-75"}`}
-              title="Like"
-              onClick={handleLikeClick}
-            >
-              <div className="svg-container">
-                <svg
-                  viewBox="0 0 24 24"
-                  className={`svg-outline ${isLiked ? "hidden" : ""}`}
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
-                </svg>
-                <svg
-                  viewBox="0 0 24 24"
-                  className={`svg-filled ${isLiked ? "" : "hidden"}`}
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
-                </svg>
-              </div>
-            </button>
-            <span>{currentLikeCount}</span>
-          </div>
+        
         </div>
       </div>
     </div>
