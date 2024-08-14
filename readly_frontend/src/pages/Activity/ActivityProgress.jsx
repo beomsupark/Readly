@@ -5,10 +5,11 @@ import CreateReview from "../../components/Review/CreateReview.jsx";
 import useUserStore from "../../store/userStore.js";
 import GroupProgressBar from "../../components/ProgressBar/Group/GroupProgressBar.jsx";
 import GroupCurrentPageModal from "../../components/ProgressBar/Group/GroupCurrentPageModal.jsx";
+import GroupBookModal from "../../components/GroupBookModal.jsx";
 import BookModal from "../../components/BookModal.jsx";
 import useBookStore from "../../store/bookStore";
 import { postReview } from "../../api/reviewAPI";
-import { BASE_URL } from '../../api/authAPI.js';
+import { BASE_URL } from "../../api/authAPI.js";
 
 const getLayoutClasses = (memberCount) => {
   if (memberCount <= 4) {
@@ -63,7 +64,7 @@ export default function ActivityProgress({ groupId }) {
     try {
       console.log(`Fetching data for groupId: ${groupId}`);
       const response = await axios.get(
-        `${BASE_URL}/group/read-books/${groupId}`,
+        `${BASE_URL}/group/read-books/${groupId}`
       );
       console.log("API Response:", response.data);
 
@@ -90,14 +91,11 @@ export default function ActivityProgress({ groupId }) {
 
   const updateCurrentPage = async (memberId, newPage) => {
     try {
-      await axios.patch(
-        `${BASE_URL}/user/update-page`,
-        {
-          bookId: bookInfo.book_id,
-          memberId,
-          currentPage: newPage,
-        },
-      );
+      await axios.patch(`${BASE_URL}/user/update-page`, {
+        bookId: bookInfo.book_id,
+        memberId,
+        currentPage: newPage,
+      });
 
       setReadBooks((prevReadBooks) =>
         prevReadBooks.map((book) =>
@@ -211,33 +209,54 @@ export default function ActivityProgress({ groupId }) {
       const requestData = {
         oldBookId: bookInfo ? bookInfo.book_id : null,
         groupId: groupId,
-        bookId: book.bookId,
+        bookId: book.id,
       };
       console.log("Request data:", requestData);
-
-      await axios.post(`${BASE_URL}/group/add`, requestData);
-
-      setBookInfo({
-        book_id: book.bookId,
+  
+      const response = await axios.post(`${BASE_URL}/group/add`, requestData);
+      console.log("Server response:", response.data);
+  
+      // 기존 bookInfo를 유지하면서 새로운 책 정보만 업데이트
+      setBookInfo(prevBookInfo => ({
+        ...prevBookInfo,
+        book_id: book.id,
         book_title: book.title,
         book_author: book.author,
-        book_totalPage: book.total_page || 100,
-        book_image: book.image,
+        book_totalPage: book.total_page || prevBookInfo.book_totalPage,
+        book_image: book.image || prevBookInfo.book_image,
+      }));
+  
+      // readBooks 상태 업데이트 (기존 진행도 유지)
+      setReadBooks(prevReadBooks => prevReadBooks.map(readBook => ({
+        ...readBook,
+        currentPage: 0, // 새 책으로 변경되었으므로 진행도 초기화
+      })));
+  
+      // 성공 메시지 표시
+      // 모달 닫기
+      setIsBookModalOpen(false);
+      setReadBooks(prevReadBooks => {
+        const updatedBooks = prevReadBooks.map(readBook => ({
+          ...readBook,
+          currentPage: 0,
+        }));
+        alert(`책이 "${book.title}"로 변경되었습니다. 모든 멤버의 진행도가 초기화되었습니다.`);
+        return updatedBooks;
       });
-
-      fetchGroupData();
     } catch (error) {
       console.error("Error adding book to group:", error);
       if (error.response) {
         console.error("Error response data:", error.response.data);
         console.error("Error response status:", error.response.status);
         console.error("Error response headers:", error.response.headers);
+        alert(`책 추가 실패: ${error.response.data.errorMessage || '알 수 없는 오류가 발생했습니다.'}`);
       } else if (error.request) {
         console.error("No response received:", error.request);
+        alert("서버로부터 응답을 받지 못했습니다. 네트워크 연결을 확인해주세요.");
       } else {
         console.error("Error setting up request:", error.message);
+        alert("요청 설정 중 오류가 발생했습니다.");
       }
-      throw error;
     }
   };
 
@@ -348,7 +367,7 @@ export default function ActivityProgress({ groupId }) {
         onReviewSubmit={handleCreateReview}
       />
 
-      <BookModal
+      <GroupBookModal
         isOpen={isBookModalOpen}
         onRequestClose={() => setIsBookModalOpen(false)}
         book={selectedBook}
@@ -359,7 +378,9 @@ export default function ActivityProgress({ groupId }) {
         handleSuggestionClick={handleSuggestionClick}
         clearSearch={() => setSearchQuery("")}
         onAddBook={handleAddBook}
-        addButtonText="책 등록하기"
+        groupId={groupId}
+        oldBookId={bookInfo ? bookInfo.book_id : null}
+        addButtonText="그룹에 책 등록하기"
       />
     </>
   );

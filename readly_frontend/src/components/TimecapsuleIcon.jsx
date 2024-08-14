@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Modal from "react-modal";
 import useUserStore from "../store/userStore"; // userStore import
-import { BASE_URL } from '../api/authAPI';
-
-Modal.setAppElement("#root"); // Modal 접근성을 위한 설정
+import { BASE_URL } from "../api/authAPI";
+import TimeCat from "../assets/onboard/time_cat.png"
+Modal.setAppElement("#root");
 
 const Timecapsule = () => {
   const { user } = useUserStore(); // user 정보를 가져옴
@@ -15,12 +15,15 @@ const Timecapsule = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedCapsule, setSelectedCapsule] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null); // 추가: 클릭된 이미지 정보를 저장
 
   useEffect(() => {
     // 로그인 후 알람 개수 불러오기
     const fetchUnreadCount = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/timecapsule/${memberId}/alarm/unread-count`);
+        const response = await axios.get(
+          `${BASE_URL}/timecapsule/${memberId}/alarm/unread-count`
+        );
         setUnreadAlarmsCount(response.data);
         console.log("Unread Alarm Count:", response.data); // Log the unread alarm count
       } catch (error) {
@@ -34,9 +37,13 @@ const Timecapsule = () => {
   const handleIconClick = async () => {
     if (!isDropdownOpen) {
       try {
-        const response = await axios.get(`${BASE_URL}/timecapsule/${memberId}/alarm`);
+        const response = await axios.get(
+          `${BASE_URL}/timecapsule/${memberId}/alarm`
+        );
         setAlarms(response.data);
-        setUnreadAlarmsCount(response.data.filter(alarm => !alarm.isRead).length);
+        setUnreadAlarmsCount(
+          response.data.filter((alarm) => !alarm.isRead).length
+        );
         setIsDropdownOpen(true);
       } catch (error) {
         console.error("Failed to fetch alarms:", error);
@@ -48,11 +55,13 @@ const Timecapsule = () => {
 
   const handleAlarmClick = async (timeCapsuleId) => {
     try {
-      const response = await axios.get(`${BASE_URL}/timecapsule/${timeCapsuleId}`);
+      const response = await axios.get(
+        `${BASE_URL}/timecapsule/${timeCapsuleId}`
+      );
       setSelectedCapsule(response.data);
       setIsModalOpen(true);
       // 특정 알람을 클릭하면 해당 알람을 읽음 처리할 수 있습니다.
-      setUnreadAlarmsCount(prevCount => prevCount - 1);
+      setUnreadAlarmsCount((prevCount) => prevCount - 1);
     } catch (error) {
       console.error("Failed to fetch time capsule details:", error);
     }
@@ -61,8 +70,10 @@ const Timecapsule = () => {
   const handleDeleteAlarm = async (timeCapsuleId) => {
     try {
       await axios.delete(`${BASE_URL}/timecapsule/${timeCapsuleId}`);
-      setAlarms(prevAlarms => prevAlarms.filter(alarm => alarm.timeCapsuleId !== timeCapsuleId));
-      setUnreadAlarmsCount(prevCount => prevCount - 1);
+      setAlarms((prevAlarms) =>
+        prevAlarms.filter((alarm) => alarm.timeCapsuleId !== timeCapsuleId)
+      );
+      setUnreadAlarmsCount((prevCount) => prevCount - 1);
     } catch (error) {
       console.error("Failed to delete alarm:", error);
     }
@@ -71,7 +82,12 @@ const Timecapsule = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedCapsule(null);
+    setSelectedImage(null); // 추가: 모달을 닫을 때 선택된 이미지 초기화
     setIsDropdownOpen(false); // 모달을 닫을 때 드롭다운도 닫음
+  };
+
+  const handleImageClick = (image) => {
+    setSelectedImage(image);
   };
 
   // 날짜 간의 차이를 일수로 계산하는 함수
@@ -85,11 +101,12 @@ const Timecapsule = () => {
 
   return (
     <div className="relative">
-       <div className="cursor-pointer flex items-center relative" onClick={handleIconClick}>
+      <div
+        className="cursor-pointer flex items-center relative"
+        onClick={handleIconClick}
+      >
         <span className="text-2xl">⏳</span>
-        {unreadAlarmsCount > 0 && (
-            <span className="notification-dot"></span>
-        )}
+        {unreadAlarmsCount > 0 && <span className="notification-dot"></span>}
       </div>
 
       {isDropdownOpen && (
@@ -106,10 +123,10 @@ const Timecapsule = () => {
                   }`}
                 >
                   <span onClick={() => handleAlarmClick(alarm.timeCapsuleId)}>
-                    {`Time Capsule from ${alarm.createdDate}`}
+                    {`${alarm.createdDate}에 온 타임캡슐`}
                   </span>
                   {!alarm.isRead && (
-                    <span className="ml-2 bg-red-500 w-3 h-3 rounded-full"></span> // 빨간 점 표시
+                    <span className="ml-2 bg-red-500 w-3 h-3 rounded-full"></span>
                   )}
                   <button
                     onClick={() => handleDeleteAlarm(alarm.timeCapsuleId)}
@@ -124,69 +141,163 @@ const Timecapsule = () => {
         </div>
       )}
 
-      {isModalOpen && selectedCapsule && (
+{isModalOpen && selectedCapsule && (
+  <Modal
+    isOpen={isModalOpen}
+    onRequestClose={closeModal}
+    contentLabel="Time Capsule Details"
+    style={{
+      overlay: {
+        backgroundColor: "rgba(0, 0, 0, 0.4)",
+        width: "100%",
+        height: "100vh",
+        zIndex: "10",
+        position: "fixed",
+        top: "0",
+        left: "0",
+      },
+      content: {
+        width: "80%",
+        maxWidth: "800px",
+        height: "80%",
+        maxHeight: "80vh",
+        zIndex: "150",
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        borderRadius: "10px",
+        boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.25)",
+        backgroundColor: "#F5F5F5",
+        padding: "20px",
+        overflow: "auto",
+      },
+    }}
+  >
+    <h2 className="text-2xl font-bold mb-2 text-purple-600 text-left">
+      <span className="text-[#5d5d5d]">{user.nickname}</span>님의{" "}
+      <span className="text-custom-highlight">
+        {calculateDaysAgo(selectedCapsule.timeCapsuleDate.startDate)}일 전 기록
+      </span>
+      이에요
+    </h2>
+    <hr className="border-t-2 border-gray-200 mb-6" />
+
+    {/* 리뷰 섹션 */}
+    <div className="mb-6">
+      <h3 className="font-semibold text-lg mb-4">📚 Reviews:</h3>
+      <div className="grid grid-cols-6 gap-4">
+        {selectedCapsule.reviews.map((review) => (
+          <div
+            key={review.reviewId}
+            className="w-[8rem] h-36 cursor-pointer"
+            onClick={() => handleImageClick(review)}
+          >
+            <img
+              src={review.bookImage}
+              alt={review.bookTitle}
+              className="w-full h-full object-fill"
+            />
+            <p className="text-xs text-gray-500 mt-2 text-center">
+              {calculateDaysAgo(review.createdDate)}일 전
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* 포토카드 섹션 */}
+    <div className="mb-6">
+      <h3 className="font-semibold text-lg mb-4">📸 Photo Cards:</h3>
+      <div className="grid grid-cols-6 gap-4">
+        {selectedCapsule.photoCards.map((photoCard) => (
+          <div
+            key={photoCard.photoCardId}
+            className="w-[8rem] h-36 cursor-pointer"
+            onClick={() => handleImageClick(photoCard)}
+          >
+            <img
+              src={photoCard.photoCardImage}
+              alt={photoCard.bookTitle}
+              className="w-full h-full object-fill"
+            />
+            <p className="text-xs text-gray-500 mt-2 text-center">
+              {calculateDaysAgo(photoCard.photoCardCreatedDate)}일 전
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* 모달의 X 버튼 */}
+    <button
+      onClick={closeModal}
+      className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl font-bold"
+    >
+      ✖
+    </button>
+
+    {/* 오른쪽 하단에 추가할 이미지 */}
+    <img
+      src={TimeCat} // 추가할 이미지의 URL
+      alt="decorative"
+      className="absolute bottom-4 right-4 w-24 h-24 object-contain"
+      style={{ zIndex: "50", pointerEvents: "none" }} // 클릭 불가능하게 설정
+    />
+  </Modal>
+)}
+
+
+      {/* 이미지 클릭 시 표시되는 세부 정보 모달 */}
+      {selectedImage && (
         <Modal
-          isOpen={isModalOpen}
-          onRequestClose={closeModal}
-          contentLabel="Time Capsule Details"
+          isOpen={!!selectedImage}
+          onRequestClose={() => setSelectedImage(null)}
+          contentLabel="Image Details"
           style={{
             overlay: {
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              zIndex: 1000,
+              backgroundColor: "rgba(0, 0, 0, 0.4)",
+              zIndex: "100",
             },
             content: {
+              width: "60%",
               maxWidth: "600px",
-              maxHeight: "80vh", // 모달의 최대 높이 설정
+              height: "auto",
+              zIndex: "200",
               margin: "auto",
-              padding: "30px",
-              borderRadius: "20px",
-              backgroundColor: "#f9f7fd",
-              boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.1)",
-              border: "2px solid #e1e1e1",
-              position: "relative",
-              fontFamily: "'Comic Sans MS', cursive, sans-serif",
-              overflowY: "auto", // 세로 스크롤바 추가
+              borderRadius: "10px",
+              boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.25)",
+              backgroundColor: "#FFF",
+              padding: "20px",
+              position: "relative", // X 버튼 포지셔닝을 위해 relative로 설정
             },
           }}
         >
-          <h2 className="text-2xl font-bold mb-6 text-purple-600 text-center">
-            🎁 <span>{user.nickname}</span> 님의 <span>{calculateDaysAgo(selectedCapsule.timeCapsuleDate.startDate)}</span>일전 기록 🎁
-          </h2>
-
-          <div className="mb-6">
-            <h3 className="font-semibold text-lg text-pink-600 mb-4">📚 Reviews:</h3>
-            <ul className="list-disc pl-5">
-              {selectedCapsule.reviews.map((review) => (
-                <li key={review.reviewId} className="mb-4">
-                  <p className="font-semibold">{review.bookTitle}</p>
-                  <img src={review.bookImage} alt={review.bookTitle} className="w-40 h-40 mt-2 rounded-lg shadow-md"/>
-                  <p className="mt-2">{review.reviewText}</p>
-                  <p className="text-sm text-gray-500">{calculateDaysAgo(review.createdDate)}일 전</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-lg text-pink-600 mb-4">📸 Photo Cards:</h3>
-            <ul className="list-disc pl-5">
-              {selectedCapsule.photoCards.map((photoCard) => (
-                <li key={photoCard.photoCardId} className="mb-4">
-                  <p className="font-semibold">{photoCard.bookTitle}</p>
-                  <img src={photoCard.photoCardImage} alt={photoCard.bookTitle} className="w-40 h-40 mt-2 rounded-lg shadow-md"/>
-                  <p className="mt-2">{photoCard.photoCardText}</p>
-                  <p className="text-sm text-gray-500">{calculateDaysAgo(photoCard.photoCardCreatedDate)}일 전</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-
           <button
-            onClick={closeModal}
-            className="absolute top-3 right-3 text-white bg-pink-500 hover:bg-pink-600 rounded-full w-10 h-10 flex items-center justify-center shadow-md focus:outline-none"
+            onClick={() => setSelectedImage(null)}
+            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-lg"
           >
             ✖
           </button>
+          <h3
+            className={`mb-4 font-bold ${
+              selectedImage.bookTitle.length > 15 ? "text-md" : "text-xl"
+            }`}
+          >
+            {selectedImage.bookTitle}
+          </h3>
+          <img
+            src={selectedImage.bookImage || selectedImage.photoCardImage}
+            alt={selectedImage.bookTitle}
+            className="w-[20rem] h-[18rem] object-fill rounded-lg shadow-md mb-4"
+          />
+          <p>{selectedImage.reviewText || selectedImage.photoCardText}</p>
+          <p className="text-xs text-gray-500 mt-2">
+            {calculateDaysAgo(
+              selectedImage.createdDate || selectedImage.photoCardCreatedDate
+            )}
+            일 전
+          </p>
         </Modal>
       )}
     </div>

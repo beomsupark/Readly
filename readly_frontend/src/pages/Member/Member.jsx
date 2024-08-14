@@ -61,18 +61,18 @@ export default function Member() {
         setUserId(data.memberResponse.id);
   
         if (currentUser) {
-          const followersData = await getFollowers(currentUser.id);
-          const followingsSet = new Set(followersData.map(follower => follower.id));
-          setFollowings(followingsSet);
-  
-          // Log the check to ensure correctness
-          if (followingsSet.has(data.memberResponse.id)) {
-            console.log('Already following this user.');
-            setIsFollowing(true);
-          } else {
-            console.log('Not following this user.');
-            setIsFollowing(false);
-          }
+          const followingsData = await getFollowers(currentUser.id);
+          console.log('Followings data:', followingsData);
+          
+
+          console.log('Follower IDs:', followingsData.map(follower => follower.followedId));
+console.log('Current member response ID:', data.memberResponse.id);
+
+          const isAlreadyFollowing = followingsData.some(follower => follower.followedId === data.memberResponse.id);
+          console.log('Is already following:', isAlreadyFollowing, 'Member ID:', memberId);
+          
+          setIsFollowing(isAlreadyFollowing);
+          setFollowings(new Set(followingsData.map(follower => follower.id)));
         }
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -84,6 +84,49 @@ export default function Member() {
   
     fetchData();
   }, [memberId, currentUser, setFollowings]);
+
+  const handleFollowClick = useCallback(async () => {
+    if (isFollowLoading || !currentUser || !userId) {
+      return;
+    }
+  
+    setIsFollowLoading(true);
+    try {
+      const { id: currentUserId } = currentUser;
+  
+      if (isFollowing) {
+        await removeFollower(currentUserId, userId);
+        removeFollowing(userId);
+        console.log('Successfully unfollowed');
+        setIsFollowing(false);
+      } else {
+        if (!followings.has(userId)) {
+          await addFollower(currentUserId, userId);
+          addFollowing(userId);
+          console.log('Successfully followed');
+          setIsFollowing(true);
+        } else {
+          console.log('User is already following. No action taken.');
+        }
+      }
+    } catch (error) {
+      console.error('팔로우 작업 중 오류 발생:', error);
+      if (error.response) {
+        console.error('Error response:', error.response.data);
+        if (error.response.status === 500 && error.response.data.errorMessage.includes('Already following')) {
+          setIsFollowing(true);
+          console.log('User is already following. Updating state.');
+        } else {
+          alert(`팔로우 작업 중 오류가 발생했습니다: ${error.response.data.errorMessage || error.message}`);
+        }
+      } else {
+        alert('팔로우 작업 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+      }
+    } finally {
+      setIsFollowLoading(false);
+    }
+  }, [isFollowLoading, currentUser, userId, isFollowing, removeFollowing, addFollowing, followings]);
+  
   
 
   const calculateLevel = (point) => {
@@ -102,33 +145,6 @@ export default function Member() {
       default: return levelIcon1;
     }
   };
-
-  const handleFollowClick = useCallback(async () => {
-    if (isFollowLoading || !currentUser || !userId) {
-      return;
-    }
-
-    setIsFollowLoading(true);
-    try {
-      const { id: currentUserId } = currentUser;
-      
-      if (isFollowing) {
-        await removeFollower(currentUserId, userId);
-        removeFollowing(userId);
-      } else {
-        await addFollower(currentUserId, userId);
-        addFollowing(userId);
-      }
-      setIsFollowing(!isFollowing);
-    } catch (error) {
-      console.error('팔로우 작업 중 오류 발생:', error);
-      if (error.response && error.response.status === 500) {
-        alert('팔로우 작업 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-      }
-    } finally {
-      setIsFollowLoading(false);
-    }
-  }, [isFollowLoading, currentUser, userId, isFollowing, removeFollowing, addFollowing]);
 
 
   const openModal = () => {
@@ -168,7 +184,11 @@ export default function Member() {
         <div>
           <div className="flex text-center">
             <h2 className="text-2xl font-bold mr-2">{user.memberResponse.nickname}</h2>
-            <FollowButton isFollowing={isFollowing} onClick={handleFollowClick} isLoading={isFollowLoading} />
+            <FollowButton 
+          isFollowing={isFollowing} 
+          onClick={handleFollowClick} 
+          isLoading={isFollowLoading} 
+        />
           </div>
           <p className="text-base">{user.memberResponse.introduction}</p>
         </div>

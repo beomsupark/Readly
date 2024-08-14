@@ -207,7 +207,7 @@ export default function BookModal({
                     포토카드 더 보러가기
                   </button>
                 </div>
-                <div className="bg-gray-100 p-4 rounded-lg flex flex-col items-center h-[20rem]">
+                <div className="bg-gray-100 p-4 rounded-lg flex flex-col items-center h-[22.2rem]">
                   {review ? (
                     <SimpleReview
                       bookImage={bookDetails.image}
@@ -217,7 +217,7 @@ export default function BookModal({
                     <p className="text-sm text-gray-500">한줄평이 없습니다.</p>
                   )}
                   <button 
-                    className="text-[#848484] px-4 py-2 rounded-full text-sm font-bold mt-auto"
+                    className="text-[#848484] px-4 rounded-full text-sm font-bold mt-3"
                     onClick={handleGoToSharedBoard}
                   >
                     한줄평 더 보러가기

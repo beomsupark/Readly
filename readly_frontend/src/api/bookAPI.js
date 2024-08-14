@@ -49,6 +49,7 @@ export const fetchBookDetailsWithPhotoAndReview = async (bookId) => {
 export const addBookToUser = async (memberId, bookId) => {
   try {
     const response = await axios.post(`${BASE_URL}/user/add`, { memberId, bookId });
+    console.log("개인책 response 전송", memberId, bookId)
     return response.data;
   } catch (error) {
     console.error('Error adding book to user:', error);
@@ -58,11 +59,12 @@ export const addBookToUser = async (memberId, bookId) => {
 
 export const addBookToGroup = async (oldBookId, groupId, bookId) => {
   try {
-    const response = await axios.post(`${BASE_URL}/api/group/add`, {
+    const response = await axios.post(`${BASE_URL}/group/add`, {
       oldBookId,
       groupId,
       bookId
     });
+    console.log("addBookToGroup", oldBookId, groupId, bookId);
     return response.data;
   } catch (error) {
     console.error('Error adding book to group:', error);
