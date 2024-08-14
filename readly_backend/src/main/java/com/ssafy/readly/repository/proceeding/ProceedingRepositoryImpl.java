@@ -21,10 +21,10 @@ public class ProceedingRepositoryImpl implements ProceedingRepository {
 
     @Override
     public List<Proceeding> getProceedingsByGroupId(int groupId, int pageSize, int pageNumber) {
-        String jpql = "SELECT p FROM Proceeding p WHERE p.group.id = :groupId";
+        String jpql = "SELECT p FROM Proceeding p WHERE p.group.id = :groupId ORDER BY p.id DESC";
         TypedQuery<Proceeding> query = entityManager.createQuery(jpql, Proceeding.class);
         query.setParameter("groupId", groupId);
-        query.setFirstResult(pageSize * (pageNumber-1));
+        query.setFirstResult(pageSize * (pageNumber - 1));
         query.setMaxResults(pageSize);
         return query.getResultList();
     }
