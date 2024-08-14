@@ -75,13 +75,12 @@ public class PhotoCardController {
 
         String prompt = "";
         prompt += book.getTitle() + " 이라는 책에서 ";
-        prompt += request.getText() + " 라는 글귀에 어울리는 그림 그려줘";
-
+        String[] promptArray = new String[]{" 라는 글귀에 어울리는 화려한 그림 그려줘"," 라는 글귀에 어울리는 동화같은 그림 그려줘" };
         // 이미지 생성
         HttpStatus status = HttpStatus.ACCEPTED;
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 2; i++) {
             String image = aiService.
-                    generatePictureV2(prompt);
+                    generatePictureV2(prompt+promptArray[i]);
             String imageLink = s3Uploader.saveFile(convertUrlToMultipartFile(image));
             //response에 넣기
             imageList.add(imageLink);
