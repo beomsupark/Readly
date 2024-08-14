@@ -25,7 +25,7 @@ public class GroupController {
         String groupId = groupService.makeGroup(makeGroupRequest);
         groupService.updateRoomId(groupId, groupId);  // Use groupId directly as roomId
 
-        return new ResponseEntity<>(groupId,HttpStatus.CREATED); // 201 Created 상태 코드로 변경
+        return new ResponseEntity<>(HttpStatus.CREATED); // 201 Created 상태 코드로 변경
     }
 
 
