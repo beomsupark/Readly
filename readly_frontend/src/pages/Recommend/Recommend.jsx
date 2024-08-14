@@ -38,7 +38,8 @@ export default function Recommend() {
   const [eventText, setEventText] = useState("");
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [recommendedBookIds, setRecommendedBookIds] = useState([]);
+  const [recommendedBooks, setRecommendedBooks] = useState([]);
+  const [showRecommendations, setShowRecommendations] = useState(false);
 
   useEffect(() => {
     fetchInitialRecommendation();
@@ -54,7 +55,6 @@ export default function Recommend() {
         setBook(response.data.book);
       } else {
         console.error("Unexpected response format:", response.data);
-        // setError("책 정보를 가져오는데 실패했습니다.");
       }
       
       return response.status;
@@ -65,7 +65,6 @@ export default function Recommend() {
         console.error("Response status:", error.response.status);
         console.error("Response data:", error.response.data);
       }
-      // setError("초기 추천을 불러오는데 실패했습니다. 나중에 다시 시도해주세요.");
       throw error;
     } finally {
       setLoading(false);
@@ -99,19 +98,15 @@ export default function Recommend() {
       );
   
       console.log("AI 추천 응답:", aiResponse.data);
-      setRecommendedBookIds(aiResponse.data.bar);
-  
-      if (aiResponse.data.bar.length > 0) {
-        const firstBookId = aiResponse.data.bar[0];
-        const bookResponse = await axios.get(`${BASE_URL}book/${firstBookId}`);
-        if (bookResponse.data && bookResponse.data.book) {
-          setBook(bookResponse.data.book);
-        } else {
-          console.error("Unexpected book response format:", bookResponse.data);
-        }
-      }
-  
-      setModalIsOpen(false);
+      const bookIds = aiResponse.data.bar;
+      
+      const bookPromises = bookIds.map(id => 
+        axios.get(`${BASE_URL}book/${id}`).then(res => res.data.book)
+      );
+      
+      const books = await Promise.all(bookPromises);
+      setRecommendedBooks(books);
+      setShowRecommendations(true);
     } catch (error) {
       console.error("에러 발생:", error);
       if (error.response) {
@@ -135,7 +130,32 @@ export default function Recommend() {
 
   const openModal = () => {
     setModalIsOpen(true);
+    setShowRecommendations(false);
   };
+
+  const RecommendedBooks = () => (
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      {recommendedBooks.map((book, index) => (
+        <div key={index} className="bg-white p-4 rounded-lg shadow">
+          <img src={book.image} alt={book.title} className="w-full h-48 object-cover mb-2 rounded" />
+          <h3 className="font-bold text-sm mb-1">{book.title}</h3>
+          <p className="text-xs text-gray-600">{book.author}</p>
+          <a
+            href={book.purchase_link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 inline-block"
+          >
+            <img
+              src={aladinLogo}
+              alt="알라딘으로 이동"
+              className="h-6 w-auto object-contain rounded-full"
+            />
+          </a>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <>
@@ -230,6 +250,8 @@ export default function Recommend() {
                 </p>
               </div>
             </div>
+          ) : showRecommendations ? (
+            <RecommendedBooks />
           ) : (
             <div className="flex flex-col sm:flex-row justify-between items-start w-full mt-8 sm:mt-12">
               <div className="w-full sm:w-1/2 sm:pr-12 flex flex-col items-center mb-8 sm:mb-0">
