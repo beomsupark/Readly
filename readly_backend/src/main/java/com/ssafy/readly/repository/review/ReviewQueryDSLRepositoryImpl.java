@@ -149,6 +149,7 @@ public class ReviewQueryDSLRepositoryImpl implements ReviewQueryDSLRepository {
                 .join(review.member, member)
                 .join(review.book, book)
                 .groupBy(review.id,review.member.id)
+                .where(book.id.eq(bookId))
                 .orderBy(new OrderSpecifier(Order.DESC, like.count()))
                 .offset(1)
                 .limit(1)
