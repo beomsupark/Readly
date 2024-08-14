@@ -2,7 +2,7 @@ import axios from "axios";
 import useUserStore from "../store/userStore"; // userStore의 실제 경로로 수정해주세요
 
  export const BASE_URL = "https://i11c207.p.ssafy.io/api";
-//export const BASE_URL = "http://localhost:8080/api";
+
 
 // axios 인스턴스 생성
 const api = axios.create({
