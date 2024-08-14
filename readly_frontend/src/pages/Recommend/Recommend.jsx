@@ -40,6 +40,7 @@ export default function Recommend() {
   const [loading, setLoading] = useState(true);
   const [recommendedBooks, setRecommendedBooks] = useState([]);
   const [showRecommendations, setShowRecommendations] = useState(false);
+  const [recommendedBooksInfo, setRecommendedBooksInfo] = useState([]);
 
   useEffect(() => {
     fetchInitialRecommendation();
@@ -98,14 +99,19 @@ export default function Recommend() {
       );
   
       console.log("AI 추천 응답:", aiResponse.data);
-      const bookIds = aiResponse.data.bar;
+      const bookIds = aiResponse.data.bar.map(item => item.foo);
       
-      const bookPromises = bookIds.map(id => 
-        axios.get(`${BASE_URL}book/${id}`).then(res => res.data.book)
+      const bookInfoPromises = bookIds.map(id => 
+        axios.get(`${BASE_URL}/api/book/searchBook/${id}`)
+          .then(res => res.data)
+          .catch(err => {
+            console.error(`Error fetching book info with id ${id}:`, err);
+            return null; // 에러가 발생한 경우 null을 반환
+          })
       );
       
-      const books = await Promise.all(bookPromises);
-      setRecommendedBooks(books);
+      const booksInfo = await Promise.all(bookInfoPromises);
+      setRecommendedBooksInfo(booksInfo.filter(info => info !== null)); // null 값 제거
       setShowRecommendations(true);
     } catch (error) {
       console.error("에러 발생:", error);
@@ -134,24 +140,55 @@ export default function Recommend() {
   };
 
   const RecommendedBooks = () => (
-    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-      {recommendedBooks.map((book, index) => (
-        <div key={index} className="bg-white p-4 rounded-lg shadow">
-          <img src={book.image} alt={book.title} className="w-full h-48 object-cover mb-2 rounded" />
-          <h3 className="font-bold text-sm mb-1">{book.title}</h3>
-          <p className="text-xs text-gray-600">{book.author}</p>
-          <a
-            href={book.purchase_link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-2 inline-block"
-          >
-            <img
-              src={aladinLogo}
-              alt="알라딘으로 이동"
-              className="h-6 w-auto object-contain rounded-full"
-            />
-          </a>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {recommendedBooksInfo.map((info, index) => (
+        <div key={index} className="bg-white p-6 rounded-lg shadow-md">
+          <div className="flex flex-col h-full">
+            <div className="mb-4">
+              {info.book && info.book.image ? (
+                <img src={info.book.image} alt={info.book.title} className="w-full h-48 object-cover rounded" />
+              ) : (
+                <div className="w-full h-48 bg-gray-200 flex items-center justify-center rounded">
+                  이미지 없음
+                </div>
+              )}
+            </div>
+            <h3 className="font-bold text-lg mb-2">{info.book?.title || "제목 없음"}</h3>
+            <p className="text-sm text-gray-600 mb-2">{info.book?.author || "저자 미상"}</p>
+            <p className="text-xs text-gray-500 mb-4">ISBN: {info.book?.ISBN || "없음"}</p>
+            <p className="text-sm text-gray-700 mb-4 flex-grow">{info.book?.detail?.slice(0, 100)}...</p>
+            
+            {info.photocard && (
+              <div className="mb-4 p-3 bg-gray-100 rounded">
+                <p className="text-xs font-semibold mb-1">포토카드</p>
+                <p className="text-sm">{info.photocard.text}</p>
+              </div>
+            )}
+            
+            {info.review && (
+              <div className="mb-4 p-3 bg-gray-100 rounded">
+                <p className="text-xs font-semibold mb-1">리뷰</p>
+                <p className="text-sm">{info.review.text}</p>
+              </div>
+            )}
+
+            {info.book && info.book.purchase_link ? (
+              <a
+                href={info.book.purchase_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-block"
+              >
+                <img
+                  src={aladinLogo}
+                  alt="알라딘으로 이동"
+                  className="h-6 w-auto object-contain rounded-full"
+                />
+              </a>
+            ) : (
+              <p className="text-xs text-gray-500 mt-2">구매 링크 없음</p>
+            )}
+          </div>
         </div>
       ))}
     </div>
