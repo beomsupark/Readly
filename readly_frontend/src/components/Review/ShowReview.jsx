@@ -63,7 +63,7 @@ const ShowReview = ({
     ? "text-base mb-4 max-h-[300px] overflow-y-auto font-bold"
     : "text-[10px] mb-1 flex-grow overflow-hidden line-clamp-2 font-bold";
 
-  const isCurrentUser = user.nickname === memberId;
+  const isCurrentUser = user.loginId === memberId;
 
   return (
     <div className={containerClasses}>

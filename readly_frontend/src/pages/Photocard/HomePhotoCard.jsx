@@ -41,7 +41,7 @@ export default function HomePhotocard({ onPhotoCardClick }) {
     <div className="w-full ml-3 bg-gray-100 mb-2">
       <div className="max-w-full mx-auto px-2 lg:px-2">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
-          <h2 className="font-bold text-xl sm:text-2xl mb-2 sm:mb-0">사용자들이 좋아하는 <span className="text-custom-highlight">포토카드</span></h2>
+          <h2 className="font-bold text-xl sm:text-2xl mb-2 sm:mb-0">사용자들이 만든 <span className="text-custom-highlight">포토카드</span></h2>
           <button
             onClick={handleMorePhotocards}
             className="text-gray-500 hover:text-gray-700"

@@ -27,7 +27,7 @@ export default function Activity() {
   };
 
   const getTabs = () => {
-    const baseTabs = ['진행도', '소통', '화상', '회의록'];
+    const baseTabs = ['진행도', '소통', '화상', '게시판'];
     if (userRole === 'L') {
       return [...baseTabs, '그룹 삭제'];
     } else if (userRole === 'M') {
