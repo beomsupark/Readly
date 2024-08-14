@@ -18,7 +18,7 @@ const customModalStyles = {
     left: "0",
   },
   content: {
-    width: "22%",
+    width: "24%",
     height: "30%",
     maxHeight: "80vh",
     zIndex: "150",
@@ -87,14 +87,14 @@ export default function TimecapsulePeriod({ isOpen, onRequestClose }) {
       <div className="flex gap-4 mb-4">
         <input
           type="date"
-          className="border rounded"
+          className="border rounded w-[7rem]"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
         />
         ~
         <input
           type="date"
-          className="border rounded"
+          className="border rounded w-[7rem]"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
         />

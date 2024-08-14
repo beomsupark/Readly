@@ -43,7 +43,7 @@ export function GroupDelete({ groupId, onDeleteSuccess }) {
         <div className="flex justify-center">
           <button 
             onClick={handleDeleteGroup} 
-            className="bg-red-500 text-white px-6 py-2 rounded-full hover:bg-red-600 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
+            className="font-bold px-6 py-2 rounded-full transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
           >
             그룹 삭제
           </button>

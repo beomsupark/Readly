@@ -9,7 +9,7 @@ import useBookStore from "../../store/bookStore";
 import usePhotocardStore from "../../store/photocardStore";
 import CardModal from "./CardModal.jsx";
 import { CardGenerator } from "./CardGenerator.js";
-
+import useUserStore from "../../store/userStore";
 const FONT_URL =
   "https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap";
 const FONT_NAME = "Noto Sans KR";
@@ -20,7 +20,7 @@ export default function MakeCard() {
   const [quote, setQuote] = useState("");
   const [visibility, setVisibility] = useState("A");
   const [showSuggestions, setShowSuggestions] = useState(false);
-
+  const { user } = useUserStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCardImage, setSelectedCardImage] = useState(null);
   const [infoCardImage, setInfoCardImage] = useState(null);
@@ -78,7 +78,7 @@ export default function MakeCard() {
     }
 
     try {
-      await createPhotoCard(selectedBook.id, quote, visibility, 1); // selectedBook.id 사용
+      await createPhotoCard(selectedBook.id, quote, visibility, user.id); // selectedBook.id 사용
       setSelectedBookInfo({
         title: selectedBook.title,
         author: selectedBook.author,
@@ -131,9 +131,9 @@ export default function MakeCard() {
   };
 
   return (
-    <div className="flex w-full h-4/5">
-      <div className="w-2/5 p-4 mt-10 bg-[#F5F5F5] rounded-xl shadow-md relative">
-        <form onSubmit={handleSubmit} className="space-y-12 font-bold">
+    <div className="flex flex-col sm:flex-row w-full h-full sm:h-4/5">
+      <div className="w-full sm:w-2/5 p-4 mt-4 sm:mt-10 bg-[#F5F5F5] rounded-xl shadow-md relative">
+        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-12 font-bold">
           <AutoCompleteWrapper
             label="책 이름을 입력해주세요"
             value={bookInfo}
@@ -149,7 +149,7 @@ export default function MakeCard() {
             multiline={true}
           />
           <div>
-            <label className="block text-lg font-bold text-gray-700 mb-2">
+            <label className="block text-base sm:text-lg font-bold text-gray-700 mb-2">
               공개 범위
             </label>
             <div className="flex justify-start">
@@ -163,7 +163,7 @@ export default function MakeCard() {
               />
             </div>
           </div>
-          <div className="absolute bottom-4 right-4">
+          <div className="sm:absolute bottom-4 right-4 mt-6 sm:mt-0">
             <GoButton
               text="포토카드 제작"
               onClick={handleSubmit}
@@ -172,16 +172,16 @@ export default function MakeCard() {
           </div>
         </form>
       </div>
-      <div className="w-3/5 flex items-center justify-center">
+      <div className="w-full sm:w-3/5 flex items-center justify-center mt-8 sm:mt-0">
         {isCreatingPhotocard ? (
           <div className="animate-bounce">
-            <img src={Logo} alt="Loading" className="w-48 h-48" />
-            <p className="text-center text-custom-highlight mt-2 text-2xl">
+            <img src={Logo} alt="Loading" className="w-32 h-32 sm:w-48 sm:h-48" />
+            <p className="text-center text-custom-highlight mt-2 text-xl sm:text-2xl">
               Loading ....
             </p>
           </div>
         ) : photoCard && photoCard.images && photoCard.images.length > 0 ? (
-          <div className="w-3/4">
+          <div className="w-full sm:w-3/4 px-4 sm:px-0">
             <div className="flex-grow grid grid-cols-2 gap-4 mb-4">
               {photoCard.images.map((imageUrl, index) => (
                 <div
@@ -197,12 +197,12 @@ export default function MakeCard() {
                 </div>
               ))}
             </div>
-            <p className="text-center mt-4 text-xl font-bold text-[#878787]">
+            <p className="text-center mt-4 text-lg sm:text-xl font-bold text-[#878787]">
               마음에 드는 포토카드를 선택해주세요
             </p>
           </div>
         ) : (
-          <p className="text-xl text-[#7a7a7a] text-bold">
+          <p className="text-lg sm:text-xl text-[#7a7a7a] text-bold">
             포토카드가 여기에 나타납니다
           </p>
         )}

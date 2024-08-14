@@ -14,11 +14,9 @@ export default function Home() {
 
   const { books, searchResults, fetchBooks, searchBooks } = useBookStore();
 
-
   useEffect(() => {
     fetchBooks().catch((err) => console.error("Failed to fetch books:", err));
   }, []);
-
 
   const openModal = (book) => {
     setSelectedBook(book);
@@ -65,16 +63,16 @@ export default function Home() {
   };
 
   return (
-    <>
+    <div className="overflow-y-auto h-screen">
       <div className="mt-1 ml-2 max-w-6xl lg:px-1">
         <h2 className="font-bold text-2xl mb-2">
           가장 <span className="text-custom-highlight">인기</span> 많은{" "}
           <span className="text-custom-highlight">책</span>
         </h2>
-        <div className="grid grid-cols-2 mb-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-1 pr-36">
+        <div className="grid grid-cols-2 mb-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-1 pr-4 sm:pr-36">
           {books.slice(0, 8).map((book) => (
             <div key={book.isbn} className="flex flex-col items-center">
-              <div className="w-24 h-28 gap-1">
+              <div className="w-20 h-24 sm:w-24 sm:h-28 gap-1">
                 <img
                   src={book.image}
                   alt={book.title}
@@ -103,6 +101,6 @@ export default function Home() {
         isOpen={showCardModalIsOpen}
         onClose={closeShowCardModal}
       />
-    </>
+    </div>
   );
 }
