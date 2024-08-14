@@ -96,7 +96,6 @@ export default function ActivityBoard({ groupId }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewingPost, setViewingPost] = useState(null);
   const [error, setError] = useState(null);
-  const { token } = useUserStore();
 
   const pageSize = 10;
 
@@ -110,9 +109,6 @@ export default function ActivityBoard({ groupId }) {
       console.log("Fetching posts with params:", { groupId, currentPage, pageSize });
 
       const response = await axios.get(`${BASE_URL}/proceeding`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         params: {
           groupId: groupId,
           pageNumber: currentPage,
@@ -147,9 +143,7 @@ export default function ActivityBoard({ groupId }) {
   const handleViewPost = async (id) => {
     try {
       setError(null);
-      const response = await axios.get(`${BASE_URL}/proceeding/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(`${BASE_URL}/proceeding/${id}`);
       setViewingPost(response.data);
     } catch (error) {
       console.error("Error fetching post details:", error);
@@ -167,12 +161,6 @@ export default function ActivityBoard({ groupId }) {
           ...newPost,
           groupId,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
       );
       console.log("Create post response:", response.data);
       setIsModalOpen(false);
@@ -186,9 +174,7 @@ export default function ActivityBoard({ groupId }) {
   const handleEditPost = async (id) => {
     try {
       setError(null);
-      const response = await axios.get(`${BASE_URL}/proceeding/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(`${BASE_URL}/proceeding/${id}`);
       console.log("Fetched post for editing:", response.data); // Debugging line
       setEditingPost(response.data);
       setIsModalOpen(true); // 수정할 글을 설정한 후 모달 열기
@@ -208,12 +194,6 @@ export default function ActivityBoard({ groupId }) {
       await axios.put(
         `${BASE_URL}/proceeding/${updatedPost.proceedingId}`,
         updatedPost,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
       );
       setIsModalOpen(false);
       setEditingPost(null);
