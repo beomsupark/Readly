@@ -102,7 +102,7 @@ export default function Recommend() {
       const bookIds = aiResponse.data.bar.map(item => item.foo);
       
       const bookInfoPromises = bookIds.map(id => 
-        axios.get(`${BASE_URL}/api/book/searchBook/${id}`)
+        axios.get(`${BASE_URL}/book/searchBook/${id}`)
           .then(res => res.data)
           .catch(err => {
             console.error(`Error fetching book info with id ${id}:`, err);
