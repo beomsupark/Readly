@@ -11,6 +11,7 @@ import com.ssafy.readly.dto.timecapsule.TimeCapsuleRequest;
 import com.ssafy.readly.entity.Review;
 import com.ssafy.readly.enums.OrderType;
 import com.ssafy.readly.enums.SearchType;
+import com.ssafy.readly.enums.Visibility;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.ssafy.readly.entity.QMember.member;
 import static com.ssafy.readly.entity.QReview.review;
@@ -62,6 +64,7 @@ public class ReviewQueryDSLRepositoryImpl implements ReviewQueryDSLRepository {
                 .rightJoin(timeCapsuleItem.review, review)
                 .join(review.member, member)
                 .join(review.book, book)
+                .where(review.visibility.eq(reviewRequest.getVisibility()))
                 .groupBy(review.id,review.member.id)
                 .orderBy(orderSpecifiers)
                 .offset(reviewRequest.getPageNumber())
@@ -160,6 +163,15 @@ public class ReviewQueryDSLRepositoryImpl implements ReviewQueryDSLRepository {
             return null;
         }
         return response.get(0);
+    }
+
+    /**
+     * @param visibility
+     * @return
+     */
+    @Override
+    public long getReviewCount(Visibility visibility) {
+        return Optional.ofNullable(queryFactory.select(review.count()).from(review).where(review.visibility.eq(visibility)).fetchFirst()).orElse(0L);
     }
 
     private OrderSpecifier[] createOrderSpecifier(ReviewSearchRequest reviewRequest) {

@@ -4,6 +4,7 @@ import com.ssafy.readly.dto.review.ReviewRequest;
 import com.ssafy.readly.dto.review.ReviewResponse;
 import com.ssafy.readly.dto.review.ReviewSearchRequest;
 import com.ssafy.readly.entity.Review;
+import com.ssafy.readly.enums.Visibility;
 import com.ssafy.readly.repository.review.ReviewQueryDSLRepository;
 import com.ssafy.readly.repository.review.ReviewRepositry;
 import jakarta.persistence.NoResultException;
@@ -66,8 +67,8 @@ public class ReviewServiceImpl implements ReviewService {
      * @throws Exception
      */
     @Override
-    public long getReviewsCount() throws Exception {
-        return reviewRepository.count();
+    public long getReviewsCount(Visibility visibility) throws Exception {
+        return reviewQueryDSLRepository.getReviewCount(visibility);
     }
 
     /**

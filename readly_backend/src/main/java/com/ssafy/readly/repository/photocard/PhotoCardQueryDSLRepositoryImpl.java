@@ -14,6 +14,7 @@ import com.ssafy.readly.dto.timecapsule.TimeCapsuleRequest;
 import com.ssafy.readly.entity.PhotoCard;
 import com.ssafy.readly.enums.OrderType;
 import com.ssafy.readly.enums.SearchType;
+import com.ssafy.readly.enums.Visibility;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ import static com.ssafy.readly.entity.QBook.book;
 import static com.ssafy.readly.entity.QLike.like;
 import static com.ssafy.readly.entity.QMember.member;
 import static com.ssafy.readly.entity.QPhotoCard.photoCard;
+import static com.ssafy.readly.entity.QReview.review;
 import static com.ssafy.readly.entity.QTimeCapsuleItem.timeCapsuleItem;
 
 @Repository
@@ -105,6 +107,7 @@ public class PhotoCardQueryDSLRepositoryImpl implements PhotoCardQueryDSLReposit
                 .rightJoin(timeCapsuleItem.photoCard, photoCard)
                 .join(photoCard.member,member)
                 .join(photoCard.book, book)
+                .where(photoCard.visibility.eq(request.getVisibility()))
                 .groupBy(photoCard.id,photoCard.member.id)
                 .orderBy(orderSpecifiers)
                 .offset(request.getPageNumber())
@@ -204,6 +207,15 @@ public class PhotoCardQueryDSLRepositoryImpl implements PhotoCardQueryDSLReposit
             return null;
         }
         return response.get(0);
+    }
+
+    /**
+     * @param visibility
+     * @return
+     */
+    @Override
+    public long getPhotoCardCount(Visibility visibility) {
+        return Optional.ofNullable(queryFactory.select(photoCard.count()).from(photoCard).where(photoCard.visibility.eq(visibility)).fetchFirst()).orElse(0L);
     }
 
     private OrderSpecifier[] createOrderSpecifier(PhotoCardSearchRequest reviewRequest) {
