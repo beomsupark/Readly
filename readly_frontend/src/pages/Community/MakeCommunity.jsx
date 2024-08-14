@@ -25,7 +25,7 @@ export default function MakeCommunity() {
       roomId: null,
       tags,
     };
-  
+
     try {
       const status = await createGroup(groupData);
       if (status === 201) {
@@ -38,7 +38,11 @@ export default function MakeCommunity() {
       }
     } catch (error) {
       console.error("Error creating group:", error);
-      alert(`소모임 생성 중 오류가 발생했습니다: ${error.response ? error.response.data : error.message}`);
+      alert(
+        `소모임 생성 중 오류가 발생했습니다: ${
+          error.response ? error.response.data : error.message
+        }`
+      );
     }
   };
 
@@ -68,7 +72,7 @@ export default function MakeCommunity() {
             label="태그를 입력해주세요"
             tags={tags}
             setTags={setTags}
-            placeholder="입력"
+            placeholder="입력 후, 엔터"
           />
           <div className="absolute bottom-4 right-4">
             <GoButton text="소모임 생성" onClick={handleSubmit} />

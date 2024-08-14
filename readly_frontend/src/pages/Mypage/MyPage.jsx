@@ -11,7 +11,7 @@ import ReviewList from "./ReviewListModal";
 import useUserStore from "../../store/userStore";
 import Myheader from "./MypageHeader";
 import { getMyReviews, getMyPhotocards } from "../../api/mypageAPI";
-import Review from '../../components/Review/Review';
+import Review from "../../components/Review/Review";
 
 export default function MyPage() {
   const user = useUserStore((state) => state.user);
@@ -72,14 +72,17 @@ export default function MyPage() {
     return Array(count)
       .fill()
       .map((_, index) => (
-        <div key={`empty-${index}`} className="bg-gray-100 p-2 rounded w-[5rem] h-[6rem]"></div>
+        <div
+          key={`empty-${index}`}
+          className="bg-gray-100 p-2 rounded w-[5rem] h-[6rem]"
+        ></div>
       ));
   };
 
   const renderItems = (items, renderFunction, emptyCount = 7) => {
     const displayItems = items.slice(0, 7);
     const emptySlots = Math.max(0, emptyCount - displayItems.length);
-    
+
     return (
       <>
         {displayItems.map(renderFunction)}
@@ -96,7 +99,9 @@ export default function MyPage() {
           <a
             href="#"
             className={`font-bold text-2xl ${
-              activeLink === "progress" ? "text-black border-b-2 border-black" : "text-[#B5B5B5]"
+              activeLink === "progress"
+                ? "text-black border-b-2 border-black"
+                : "text-[#B5B5B5]"
             }`}
             onClick={() => handleLinkClick("progress")}
           >
@@ -105,7 +110,9 @@ export default function MyPage() {
           <a
             href="#"
             className={`font-bold text-2xl ${
-              activeLink === "bookshelf" ? "text-black border-b-2 border-black" : "text-[#B5B5B5]"
+              activeLink === "bookshelf"
+                ? "text-black border-b-2 border-black"
+                : "text-[#B5B5B5]"
             }`}
             onClick={() => handleLinkClick("bookshelf")}
           >
@@ -114,7 +121,9 @@ export default function MyPage() {
           <a
             href="#"
             className={`font-bold text-2xl ${
-              activeLink === "follow" ? "text-black border-b-2 border-black" : "text-[#B5B5B5]"
+              activeLink === "follow"
+                ? "text-black border-b-2 border-black"
+                : "text-[#B5B5B5]"
             }`}
             onClick={() => handleLinkClick("follow")}
           >
@@ -128,7 +137,9 @@ export default function MyPage() {
               <MypageProgress userId={userId || user.id} />
             </div>
           )}
-          {activeLink === "bookshelf" && <MypageBookshelf userId={userId || user.id} />}
+          {activeLink === "bookshelf" && (
+            <MypageBookshelf userId={userId || user.id} />
+          )}
           {activeLink === "follow" && (
             <div>
               <MypageFollow userId={userId || user.id} />
@@ -145,62 +156,56 @@ export default function MyPage() {
 
         {activeLink !== "progress" && (
           <>
-            <div className="relative bg-white rounded-lg shadow p-4 mb-4">
+            <div className="relative bg-white rounded-lg shadow p-4 mb-4 w-3/4 h-[11rem]">
               <h3 className="font-bold mb-2">내가 만든 포토카드</h3>
               <div className="flex flex-wrap gap-1">
-                {renderItems(
-                  myPhotocards,
-                  (card) => (
-                    <div
-                      key={card.photocardId}
-                      className="bg-gray-200 p-2 rounded w-[5rem] h-[6rem] flex items-center justify-center"
-                    >
-                      <img
-                        src={card.photocardImage}
-                        alt={card.bookTitle}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )
-                )}
+                {renderItems(myPhotocards, (card) => (
+                  <div
+                    key={card.photocardId}
+                    className="bg-gray-200 p-2 rounded w-[5rem] h-[6rem] flex items-center justify-center"
+                  >
+                    <img
+                      src={card.photocardImage}
+                      alt={card.bookTitle}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
               </div>
-              <div className="absolute top-4 right-4">
+              <div className="absolute top-4 right-4 flex items-center">
                 <button
                   onClick={openPhotocardModal}
-                  className="text-blue-500 hover:text-blue-700 text-lg font-bold mr-80"
+                  className="text-blue-500 hover:text-blue-700 text-lg font-bold flex items-center"
                 >
-                  <span className="text-custom-highlight">&gt;</span>{" "}
+                  <span className="text-custom-highlight mr-1">&gt;</span>
                   <span className="text-[1rem] text-[#868686]">더보기</span>
                 </button>
               </div>
             </div>
 
-            <div className="relative bg-white rounded-lg shadow p-4">
-  <h3 className="font-bold mb-2">내가 남긴 한줄평</h3>
-  <div className="flex flex-wrap gap-3">
-    {renderItems(
-      myReviews,
-      (review) => (
-        <div key={review.reviewId} className="w-[6rem] h-[7rem]">
-          <img
-            src={review.bookImage}
-            alt={review.bookTitle}
-            className="w-full h-full object-fill rounded"
-          />
-        </div>
-      )
-    )}
-  </div>
-  <div className="absolute top-4 right-4">
-    <button
-      onClick={openReviewModal}
-      className="text-blue-500 hover:text-blue-700 text-lg font-bold mr-80"
-    >
-      <span className="text-custom-highlight">&gt;</span>{" "}
-      <span className="text-[1rem] text-[#868686]">더보기</span>
-    </button>
-  </div>
-</div>
+            <div className="relative bg-white rounded-lg shadow p-4 w-3/4 h-[11rem]">
+              <h3 className="font-bold mb-2">내가 남긴 한줄평</h3>
+              <div className="flex flex-wrap gap-3">
+                {renderItems(myReviews, (review) => (
+                  <div key={review.reviewId} className="w-[6rem] h-[7rem]">
+                    <img
+                      src={review.bookImage}
+                      alt={review.bookTitle}
+                      className="w-full h-full object-fill rounded"
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="absolute top-4 right-4 flex items-center">
+                <button
+                  onClick={openReviewModal}
+                  className="text-blue-500 hover:text-blue-700 text-lg font-bold flex items-center"
+                >
+                  <span className="text-custom-highlight mr-1">&gt;</span>
+                  <span className="text-[1rem] text-[#868686]">더보기</span>
+                </button>
+              </div>
+            </div>
           </>
         )}
       </div>
@@ -218,7 +223,11 @@ export default function MyPage() {
         photocards={myPhotocards}
       />
 
-      <ReviewList isOpen={reviewModalIsOpen} onRequestClose={closeReviewModal} reviews={myReviews} />
+      <ReviewList
+        isOpen={reviewModalIsOpen}
+        onRequestClose={closeReviewModal}
+        reviews={myReviews}
+      />
     </>
   );
 }
