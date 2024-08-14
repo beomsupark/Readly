@@ -47,7 +47,7 @@ export default function Recommend() {
   const fetchInitialRecommendation = async () => {
     console.log(`Attempting to fetch initial book recommendation.`);
     try {
-      const response = await axios.get(`${BASE_URL}book/firstRecommand`);
+      const response = await axios.get(`${BASE_URL}/book/firstRecommand`);
       console.log('Full API response:', response);
       
       if (response.data && response.data.book) {
