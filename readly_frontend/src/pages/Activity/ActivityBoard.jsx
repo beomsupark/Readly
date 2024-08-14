@@ -2,26 +2,26 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { AlertCircle, Plus, Eye, EyeOff, Edit2, Trash2 } from "lucide-react";
 import { BASE_URL } from '../../api/authAPI';
-
 const CreateOrEditPostModal = ({ isOpen, onClose, onSubmit, post }) => {
-  const [formData, setFormData] = useState(post || { title: "", content: "" });
+  const [formData, setFormData] = useState({ title: "", content: "" });
 
   useEffect(() => {
     if (post) {
       setFormData(post);
+    } else {
+      setFormData({ title: "", content: "" }); // Reset the form data when there's no post
     }
   }, [post]);
 
   if (!isOpen) return null;
 
   const handleSubmit = () => {
-    console.log("Submitting post data:", formData); // Debugging line
-  
-    // If editing an existing post, ensure the id is preserved
+    console.log("Submitting post data:", formData);
+
     const updatedFormData = post ? { ...formData, id: post.id } : formData;
-    
+
     onSubmit(updatedFormData);
-  
+
     if (!post) {
       setFormData({ title: "", content: "" });
     }
@@ -221,8 +221,8 @@ export default function ActivityBoard({ groupId }) {
         <h2 className="text-xl font-bold text-[#333333]">게시판</h2>
         <button
           onClick={() => {
-            setIsModalOpen(true);
-            setEditingPost(null); // Reset editing post when creating a new one
+            setEditingPost(null); // Reset editing post first
+            setIsModalOpen(true); // Open the modal
           }}
           className="bg-[#4A90E2] text-[#FFFFFF] px-6 py-3 rounded-md hover:bg-[#3A7BC8] transition duration-200 shadow-md flex items-center"
         >
