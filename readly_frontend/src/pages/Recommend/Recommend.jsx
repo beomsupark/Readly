@@ -92,7 +92,7 @@ export default function Recommend() {
       const query = `오늘은 ${selectedEmotion} 감정을 느꼈고, ${eventText}`;
   
       const aiResponse = await axios.post(
-        `${BASE_URL}/ai/recommand`,
+        `https://i11c207.p.ssafy.io/ai/recommand`,
         {
           query: query,
         }
