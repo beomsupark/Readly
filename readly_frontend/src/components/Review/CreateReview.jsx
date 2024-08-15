@@ -93,8 +93,8 @@ export default function CreateReview({
       <div className="mt-5 ml-3 justify-start sm:w-40 lg:w-48">
         <CustomRadioButton
           options={[
-            { value: "A", label: "공개" },
-            { value: "E", label: "비공개" },
+            { value: "E", label: "공개" },
+            { value: "A", label: "비공개" },
           ]}
           selectedOption={visibility}
           onChange={setVisibility}
